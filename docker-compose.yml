@@ -1,0 +1,28 @@
+version: '3.1'
+name: pet-project-shop-db
+services:
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: dmitry
+      POSTGRES_PASSWORD: password
+    volumes:
+      - posgresql_shop_db:/var/lib/postgresql/data
+    ports:
+      - 5555:5432
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    ports:
+      - 8888:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: AnisimovDmitry97@yandex.ru
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pg_data:/var/lib/pgadmin
+volumes:
+  posgresql_shop_db:
+  pg_data:
