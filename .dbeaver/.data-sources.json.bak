@@ -1,0 +1,36 @@
+{
+	"folders": {},
+	"connections": {
+		"postgres-jdbc-18c3416cfb1-548af4457ae39c65": {
+			"provider": "postgresql",
+			"driver": "postgres-jdbc",
+			"name": "localhost",
+			"save-password": true,
+			"configuration": {
+				"host": "192.168.0.106",
+				"port": "5551",
+				"database": "market_repository",
+				"url": "jdbc:postgresql://192.168.0.106:5551/market_repository",
+				"configurationType": "MANUAL",
+				"home": "postgresql_client",
+				"type": "dev",
+				"provider-properties": {},
+				"auth-model": "native"
+			}
+		}
+	},
+	"connection-types": {
+		"dev": {
+			"name": "Разработка",
+			"color": "255,255,255",
+			"description": "База данных для разработки",
+			"auto-commit": true,
+			"confirm-execute": false,
+			"confirm-data-change": false,
+			"smart-commit": false,
+			"smart-commit-recover": false,
+			"auto-close-transactions": true,
+			"close-transactions-period": 1800
+		}
+	}
+}

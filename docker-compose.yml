@@ -4,7 +4,7 @@ services:
 
   db:
     image: postgres:latest
-    restart: always
+    restart: on-failure
     environment:
       POSTGRES_USER: dmitry
       POSTGRES_PASSWORD: password
@@ -15,7 +15,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    restart: always
+    restart: on-failure
     ports:
       - 8888:80
     environment:
