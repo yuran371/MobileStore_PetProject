@@ -1,21 +1,28 @@
 {
 	"folders": {},
 	"connections": {
-		"postgres-jdbc-18c3416cfb1-548af4457ae39c65": {
+		"postgres-jdbc-18c39633b15-19a7c869f11b8122": {
 			"provider": "postgresql",
 			"driver": "postgres-jdbc",
-			"name": "localhost",
+			"name": "postgres",
 			"save-password": true,
 			"configuration": {
 				"host": "localhost",
 				"port": "5555",
-				"database": "market_repository",
-				"url": "jdbc:postgresql://localhost:5555/market_repository",
+				"database": "postgres",
+				"url": "jdbc:postgresql://localhost:5555/postgres",
 				"configurationType": "MANUAL",
 				"home": "postgresql_client",
 				"type": "dev",
-				"provider-properties": {},
 				"auth-model": "native"
+			},
+			"custom-properties": {
+				"SQLEditor.ContentAssistant.activate.hippie": "true",
+				"SQLEditor.ContentAssistant.insert.case": "1",
+				"SQLEditor.ContentAssistant.replace.word": "true",
+				"resultset.confirm.beforeSave": "false",
+				"resultset.datetime.editor": "false",
+				"sql.format.keywordCase": "UPPER"
 			}
 		}
 	},

@@ -1,1 +1,1 @@
-{"resources":{"Scripts/market_repository.sql":{"default-schema":"market","default-datasource":"postgres-jdbc-18c3416cfb1-548af4457ae39c65","default-catalog":"market_repository"}}}
+{"resources":{"Scripts/market_repository.sql":{"default-schema":"market","default-datasource":"postgres-jdbc-18c39633b15-19a7c869f11b8122","default-catalog":"postgres"}}}
