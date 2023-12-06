@@ -9,11 +9,12 @@
 			"configuration": {
 				"host": "localhost",
 				"port": "5555",
-				"database": "postgres",
-				"url": "jdbc:postgresql://localhost:5555/postgres",
+				"database": "market_repository",
+				"url": "jdbc:postgresql://localhost:5555/market_repository",
 				"configurationType": "MANUAL",
 				"home": "postgresql_client",
 				"type": "dev",
+				"provider-properties": {},
 				"auth-model": "native"
 			},
 			"custom-properties": {

@@ -9,9 +9,7 @@ CREATE TABLE Items (item_id BIGSERIAl PRIMARY KEY,
 					brand VARCHAR(32) NOT NULL,
 					attributes VARCHAR(128) NOT NULL,
 					price NUMERIC(12,2) CHECK (price > 0),
-					quantity INT CHECK (quantity >= 0)) NOT NULL;
-				
-DROP TABLE Items;
+					quantity INT CHECK (quantity >= 0) NOT NULL );
 					
 
 CREATE TABLE IF NOT EXISTS personal_account (
@@ -24,4 +22,18 @@ CREATE TABLE IF NOT EXISTS personal_account (
 	CONSTRAINT phone_number_constraint CHECK (((phone_number LIKE '+7[0-9]{10}$') AND city = 'russia') OR city != 'russia')
 );
 
+CREATE TABLE IF NOT EXISTS sell_history (
+	sell_id BIGSERIAl PRIMARY KEY,
+	item_id BIGINT REFERENCES Items (item_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+	login VARCHAR(32) NOT NULL, 
+	FOREIGN KEY (login) REFERENCES personal_account (login) ON DELETE RESTRICT,
+	quantity INT CHECK (quantity >= 0) NOT NULL,
+	sell_date TIMESTAMPTZ NOT NULL  
+);
 
+CREATE INDEX IF NOT EXISTS item_id_idx ON sell_history (item_id);
+
+CREATE INDEX IF NOT EXISTS login_idx ON sell_history (login);
+
+
+ 
