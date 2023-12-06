@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import exceptions.NotFoundApplicationPropertiesFileException;
+
 public final class PropertiesUtil {
 
 	private final static PropertiesUtil INSTANCE = new PropertiesUtil();
@@ -21,9 +23,8 @@ public final class PropertiesUtil {
 				.getResourceAsStream("application.properties")) {
 			prop.load(resourceAsStream);
 			return prop.getProperty(property);
-		} catch (IOException e) {
-			// TODO throw new NotFoundApplicationPropertiesFileException();
-			throw new RuntimeException(e);
+		} catch (NullPointerException | IOException e) {
+			throw new NotFoundApplicationPropertiesFileException(e);
 		}
 	}
 }

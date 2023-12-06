@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import exceptions.DriverClassLoadException;
+
 public final class ConnectionPoolManager {
 
 	private final static String SQL_USER_KEY = "db.user";
@@ -31,8 +33,7 @@ public final class ConnectionPoolManager {
 		try {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
-			// TODO add custom exception
-			throw new RuntimeException(e);
+			throw new DriverClassLoadException(e);
 		}
 	}
 
@@ -42,7 +43,6 @@ public final class ConnectionPoolManager {
 					PropertiesUtil.getInstance().getProperty(SQL_USER_KEY),
 					PropertiesUtil.getInstance().getProperty(SQL_PASSWORD_KEY));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new RuntimeException(e);
 		}
 	}
@@ -51,7 +51,6 @@ public final class ConnectionPoolManager {
 		try {
 			return connectionPool.take();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			throw new RuntimeException(e);
 		}
 	}
