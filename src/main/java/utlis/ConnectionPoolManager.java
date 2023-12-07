@@ -1,8 +1,11 @@
 package utlis;
 
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import exceptions.DriverClassLoadException;
@@ -14,18 +17,30 @@ public final class ConnectionPoolManager {
 	private final static String SQL_URL_KEY = "db.url";
 	private final static String SQL_CONNECTION_POOL_SIZE = "db.pool.size";
 	private static ArrayBlockingQueue<Connection> connectionPool;
+	private static List<Connection> sourceConnections;
 
 	static {
 		load();
 		createConnectionPool();
+
+	}
+
+	private ConnectionPoolManager() {
 	}
 
 	private static void createConnectionPool() {
 		String poolSize = PropertiesUtil.getInstance().getProperty(SQL_CONNECTION_POOL_SIZE);
 		int size = poolSize == null ? 10 : Integer.parseInt(poolSize);
 		connectionPool = new ArrayBlockingQueue<>(size);
+		sourceConnections = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
-			connectionPool.add(open());
+			var connection = open();
+			var newProxyInstance = (Connection) Proxy.newProxyInstance(ConnectionPoolManager.class.getClassLoader(),
+					new Class[] { Connection.class },
+					(proxy, method, args) -> method.getName().equals("close") ? connectionPool.add((Connection) proxy)
+							: method.invoke(connection, args));
+			connectionPool.add(newProxyInstance);
+			sourceConnections.add(connection);
 		}
 	}
 
@@ -52,6 +67,16 @@ public final class ConnectionPoolManager {
 			return connectionPool.take();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	public static void closePool() {
+		for (Connection connection : sourceConnections) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }

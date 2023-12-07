@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS personal_account (
 	CONSTRAINT phone_number_constraint CHECK (((phone_number LIKE '+7[0-9]{10}$') AND city = 'russia') OR city != 'russia')
 );
 
+
 CREATE TABLE IF NOT EXISTS sell_history (
 	sell_id BIGSERIAl PRIMARY KEY,
 	item_id BIGINT REFERENCES Items (item_id) ON UPDATE CASCADE ON DELETE RESTRICT,

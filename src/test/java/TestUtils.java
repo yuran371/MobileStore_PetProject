@@ -5,7 +5,7 @@ import java.sql.Statement;
 import utlis.ConnectionPoolManager;
 import utlis.PropertiesUtil;
 
-public class testUtils {
+public class TestUtils {
 
 	public static void main(String[] args) {
 		PropertiesUtil.getInstance();
