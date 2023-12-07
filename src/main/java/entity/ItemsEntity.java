@@ -5,9 +5,9 @@ public class ItemsEntity {
 	private String model;
 	private String brand;
 	private String attributes;
-	private Long price;
+	private Double price;
 	private Integer quantity;
-	public ItemsEntity(Long itemId, String model, String brand, String attributes, Long price, Integer quantity) {
+	public ItemsEntity(Long itemId, String model, String brand, String attributes, Double price, Integer quantity) {
 		super();
 		this.itemId = itemId;
 		this.model = model;
@@ -40,10 +40,10 @@ public class ItemsEntity {
 	public void setAttributes(String attributes) {
 		this.attributes = attributes;
 	}
-	public Long getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(Long price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 	public Integer getQuantity() {
