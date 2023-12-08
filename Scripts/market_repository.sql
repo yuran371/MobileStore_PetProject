@@ -2,7 +2,7 @@ CREATE DATABASE market_repository;
 
 CREATE SCHEMA market;
 SHOW search_path;
-SET search_path TO market;
+ALTER ROLE dmitry SET search_path=market;
 
 CREATE TABLE Items (item_id BIGSERIAl PRIMARY KEY,
 					model VARCHAR(32) NOT NULL,
