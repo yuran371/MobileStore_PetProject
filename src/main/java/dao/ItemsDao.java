@@ -17,6 +17,11 @@ public class ItemsDao {
 	private final static String SQL_INSERT_STATEMENT = """
 			INSERT INTO items (model, brand, attributes, price, quantity)
 			""";
+	private final static String SQL_CHANGE_QUANTITY = """
+			UPDATE items
+			SET quantity=quantity-?
+			WHERE item_id=?
+			""";
 
 	public static int Insert(List<ItemsEntity> arrayList) {
 		String innerSql = "(?, ?, ?, ?, ?)";
@@ -25,7 +30,7 @@ public class ItemsDao {
 			valuesList.add(innerSql);
 		}
 		String collect = valuesList.stream().collect(Collectors.joining(", ", "VALUES ", ";"));
-		
+
 		System.out.println(valuesList);
 
 		try (Connection connection = ConnectionPoolManager.get();
@@ -42,7 +47,7 @@ public class ItemsDao {
 			}
 			int executeUpdate = prepareStatement.executeUpdate();
 			ResultSet generatedKeys = prepareStatement.getGeneratedKeys();
-			while(generatedKeys.next()) {
+			while (generatedKeys.next()) {
 				System.out.println(generatedKeys.getLong("item_id"));
 			}
 			return executeUpdate;
@@ -50,5 +55,23 @@ public class ItemsDao {
 			throw new RuntimeException(e);
 		}
 
+	}
+
+	public static Integer changeQuantity(int quantity, long itemId) {
+		try (Connection connection = ConnectionPoolManager.get();
+				PreparedStatement prepareStatement = connection.prepareStatement(SQL_CHANGE_QUANTITY,
+						Statement.RETURN_GENERATED_KEYS)) {
+			prepareStatement.setInt(1, quantity);
+			prepareStatement.setLong(2, itemId);
+			prepareStatement.executeUpdate();
+			ResultSet generatedKeys = prepareStatement.getGeneratedKeys();
+			if(generatedKeys.next()) {
+				return generatedKeys.getInt("quantity");
+			}
+			return null;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new RuntimeException(e);
+		}
 	}
 }

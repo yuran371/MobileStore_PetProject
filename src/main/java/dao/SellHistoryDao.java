@@ -30,6 +30,7 @@ public class SellHistoryDao {
 				prepareStatement.setString(4, "now()");
 			}
 			var result = prepareStatement.executeUpdate();
+			ItemsDao.changeQuantity(sellEntity.getQuantity(), sellEntity.getItems().getItemId());
 			return result > 0;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
