@@ -1,4 +1,3 @@
-import dao.PersonalAccountDao;
 import entity.PersonalAccountEntity;
 import utlis.ConnectionPoolManager;
 
@@ -11,7 +10,6 @@ public class TestPersAccDao {
 //			System.out.println(PersonalAccountDao.getByLogin("chmod"));
 			var personalAccountEntity = new PersonalAccountEntity();
 			personalAccountEntity.setCountry("Russia");
-			System.out.println(PersonalAccountDao.sortByParams(personalAccountEntity));
 		} finally {
 			ConnectionPoolManager.closePool();
 		}
