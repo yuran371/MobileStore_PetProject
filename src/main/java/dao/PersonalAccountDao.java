@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import dto.DtoPersonalAccountFilter;
 import entity.PersonalAccountEntity;
 import utlis.ConnectionPoolManager;
 
@@ -59,16 +60,16 @@ public class PersonalAccountDao {
 		}
 	}
 
-	public static List<PersonalAccountEntity> sortByParams(PersonalAccountEntity account) {
+	public static List<PersonalAccountEntity> sortByParams(DtoPersonalAccountFilter filter) {
 		List<String> sqlWhereStatement = new ArrayList<String>();
 		List<String> parameters = new ArrayList<>();
-		if (account.getCity() != null) {
+		if (filter.city() != null) {
 			sqlWhereStatement.add("city = ?");
-			parameters.add(account.getCity());
+			parameters.add(filter.city());
 		}
-		if (account.getCountry() != null) {
+		if (filter.country() != null) {
 			sqlWhereStatement.add("country = ?");
-			parameters.add(account.getCountry());
+			parameters.add(filter.country());
 		}
 
 		var whereSql = sqlWhereStatement.stream().collect(Collectors.joining(" AND ", "\nWHERE ", ";"));
