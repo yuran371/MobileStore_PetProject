@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import entity.ItemsEntity;
@@ -21,6 +22,11 @@ public class ItemsDao {
 			UPDATE items
 			SET quantity=quantity-?
 			WHERE item_id=?
+			""";
+	private final static String SQL_GET_STATEMNET = """
+			SELECT item_id, model, brand, attributes, price, quantity
+			FROM items
+			WHERE item_id = ?;
 			""";
 
 	public static int Insert(List<ItemsEntity> arrayList) {
@@ -57,6 +63,27 @@ public class ItemsDao {
 
 	}
 
+	public static Optional<ItemsEntity> get(long itemId) {
+		try (var connection = ConnectionPoolManager.get();
+				var prepareStatement = connection.prepareStatement(SQL_GET_STATEMNET)) {
+			prepareStatement.setLong(1, itemId);
+			var resultSet = prepareStatement.executeQuery();
+			ItemsEntity entityResult = null;
+			while (resultSet.next()) {
+				entityResult = createItemById(resultSet);
+			}
+			return Optional.ofNullable(entityResult);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	private static ItemsEntity createItemById(ResultSet resultSet) throws SQLException {
+		return new ItemsEntity(resultSet.getLong("item_id"), resultSet.getString("model"), resultSet.getString("brand"),
+				resultSet.getString("attributes"), resultSet.getDouble("price"), resultSet.getInt("quantity"));
+	}
+
 	public static Integer changeQuantity(int quantity, long itemId) {
 		try (Connection connection = ConnectionPoolManager.get();
 				PreparedStatement prepareStatement = connection.prepareStatement(SQL_CHANGE_QUANTITY,
@@ -65,7 +92,7 @@ public class ItemsDao {
 			prepareStatement.setLong(2, itemId);
 			prepareStatement.executeUpdate();
 			ResultSet generatedKeys = prepareStatement.getGeneratedKeys();
-			if(generatedKeys.next()) {
+			if (generatedKeys.next()) {
 				return generatedKeys.getInt("quantity");
 			}
 			return null;
