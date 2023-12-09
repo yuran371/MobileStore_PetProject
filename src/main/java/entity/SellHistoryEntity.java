@@ -14,7 +14,7 @@ public class SellHistoryEntity {
 	public SellHistoryEntity() {
 	}
 
-	public SellHistoryEntity(Long sellId, ItemsEntity itemId, PersonalAccountEntity login, Integer quantity,
+	public SellHistoryEntity(ItemsEntity itemId, PersonalAccountEntity login, Integer quantity,
 			OffsetDateTime sellDate) {
 		super();
 		this.sellId = sellId;

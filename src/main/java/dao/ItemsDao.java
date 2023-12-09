@@ -63,7 +63,7 @@ public class ItemsDao {
 
 	}
 
-	public static Optional<ItemsEntity> get(long itemId) {
+	public static Optional<ItemsEntity> getByItemId(long itemId) {
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_GET_STATEMNET)) {
 			prepareStatement.setLong(1, itemId);

@@ -15,7 +15,7 @@ public class SellHistoryDao {
 			VALUES (?, ?, ?, ?);
 			""";
 
-	private static boolean insert(SellHistoryEntity sellEntity) {
+	public static boolean insert(SellHistoryEntity sellEntity) {
 		if (sellEntity.getItems().getQuantity() < sellEntity.getQuantity()) {
 			throw new IncorrectQuantityException();
 		}
