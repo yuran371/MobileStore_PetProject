@@ -14,5 +14,4 @@ public class TestPersAccDao {
 			ConnectionPoolManager.closePool();
 		}
 	}
-
 }

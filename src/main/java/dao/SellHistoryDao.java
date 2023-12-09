@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.time.ZoneOffset;
 
 import entity.SellHistoryEntity;
+import exceptions.IncorrectQuantityException;
 import utlis.ConnectionPoolManager;
 
 public class SellHistoryDao {
@@ -16,7 +17,7 @@ public class SellHistoryDao {
 
 	private static boolean insert(SellHistoryEntity sellEntity) {
 		if (sellEntity.getItems().getQuantity() < sellEntity.getQuantity()) {
-			throw new RuntimeException();
+			throw new IncorrectQuantityException();
 		}
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_INSERT_STATEMENT)) {
@@ -33,7 +34,6 @@ public class SellHistoryDao {
 			ItemsDao.changeQuantity(sellEntity.getQuantity(), sellEntity.getItems().getItemId());
 			return result > 0;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new RuntimeException(e);
 		}
 	}
