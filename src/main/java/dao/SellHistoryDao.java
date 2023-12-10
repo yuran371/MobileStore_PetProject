@@ -1,9 +1,16 @@
 package dao;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import dto.DtoSellHistoryFilter;
 import entity.SellHistoryEntity;
 import exceptions.IncorrectQuantityException;
 import utlis.ConnectionPoolManager;
@@ -13,6 +20,10 @@ public class SellHistoryDao {
 	private final static String SQL_INSERT_STATEMENT = """
 			INSERT INTO sell_history (item_id, login, quantity, sell_date)
 			VALUES (?, ?, ?, ?);
+			""";
+	private final static String SQL_GET_STATEMENT = """
+			SELECT sell_id, item_id, login, quantity, sell_date
+			FROM sell_history
 			""";
 
 	public static boolean insert(SellHistoryEntity sellEntity) {
@@ -25,8 +36,7 @@ public class SellHistoryDao {
 			prepareStatement.setString(2, sellEntity.getPersonalAccount().getLogin());
 			prepareStatement.setInt(3, sellEntity.getQuantity());
 			if (sellEntity.getSellDate() != null) {
-				prepareStatement.setTimestamp(4, Timestamp
-						.valueOf(sellEntity.getSellDate().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()));
+				prepareStatement.setTimestamp(4, Timestamp.valueOf(sellEntity.getSellDate().toLocalDateTime()));
 			} else {
 				prepareStatement.setString(4, "now()");
 			}
@@ -36,5 +46,45 @@ public class SellHistoryDao {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public List<SellHistoryEntity> getWithFilter(DtoSellHistoryFilter filter) {
+		List<String> statements = new ArrayList<>();
+		List<Object> filters = new ArrayList<>();
+		if (filter.items().getItemId() != null) {
+			filters.add(filter.items().getItemId());
+			statements.add("item_id = ?");
+		}
+		if (filter.personalAccount().getLogin() != null) {
+			filters.add(filter.personalAccount().getLogin());
+			statements.add("login IS LIKE %?%");
+		}
+		if (filter.quantity() != null) {
+			filters.add(filter.quantity());
+			statements.add("quantity = ?");
+		}
+		String SQL_WITH_FILTERS = SQL_GET_STATEMENT
+				+ statements.stream().collect(Collectors.joining(" AND ", "WHERE ", ";"));
+		try (var connection = ConnectionPoolManager.get();
+				var prepareStatement = connection.prepareStatement(SQL_WITH_FILTERS)) {
+			for (int i = 0; i < filters.size(); i++) {
+				prepareStatement.setObject(i + 1, filters.get(i));
+			}
+			var resultSet = prepareStatement.executeQuery();
+			List<SellHistoryEntity> result = new ArrayList<>();
+			while (resultSet.next()) {
+				result.add(createSellHistoryEntityFromResultSet(resultSet));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private SellHistoryEntity createSellHistoryEntityFromResultSet(ResultSet resultSet) throws SQLException {
+		return new SellHistoryEntity(ItemsDao.getByItemId(resultSet.getLong("item_id")).orElseThrow(),
+				PersonalAccountDao.getByLogin(resultSet.getString("login")).orElseThrow(), resultSet.getInt("quantity"),
+				OffsetDateTime.ofInstant(Instant.ofEpochMilli(resultSet.getTimestamp("sell_date").getTime()),
+						ZoneOffset.UTC));
 	}
 }

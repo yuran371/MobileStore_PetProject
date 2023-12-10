@@ -17,7 +17,6 @@ public class SellHistoryEntity {
 	public SellHistoryEntity(ItemsEntity itemId, PersonalAccountEntity login, Integer quantity,
 			OffsetDateTime sellDate) {
 		super();
-		this.sellId = sellId;
 		this.items = itemId;
 		this.personalAccount = login;
 		this.quantity = quantity;
