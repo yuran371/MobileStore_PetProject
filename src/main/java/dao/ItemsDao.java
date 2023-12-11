@@ -14,9 +14,9 @@ import entity.ItemsEntity;
 import utlis.ConnectionPoolManager;
 
 public class ItemsDao {
-	private final static Integer DEFAULT_COLUMNS_QT_IN_ITEMS_TABLE = 5;
+	private final static Integer DEFAULT_COLUMNS_QT_IN_ITEMS_TABLE = 6;
 	private final static String SQL_INSERT_STATEMENT = """
-			INSERT INTO items (model, brand, attributes, price, quantity)
+			INSERT INTO items (model, brand, attributes, price, currency, quantity)
 			""";
 	private final static String SQL_CHANGE_QUANTITY = """
 			UPDATE items
@@ -30,7 +30,7 @@ public class ItemsDao {
 			""";
 
 	public static int Insert(List<ItemsEntity> arrayList) {
-		String innerSql = "(?, ?, ?, ?, ?)";
+		String innerSql = "(?, ?, ?, ?, ?, ?)";
 		ArrayList<String> valuesList = new ArrayList<String>();
 		for (int i = 0; i < arrayList.size(); i++) {
 			valuesList.add(innerSql);
@@ -49,7 +49,8 @@ public class ItemsDao {
 				prepareStatement.setString(qt * i + 2, arrayList.get(i).getBrand());
 				prepareStatement.setString(qt * i + 3, arrayList.get(i).getAttributes());
 				prepareStatement.setDouble(qt * i + 4, arrayList.get(i).getPrice());
-				prepareStatement.setInt(qt * i + 5, arrayList.get(i).getQuantity());
+				prepareStatement.setString(qt * i + 5, arrayList.get(i).getCurrency());
+				prepareStatement.setInt(qt * i + 6, arrayList.get(i).getQuantity());
 			}
 			int executeUpdate = prepareStatement.executeUpdate();
 			ResultSet generatedKeys = prepareStatement.getGeneratedKeys();
@@ -81,7 +82,8 @@ public class ItemsDao {
 
 	private static ItemsEntity createItemById(ResultSet resultSet) throws SQLException {
 		return new ItemsEntity(resultSet.getLong("item_id"), resultSet.getString("model"), resultSet.getString("brand"),
-				resultSet.getString("attributes"), resultSet.getDouble("price"), resultSet.getInt("quantity"));
+				resultSet.getString("attributes"), resultSet.getDouble("price"), resultSet.getString("currency"),
+				resultSet.getInt("quantity"));
 	}
 
 	public static Integer changeQuantity(int quantity, long itemId) {

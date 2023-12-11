@@ -12,8 +12,13 @@ CREATE TABLE Items (item_id BIGSERIAl PRIMARY KEY,
 					brand VARCHAR(32) NOT NULL,
 					attributes VARCHAR(128) NOT NULL,
 					price NUMERIC(12,2) CHECK (price > 0),
-					quantity INT CHECK (quantity >= 0) NOT NULL );
-					
+					currency VARCHAR(1) NOT NULL,
+					quantity INT CHECK (quantity >= 0) NOT NULL, 
+					UNIQUE (model, attributes)
+				);
+ALTER SEQUENCE items_item_id_seq RESTART WITH 1;
+TRUNCATE TABLE items CASCADE;
+DROP TABLE items CASCADE;					
 
 CREATE TABLE IF NOT EXISTS personal_account (
 	login VARCHAR(32) PRIMARY KEY,
@@ -38,4 +43,6 @@ CREATE TABLE IF NOT EXISTS sell_history (
 CREATE INDEX IF NOT EXISTS item_id_idx ON sell_history (item_id);
 
 CREATE INDEX IF NOT EXISTS login_idx ON sell_history (login);
+
+
 
