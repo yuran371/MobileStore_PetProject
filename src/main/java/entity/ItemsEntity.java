@@ -8,15 +8,18 @@ public class ItemsEntity {
 	private String brand;
 	private String attributes;
 	private Double price;
+	private String currency;
 	private Integer quantity;
 
-	public ItemsEntity(Long itemId, String model, String brand, String attributes, Double price, Integer quantity) {
+	public ItemsEntity(Long itemId, String model, String brand, String attributes, Double price,
+			String currency, Integer quantity) {
 		super();
 		this.itemId = itemId;
 		this.model = model;
 		this.brand = brand;
 		this.attributes = attributes;
 		this.price = price;
+		this.currency = currency;
 		this.quantity = quantity;
 	}
 
@@ -59,6 +62,14 @@ public class ItemsEntity {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
+	
+	public String getCurrency() {
+		return currency;
+	}
+	
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
 
 	public Integer getQuantity() {
 		return quantity;
@@ -69,14 +80,8 @@ public class ItemsEntity {
 	}
 
 	@Override
-	public String toString() {
-		return "ItemsEntity [itemId=" + itemId + ", model=" + model + ", brand=" + brand + ", attributes=" + attributes
-				+ ", price=" + price + ", quantity=" + quantity + "]";
-	}
-
-	@Override
 	public int hashCode() {
-		return Objects.hash(attributes, brand, itemId, model, price, quantity);
+		return Objects.hash(attributes, brand, currency, itemId, model, price, quantity);
 	}
 
 	@Override
@@ -89,8 +94,15 @@ public class ItemsEntity {
 			return false;
 		ItemsEntity other = (ItemsEntity) obj;
 		return Objects.equals(attributes, other.attributes) && Objects.equals(brand, other.brand)
-				&& Objects.equals(itemId, other.itemId) && Objects.equals(model, other.model)
-				&& Objects.equals(price, other.price) && Objects.equals(quantity, other.quantity);
+				&& Objects.equals(currency, other.currency) && Objects.equals(itemId, other.itemId)
+				&& Objects.equals(model, other.model) && Objects.equals(price, other.price)
+				&& Objects.equals(quantity, other.quantity);
+	}
+
+	@Override
+	public String toString() {
+		return "ItemsEntity [itemId=" + itemId + ", model=" + model + ", brand=" + brand + ", attributes=" + attributes
+				+ ", price=" + price + ", currency=" + currency + ", quantity=" + quantity + "]";
 	}
 
 }
