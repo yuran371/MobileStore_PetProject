@@ -9,7 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import services.AddLoginService;
+import service.AddLoginService;
 
 @WebServlet("/loginResult")
 public class loginServlet extends HttpServlet {
