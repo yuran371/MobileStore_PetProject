@@ -17,6 +17,8 @@ import utlis.ConnectionPoolManager;
 
 public class SellHistoryDao {
 
+	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
+
 	private final static String SQL_INSERT_STATEMENT = """
 			INSERT INTO sell_history (item_id, login, quantity, sell_date)
 			VALUES (?, ?, ?, ?);
@@ -83,7 +85,7 @@ public class SellHistoryDao {
 
 	private SellHistoryEntity createSellHistoryEntityFromResultSet(ResultSet resultSet) throws SQLException {
 		return new SellHistoryEntity(ItemsDao.getByItemId(resultSet.getLong("item_id")).orElseThrow(),
-				PersonalAccountDao.getByLogin(resultSet.getString("login")).orElseThrow(), resultSet.getInt("quantity"),
+				personalAccountDao.getByLogin(resultSet.getString("login")).orElseThrow(), resultSet.getInt("quantity"),
 				OffsetDateTime.ofInstant(Instant.ofEpochMilli(resultSet.getTimestamp("sell_date").getTime()),
 						ZoneOffset.UTC));
 	}

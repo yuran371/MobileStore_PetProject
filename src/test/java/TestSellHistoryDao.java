@@ -8,9 +8,10 @@ import entity.SellHistoryEntity;
 public class TestSellHistoryDao {
 
 	public static void main(String[] args) {
+		PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
 		System.out.println(ItemsDao.getByItemId(1L));
 		SellHistoryDao.insert(new SellHistoryEntity(ItemsDao.getByItemId(1L).get(),
-				PersonalAccountDao.getByLogin("chmod").get(), 1, OffsetDateTime.now()));
+				personalAccountDao.getByLogin("chmod").get(), 1, OffsetDateTime.now()));
 		System.out.println(ItemsDao.getByItemId(1L));
 	}
 }

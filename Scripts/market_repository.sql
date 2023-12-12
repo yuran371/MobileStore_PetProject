@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS personal_account (
 	city VARCHAR(256) NOT NULL,
 	address VARCHAR(256) NOT NULL,
 	phone_number TEXT CONSTRAINT phone_number_constraint NOT NULL,
-	CONSTRAINT phone_number_constraint CHECK (((phone_number LIKE '+7[0-9]{10}$') AND city = 'russia') OR city != 'russia')
+	CONSTRAINT phone_number_constraint CHECK (((phone_number LIKE '+7[0-9]{10}$') AND country = 'russia') OR country != 'russia')
 );
 
 
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS sell_history (
 	quantity INT CHECK (quantity >= 0) NOT NULL,
 	sell_date TIMESTAMPTZ NOT NULL  
 );
-
+ 
 CREATE INDEX IF NOT EXISTS item_id_idx ON sell_history (item_id);
 
 CREATE INDEX IF NOT EXISTS login_idx ON sell_history (login);
