@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.ItemsService;
 
-@WebServlet("/Items")
+@WebServlet("/items")
 public class ItemsServlet extends HttpServlet {
 
 	private final ItemsService instanceService = ItemsService.getInstance();
@@ -27,7 +27,7 @@ public class ItemsServlet extends HttpServlet {
 			instanceService.itemsServiceMethod().forEach(item -> {
 				printWriter.write("""
 						<li>
-							<a href="/ItemsParameters?itemId=%d"> %s %s %,.2f %s </a>
+							<a href="/items-parameters?itemId=%d"> %s %s %,.2f %s </a>
 						</li>
 						""".formatted(item.itemId(), item.brand(), item.model(), item.price(),
 						item.currency()));
