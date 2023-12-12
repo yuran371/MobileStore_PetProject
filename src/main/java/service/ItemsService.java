@@ -7,12 +7,21 @@ import dao.ItemsDao;
 import dto.ItemsFilterDto;
 
 public class ItemsService {
+	private static ItemsService INSTANCE = new ItemsService();
+
+	private ItemsService() {
+	};
 
 	static ItemsDao InstanceDao = ItemsDao.getInstance();
 
-	public static List<ItemsFilterDto> itemsServiceMethod() {
+	public static ItemsService getInstance() {
+		return INSTANCE;
+	}
+
+	public List<ItemsFilterDto> itemsServiceMethod() {
 		return InstanceDao.findAll().stream()
-				.map(x -> new ItemsFilterDto(x.getModel(), x.getBrand(), x.getPrice(), x.getCurrency()))
+				.map(x -> new ItemsFilterDto(x.getItemId(), x.getModel(), x.getBrand(), x.getPrice(), x.getCurrency()))
 				.collect(Collectors.toList());
 	}
+
 }

@@ -1,5 +1,5 @@
 package dto;
 
-public record ItemsFilterDto(String model, String brand, Double price, String currency) {
+public record ItemsFilterDto(Long itemId, String model, String brand, Double price, String currency) {
 
 }
