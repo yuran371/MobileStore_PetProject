@@ -1,5 +1,5 @@
 package dto;
 
-public record DtoPersonalAccount(String login, String fullName, String country, String city, String address,
+public record DtoPersonalAccount(String email, String name, String surname, String country, String city, String address,
 		String phoneNumber) {
 }

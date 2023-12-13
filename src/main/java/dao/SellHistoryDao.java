@@ -20,6 +20,7 @@ public class SellHistoryDao {
 	private static ItemsDao itemsDao = ItemsDao.getInstance();
 
 	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
+	private static ItemsDao itemsDao = ItemsDao.getInstance();
 
 	private final static String SQL_INSERT_STATEMENT = """
 			INSERT INTO sell_history (item_id, login, quantity, sell_date)
@@ -37,7 +38,7 @@ public class SellHistoryDao {
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_INSERT_STATEMENT)) {
 			prepareStatement.setLong(1, sellEntity.getItems().getItemId());
-			prepareStatement.setString(2, sellEntity.getPersonalAccount().getLogin());
+			prepareStatement.setString(2, sellEntity.getPersonalAccount().getEmail());
 			prepareStatement.setInt(3, sellEntity.getQuantity());
 			if (sellEntity.getSellDate() != null) {
 				prepareStatement.setTimestamp(4, Timestamp.valueOf(sellEntity.getSellDate().toLocalDateTime()));
@@ -59,8 +60,8 @@ public class SellHistoryDao {
 			filters.add(filter.items().getItemId());
 			statements.add("item_id = ?");
 		}
-		if (filter.personalAccount().getLogin() != null) {
-			filters.add(filter.personalAccount().getLogin());
+		if (filter.personalAccount().getEmail() != null) {
+			filters.add(filter.personalAccount().getEmail());
 			statements.add("login IS LIKE %?%");
 		}
 		if (filter.quantity() != null) {

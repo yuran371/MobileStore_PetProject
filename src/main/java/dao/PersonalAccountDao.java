@@ -23,30 +23,31 @@ public class PersonalAccountDao {
 	}
 
 	private final static String SQL_INSERT_STATEMENT = """
-			INSERT INTO personal_account
-			VALUES (?, ?, ?, ?, ?, ?);
+			INSERT INTO personal_account (email, name, surname, country, city, address, phone_number)
+			VALUES (?, ?, ?, ?, ?, ?, ?);
 			""";
 
 	private final static String SQL_GET_BY_ID_STATEMENT = """
-			SELECT login, full_name, country, city, address, phone_number
+			SELECT account_id, email, name, surname, country, city, address, phone_number
 			FROM personal_account
 			WHERE login LIKE ?;
 			""";
 
 	private final static String SQL_SELECT_STATEMENT = """
-				SELECT login, full_name, country, city, address, phone_number
+				SELECT account_id, email, name, surname, country, city, address, phone_number
 				FROM personal_account
 			""";
 
 	public boolean insertAccount(PersonalAccountEntity accountEntity) {
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_INSERT_STATEMENT)) {
-			prepareStatement.setString(1, accountEntity.getLogin());
-			prepareStatement.setString(2, accountEntity.getFullName());
-			prepareStatement.setString(3, accountEntity.getCountry());
-			prepareStatement.setString(4, accountEntity.getCity());
-			prepareStatement.setString(5, accountEntity.getAddress());
-			prepareStatement.setString(6, accountEntity.getPhoneNumber());
+			prepareStatement.setString(1, accountEntity.getEmail());
+			prepareStatement.setString(2, accountEntity.getName());
+			prepareStatement.setString(3, accountEntity.getSurname());
+			prepareStatement.setString(4, accountEntity.getCountry());
+			prepareStatement.setString(5, accountEntity.getCity());
+			prepareStatement.setString(6, accountEntity.getAddress());
+			prepareStatement.setString(7, accountEntity.getPhoneNumber());
 			int executeUpdate = prepareStatement.executeUpdate();
 			return executeUpdate == 1 ? true : false;
 		} catch (SQLException e) {
@@ -99,8 +100,9 @@ public class PersonalAccountDao {
 	}
 
 	private static PersonalAccountEntity createEntityByResultSet(ResultSet executeQuery) throws SQLException {
-		return new PersonalAccountEntity(executeQuery.getString("login"), executeQuery.getString("full_name"),
-				executeQuery.getString("country"), executeQuery.getString("city"), executeQuery.getString("address"),
+		return new PersonalAccountEntity(executeQuery.getLong("account_id"), executeQuery.getString("email"),
+				executeQuery.getString("name"), executeQuery.getString("surname"), executeQuery.getString("country"),
+				executeQuery.getString("city"), executeQuery.getString("address"),
 				executeQuery.getString("phone_number"));
 	}
 }

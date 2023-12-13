@@ -17,13 +17,14 @@ public class AddLoginService {
 	}
 
 	public boolean addAccount(DtoPersonalAccount account) {
-		if (account.address().isBlank() || account.city().isBlank()
-				|| account.country().isBlank() && account.fullName().isBlank() || account.login().isBlank()
-				|| account.phoneNumber().isBlank()) {
+		if (account.address().isBlank() || account.city().isBlank() || account.country().isBlank()
+				|| account.name().isBlank() || account.email().isBlank() || account.phoneNumber().isBlank()
+				|| account.surname().isBlank()) {
 			return false;
 		}
-		return personalAccountDao.insertAccount(new PersonalAccountEntity(account.login(), account.fullName(),
-				account.country(), account.city(), account.address(), account.phoneNumber()));
+		return personalAccountDao.insertAccount(new PersonalAccountEntity(account.email(), account.name(),
+				account.surname(), account.country().toLowerCase(), account.city().toLowerCase(), account.address(),
+				account.phoneNumber()));
 	}
 
 }
