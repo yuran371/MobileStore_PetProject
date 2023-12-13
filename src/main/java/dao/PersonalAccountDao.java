@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +28,16 @@ public class PersonalAccountDao {
 			VALUES (?, ?, ?, ?, ?, ?, ?);
 			""";
 
-	private final static String SQL_GET_BY_ID_STATEMENT = """
+	private final static String SQL_GET_BY_LOGIN_STATEMENT = """
 			SELECT account_id, email, name, surname, country, city, address, phone_number
 			FROM personal_account
 			WHERE login LIKE ?;
+			""";
+
+	private final static String SQL_GET_BY_ID_STATEMENT = """
+			SELECT account_id, email, name, surname, country, city, address, phone_number
+			FROM personal_account
+			WHERE account_id = ?;
 			""";
 
 	private final static String SQL_SELECT_STATEMENT = """
@@ -38,9 +45,10 @@ public class PersonalAccountDao {
 				FROM personal_account
 			""";
 
-	public boolean insertAccount(PersonalAccountEntity accountEntity) {
+	public Optional<Long> insertAccount(PersonalAccountEntity accountEntity) {
 		try (var connection = ConnectionPoolManager.get();
-				var prepareStatement = connection.prepareStatement(SQL_INSERT_STATEMENT)) {
+				var prepareStatement = connection.prepareStatement(SQL_INSERT_STATEMENT,
+						Statement.RETURN_GENERATED_KEYS)) {
 			prepareStatement.setString(1, accountEntity.getEmail());
 			prepareStatement.setString(2, accountEntity.getName());
 			prepareStatement.setString(3, accountEntity.getSurname());
@@ -48,17 +56,37 @@ public class PersonalAccountDao {
 			prepareStatement.setString(5, accountEntity.getCity());
 			prepareStatement.setString(6, accountEntity.getAddress());
 			prepareStatement.setString(7, accountEntity.getPhoneNumber());
-			int executeUpdate = prepareStatement.executeUpdate();
-			return executeUpdate == 1 ? true : false;
+			prepareStatement.executeUpdate();
+			var generatedKeys = prepareStatement.getGeneratedKeys();
+			if (generatedKeys.next()) {
+				return Optional.ofNullable(generatedKeys.getLong("account_id"));
+			} else {
+				return Optional.empty();
+			}
 		} catch (SQLException e) {
-			return false;
+			return Optional.empty();
 		}
 	}
 
 	public Optional<PersonalAccountEntity> getByLogin(String login) {
 		try (var connection = ConnectionPoolManager.get();
-				var prepareStatement = connection.prepareStatement(SQL_GET_BY_ID_STATEMENT)) {
+				var prepareStatement = connection.prepareStatement(SQL_GET_BY_LOGIN_STATEMENT)) {
 			prepareStatement.setString(1, login);
+			var executeQuery = prepareStatement.executeQuery();
+			PersonalAccountEntity resultEntity = null;
+			while (executeQuery.next()) {
+				resultEntity = createEntityByResultSet(executeQuery);
+			}
+			return Optional.ofNullable(resultEntity);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public Optional<PersonalAccountEntity> getByID(Long id) {
+		try (var connection = ConnectionPoolManager.get();
+				var prepareStatement = connection.prepareStatement(SQL_GET_BY_ID_STATEMENT)) {
+			prepareStatement.setLong(1, id);
 			var executeQuery = prepareStatement.executeQuery();
 			PersonalAccountEntity resultEntity = null;
 			while (executeQuery.next()) {
