@@ -18,6 +18,7 @@ import utlis.ConnectionPoolManager;
 public class SellHistoryDao {
 
 	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
+	private static ItemsDao itemsDao = ItemsDao.getInstance();
 
 	private final static String SQL_INSERT_STATEMENT = """
 			INSERT INTO sell_history (item_id, login, quantity, sell_date)
@@ -35,7 +36,7 @@ public class SellHistoryDao {
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_INSERT_STATEMENT)) {
 			prepareStatement.setLong(1, sellEntity.getItems().getItemId());
-			prepareStatement.setString(2, sellEntity.getPersonalAccount().getLogin());
+			prepareStatement.setString(2, sellEntity.getPersonalAccount().getEmail());
 			prepareStatement.setInt(3, sellEntity.getQuantity());
 			if (sellEntity.getSellDate() != null) {
 				prepareStatement.setTimestamp(4, Timestamp.valueOf(sellEntity.getSellDate().toLocalDateTime()));
@@ -43,7 +44,7 @@ public class SellHistoryDao {
 				prepareStatement.setString(4, "now()");
 			}
 			var result = prepareStatement.executeUpdate();
-			ItemsDao.changeQuantity(sellEntity.getQuantity(), sellEntity.getItems().getItemId());
+			itemsDao.changeQuantity(sellEntity.getQuantity(), sellEntity.getItems().getItemId());
 			return result > 0;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -57,8 +58,8 @@ public class SellHistoryDao {
 			filters.add(filter.items().getItemId());
 			statements.add("item_id = ?");
 		}
-		if (filter.personalAccount().getLogin() != null) {
-			filters.add(filter.personalAccount().getLogin());
+		if (filter.personalAccount().getEmail() != null) {
+			filters.add(filter.personalAccount().getEmail());
 			statements.add("login IS LIKE %?%");
 		}
 		if (filter.quantity() != null) {
@@ -84,7 +85,7 @@ public class SellHistoryDao {
 	}
 
 	private SellHistoryEntity createSellHistoryEntityFromResultSet(ResultSet resultSet) throws SQLException {
-		return new SellHistoryEntity(ItemsDao.getByItemId(resultSet.getLong("item_id")).orElseThrow(),
+		return new SellHistoryEntity(itemsDao.getByItemId(resultSet.getLong("item_id")).orElseThrow(),
 				personalAccountDao.getByLogin(resultSet.getString("login")).orElseThrow(), resultSet.getInt("quantity"),
 				OffsetDateTime.ofInstant(Instant.ofEpochMilli(resultSet.getTimestamp("sell_date").getTime()),
 						ZoneOffset.UTC));

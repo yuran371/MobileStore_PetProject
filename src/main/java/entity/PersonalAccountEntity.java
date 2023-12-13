@@ -4,8 +4,10 @@ import java.util.Objects;
 
 public class PersonalAccountEntity {
 
-	private String login;
-	private String fullName;
+	private Long accountId;
+	private String email;
+	private String name;
+	private String surname;
 	private String country;
 	private String city;
 	private String address;
@@ -14,30 +16,35 @@ public class PersonalAccountEntity {
 	public PersonalAccountEntity() {
 	}
 
-	public PersonalAccountEntity(String login, String fullName, String country, String city, String address,
-			String phoneNumber) {
-		this.login = login;
-		this.fullName = fullName;
+	public PersonalAccountEntity(Long accountId, String email, String name, String surname, String country, String city,
+			String address, String phoneNumber) {
+		this.accountId = accountId;
+		this.email = email;
+		this.setName(name);
+		this.setSurname(surname);
 		this.country = country;
 		this.city = city;
 		this.address = address;
 		this.phoneNumber = phoneNumber;
 	}
 
-	public String getLogin() {
-		return login;
+	public PersonalAccountEntity(String email, String name, String surname, String country, String city, String address,
+			String phoneNumber) {
+		this.email = email;
+		this.setName(name);
+		this.setSurname(surname);
+		this.country = country;
+		this.city = city;
+		this.address = address;
+		this.phoneNumber = phoneNumber;
 	}
 
-	public void setLogin(String login) {
-		this.login = login;
+	public String getEmail() {
+		return email;
 	}
 
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getCountry() {
@@ -72,9 +79,33 @@ public class PersonalAccountEntity {
 		this.phoneNumber = phoneNumber;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public Long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(address, city, country, fullName, login, phoneNumber);
+		return Objects.hash(accountId, address, city, country, email, name, phoneNumber, surname);
 	}
 
 	@Override
@@ -86,15 +117,17 @@ public class PersonalAccountEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		PersonalAccountEntity other = (PersonalAccountEntity) obj;
-		return Objects.equals(address, other.address) && Objects.equals(city, other.city)
-				&& Objects.equals(country, other.country) && Objects.equals(fullName, other.fullName)
-				&& Objects.equals(login, other.login) && Objects.equals(phoneNumber, other.phoneNumber);
+		return Objects.equals(accountId, other.accountId) && Objects.equals(address, other.address)
+				&& Objects.equals(city, other.city) && Objects.equals(country, other.country)
+				&& Objects.equals(email, other.email) && Objects.equals(name, other.name)
+				&& Objects.equals(phoneNumber, other.phoneNumber) && Objects.equals(surname, other.surname);
 	}
 
 	@Override
 	public String toString() {
-		return "PersonalAccountEntity [login=" + login + ", fullName=" + fullName + ", country=" + country + ", city="
-				+ city + ", address=" + address + ", phoneNumber=" + phoneNumber + "]";
+		return "PersonalAccountEntity [accountId=" + accountId + ", login=" + email + ", name=" + name + ", surname="
+				+ surname + ", country=" + country + ", city=" + city + ", address=" + address + ", phoneNumber="
+				+ phoneNumber + "]";
 	}
 
 }
