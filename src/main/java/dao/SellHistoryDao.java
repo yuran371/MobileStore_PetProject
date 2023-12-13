@@ -16,6 +16,8 @@ import exceptions.IncorrectQuantityException;
 import utlis.ConnectionPoolManager;
 
 public class SellHistoryDao {
+	
+	private static ItemsDao itemsDao = ItemsDao.getInstance();
 
 	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
 
@@ -43,7 +45,7 @@ public class SellHistoryDao {
 				prepareStatement.setString(4, "now()");
 			}
 			var result = prepareStatement.executeUpdate();
-			ItemsDao.changeQuantity(sellEntity.getQuantity(), sellEntity.getItems().getItemId());
+			itemsDao.changeQuantity(sellEntity.getQuantity(), sellEntity.getItems().getItemId());
 			return result > 0;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -84,7 +86,7 @@ public class SellHistoryDao {
 	}
 
 	private SellHistoryEntity createSellHistoryEntityFromResultSet(ResultSet resultSet) throws SQLException {
-		return new SellHistoryEntity(ItemsDao.getByItemId(resultSet.getLong("item_id")).orElseThrow(),
+		return new SellHistoryEntity(itemsDao.getByItemId(resultSet.getLong("item_id")).orElseThrow(),
 				personalAccountDao.getByLogin(resultSet.getString("login")).orElseThrow(), resultSet.getInt("quantity"),
 				OffsetDateTime.ofInstant(Instant.ofEpochMilli(resultSet.getTimestamp("sell_date").getTime()),
 						ZoneOffset.UTC));
