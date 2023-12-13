@@ -18,19 +18,20 @@ public class loginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
-		var username = req.getParameter("username");
-		var fullName = req.getParameter("fullName");
+		var email = req.getParameter("email");
+		var name = req.getParameter("name");
+		var surname = req.getParameter("surname");
 		var country = req.getParameter("country");
 		var city = req.getParameter("city");
 		var address = req.getParameter("address");
 		var phoneNumber = req.getParameter("phoneNumber");
 		boolean addAccountResult = AddLoginService.getInctance()
-				.addAccount(new DtoPersonalAccount(username, fullName, country, city, address, phoneNumber));
+				.addAccount(new DtoPersonalAccount(email, name, surname, country, city, address, phoneNumber));
 		try (var writer = resp.getWriter()) {
 			if (addAccountResult) {
 				writer.write("""
 						<h1>Welcome %s. Your account successfully added. </h1>
-						""".formatted(username));
+						""".formatted(name));
 				writer.write("<a href = \"/login.html\">Create another account</a>");
 			} else {
 				writer.write("<h1>Wrong login or phone number. Account is not created</h1>");

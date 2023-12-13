@@ -109,12 +109,8 @@ public class ItemsDao {
 	}
 
 	private ItemsEntity buildItems(ResultSet resultSet) throws SQLException {
-		return new ItemsEntity(resultSet.getLong("item_id"), 
-				resultSet.getString("model"), 
-				resultSet.getString("brand"),
-				resultSet.getString("attributes"), 
-				resultSet.getDouble("price"), 
-				resultSet.getString("currency"),
+		return new ItemsEntity(resultSet.getLong("item_id"), resultSet.getString("model"), resultSet.getString("brand"),
+				resultSet.getString("attributes"), resultSet.getDouble("price"), resultSet.getString("currency"),
 				resultSet.getInt("quantity"));
 	}
 
