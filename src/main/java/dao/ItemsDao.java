@@ -34,7 +34,7 @@ public class ItemsDao {
 			WHERE item_id=?
 			""";
 	private final static String SQL_GET_STATEMENT = """
-			SELECT item_id, model, brand, attributes, price, quantity
+			SELECT *
 			FROM items
 			WHERE item_id = ?
 			""";
