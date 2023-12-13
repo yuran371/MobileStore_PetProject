@@ -29,8 +29,8 @@ public class ItemsServlet extends HttpServlet {
 						<li>
 							<a href="/items-parameters?itemId=%d"> %s %s %,.2f %s </a>
 						</li>
-						""".formatted(item.itemId(), item.brand(), item.model(), item.price(),
-						item.currency()));
+						""".formatted(item.getItemId(), item.getBrand(), item.getModel(), item.getPrice(),
+						item.getCurrency()));
 			});
 			printWriter.write("</ul>");
 		}

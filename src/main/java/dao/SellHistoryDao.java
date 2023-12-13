@@ -16,6 +16,8 @@ import exceptions.IncorrectQuantityException;
 import utlis.ConnectionPoolManager;
 
 public class SellHistoryDao {
+	
+	private static ItemsDao itemsDao = ItemsDao.getInstance();
 
 	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
 	private static ItemsDao itemsDao = ItemsDao.getInstance();
