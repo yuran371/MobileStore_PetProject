@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 
 import dto.DtoPersonalAccount;
@@ -30,8 +31,16 @@ public class loginServlet extends HttpServlet {
 				.findFirst().isEmpty()) {
 			writer.write("<h1>You are not authorized. Please go to the Registration page</h1>");
 			writer.write("<a href = \"/login.html\">Registration</a>");
+		} else {
+			Cookie authorizationCookie = Arrays.stream(cookies)
+					.filter(cookie -> cookie.getName().equals(AUTHORIZATION_CHECK)).findFirst().get();
+			DtoPersonalAccount byId = PersonalAccountService.getInctance()
+					.getById(Long.parseLong(authorizationCookie.getValue()));
+			writer.write("""
+					<h1>Welcome %s. Your are already authorized.</h1>
+					<h1> Your IP: %s</h1>
+					""".formatted(byId.email(), req.getLocalAddr()+ new Date().toString()));
 		}
-		
 	}
 
 	@Override
