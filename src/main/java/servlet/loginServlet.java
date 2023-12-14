@@ -21,9 +21,11 @@ import service.PersonalAccountService;
 public class loginServlet extends HttpServlet {
 
 	private final static String AUTHORIZATION_CHECK = "loginCheck";
+	private final static String USER = "User";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.getSession();
 		Cookie[] cookies = req.getCookies();
 		@Cleanup
 		PrintWriter writer = resp.getWriter();
@@ -39,7 +41,7 @@ public class loginServlet extends HttpServlet {
 			writer.write("""
 					<h1>Welcome %s. Your are already authorized.</h1>
 					<h1> Your IP: %s</h1>
-					""".formatted(byId.email(), req.getLocalAddr()+ new Date().toString()));
+					""".formatted(byId.email(), req.getLocalAddr() + new Date().toString()));
 		}
 	}
 
@@ -47,10 +49,10 @@ public class loginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
-		var cookies = req.getCookies();
+		var session = req.getSession();
 		try (var writer = resp.getWriter()) {
-			if (cookies == null || (Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(AUTHORIZATION_CHECK))
-					.findFirst().isEmpty())) {
+			var user = (DtoPersonalAccount) session.getAttribute(USER);
+			if (session.isNew() || user.equals(null)) {
 				var email = req.getParameter("email");
 				var name = req.getParameter("name");
 				var surname = req.getParameter("surname");
@@ -58,8 +60,9 @@ public class loginServlet extends HttpServlet {
 				var city = req.getParameter("city");
 				var address = req.getParameter("address");
 				var phoneNumber = req.getParameter("phoneNumber");
-				Optional<Long> addAccountResult = PersonalAccountService.getInctance()
-						.addAccount(new DtoPersonalAccount(email, name, surname, country, city, address, phoneNumber));
+				var dtoPersonalAccount = new DtoPersonalAccount(email, name, surname, country, city, address,
+						phoneNumber);
+				Optional<Long> addAccountResult = PersonalAccountService.getInctance().addAccount(dtoPersonalAccount);
 				if (addAccountResult.isPresent()) {
 					writer.write("""
 							<h1>Welcome %s. Your account successfully added. </h1>
@@ -70,19 +73,12 @@ public class loginServlet extends HttpServlet {
 					writer.write("<a href = \"/login.html\">Go back to login</a>");
 				}
 				if (addAccountResult.isPresent()) {
-					var cookie = new Cookie(AUTHORIZATION_CHECK, addAccountResult.get().toString());
-					cookie.setPath("/loginResult");
-					cookie.setMaxAge(60 * 60);
-					resp.addCookie(cookie);
+					session.setAttribute(USER, dtoPersonalAccount);
 				}
 			} else {
-				Cookie authorizationCookie = Arrays.stream(cookies)
-						.filter(cookie -> cookie.getName().equals(AUTHORIZATION_CHECK)).findFirst().get();
-				DtoPersonalAccount byId = PersonalAccountService.getInctance()
-						.getById(Long.parseLong(authorizationCookie.getValue()));
 				writer.write("""
 						<h1>Welcome %s. Your are already authorized. </h1>
-						""".formatted(byId.email()));
+						""".formatted(user.email()));
 			}
 		}
 	}
