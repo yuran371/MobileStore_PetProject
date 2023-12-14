@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Cleanup;
 import service.PersonalAccountService;
 
-@WebServlet("/loginResult")
+@WebServlet("/login-status")
 public class loginServlet extends HttpServlet {
 
 	private final static String AUTHORIZATION_CHECK = "loginCheck";
