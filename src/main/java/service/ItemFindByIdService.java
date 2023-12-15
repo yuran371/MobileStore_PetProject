@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import dao.ItemsDao;
 import dto.ItemsFindByIdDto;
+import entity.ItemsEntity;
 
 public class ItemFindByIdService {
 	private static ItemFindByIdService INSTANCE = new ItemFindByIdService();
@@ -18,11 +19,10 @@ public class ItemFindByIdService {
 
 	static ItemsDao itemsDao = ItemsDao.getInstance();
 
-	public List<ItemsFindByIdDto> itemsServiceMethod(Long itemId) {
-		return itemsDao
-				.getByItemId(itemId).stream()
-				.map(dto -> new ItemsFindByIdDto(dto.getItemId(), dto.getModel(),
-						dto.getBrand(), dto.getAttributes(), dto.getPrice(), dto.getCurrency(), dto.getQuantity()))
-				.collect(Collectors.toList());
+	public ItemsFindByIdDto findById(Long itemId) {
+		ItemsEntity itemsEntity = ItemsDao.getInstance().getByItemId(itemId).get();
+		return new ItemsFindByIdDto(itemsEntity.getItemId(), itemsEntity.getModel(), itemsEntity.getBrand(),
+				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency(),
+				itemsEntity.getQuantity());
 	}
 }
