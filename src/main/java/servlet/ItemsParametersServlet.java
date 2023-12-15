@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
+import dto.ItemsFindByIdDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,21 +26,20 @@ public class ItemsParametersServlet extends HttpServlet {
 		try (PrintWriter writer = resp.getWriter()) {
 			writer.write("<h1>Параметры и количество телефонов</h1>");
 			writer.write("<ul>");
-			instanceService.itemsServiceMethod(itemIdd).forEach(dto -> {
-				writer.write("""
-						<li>
-							%d %s %s %s %,.2f %s %d шт.
-						</li>
-						""".formatted(dto.itemId(), dto.model(), dto.brand(), dto.attributes(), dto.price(),
-						dto.currency(), dto.quantity()));
-			});
+			ItemsFindByIdDto findByIdDto = instanceService.findById(itemIdd);
+			writer.write("""
+					<li>
+						%s %s %s %,.2f %s %d шт.
+					</li>
+					""".formatted(findByIdDto.model(), findByIdDto.brand(),
+					findByIdDto.attributes(), findByIdDto.price(), findByIdDto.currency(), findByIdDto.quantity()));
 			writer.write("</ul>");
 			writer.write("""
 					<form action="items-cart?itemId=%d" method="post">
-					Quantity:<input type="number" min="1" name="quantityInCart" /><br /><br />
+					Quantity:<input type="number" min="1" max="%d" name="quantityInCart" /><br /><br />
 					<input type="submit" value="Add to cart" />
 					</form>
-					""".formatted(itemIdd));
+					""".formatted(itemIdd, findByIdDto.quantity()));
 		}
 	}
 }

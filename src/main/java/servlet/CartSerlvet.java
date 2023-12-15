@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Cleanup;
+import service.ItemFindByIdService;
 
 @WebServlet("/items-cart")
 public class CartSerlvet extends HttpServlet {
@@ -22,30 +23,24 @@ public class CartSerlvet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		resp.setContentType("text/html");
 		var itemIdFromReq = Long.valueOf(req.getParameter("itemId"));
 		var quantityFromRequest = Integer.valueOf(req.getParameter("quantityInCart"));
 		@Cleanup
 		var writer = resp.getWriter();
 		int quantityCheck = quantityFromRequest != null ? quantityFromRequest : 0;
-		if (quantityCheck > ItemsDao.getInstance().getByItemId(itemIdFromReq).get().getQuantity()) {
-			// TODO Add html for invalid quantity
-			writer.write("""
-					<h1>Your are not authorized. Please create account before using cart. </h1>
-					<a href = \"/login.html\">Create account</a>
-					""");
-			return;
-		}
-		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		var session = req.getSession();
 		var user = (DtoPersonalAccount) session.getAttribute(USER);
 		var cart = (CartDto) session.getAttribute(CART);
-		ConcurrentHashMap<Long, Integer> mapOfItems;
-		if (session.isNew() || user.equals(null)) {
+		ConcurrentHashMap<Long, Integer> mapOfItems = null;
+		if (session.isNew() || user == null) {
 			writer.write("""
-					<h1>Your are not authorized. Please create account before using cart. </h1>
+					<h1>ываппYour are not authorized. Please create account before using cart. </h1>
 					<a href = \"/login.html\">Create account</a>
 					""");
-		} else if (cart.equals(null)) {
+			return;
+		} else if (cart == null) {
 			mapOfItems = new ConcurrentHashMap<Long, Integer>();
 			mapOfItems.put(itemIdFromReq, quantityFromRequest);
 			var cartDto = new CartDto(mapOfItems, user.email());
@@ -53,12 +48,27 @@ public class CartSerlvet extends HttpServlet {
 		} else {
 			mapOfItems = cart.getItemsIdAndQuantity();
 			if (mapOfItems.containsKey(itemIdFromReq)) {
-				var quantityFromCart = mapOfItems.get(itemIdFromReq);
-				mapOfItems.put(itemIdFromReq, quantityFromCart + quantityFromRequest);
+				var quantityToAdd = mapOfItems.get(itemIdFromReq) + quantityFromRequest;
+				Integer quantityFromDB = ItemsDao.getInstance().getByItemId(itemIdFromReq).get().getQuantity();
+				if (quantityToAdd > quantityFromDB) {
+					// TODO Add html for invalid quantity
+					writer.write("""
+							<h1> Quantity is invalid. You can add only %d </h1>
+							<a href = \"/items-parameters?itemId=%d\">Return to item</a>
+							""".formatted(quantityFromDB - mapOfItems.get(itemIdFromReq), itemIdFromReq));
+					return;
+				}
+				mapOfItems.put(itemIdFromReq, quantityToAdd);
 			} else {
 				mapOfItems.put(itemIdFromReq, quantityFromRequest);
 			}
-			// TODO Create HTML with all items in cart
+		}
+		// TODO Create HTML with all items in cart
+		writer.write("<h1> %s's cart </h1>".formatted(user.name() + user.surname()));
+		ItemFindByIdService itemFindByIdService = ItemFindByIdService.getInstance();
+		for (var entry : mapOfItems.entrySet()) {
+			writer.write("<li> " + itemFindByIdService.findById(entry.getKey()).model() + " " + entry.getValue() + "шт."
+					+ " </li>");
 		}
 	}
 }

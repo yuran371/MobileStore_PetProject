@@ -20,7 +20,7 @@ public class ItemsService {
 
 	public List<ItemsFilterDto> itemsServiceMethod() {
 		return InstanceDao.findAll().stream()
-				.map(x -> new ItemsFilterDto(x.getItemId(), x.getModel(), x.getBrand(), x.getPrice(), x.getCurrency()))
+				.map(dao -> new ItemsFilterDto(dao.getItemId(), dao.getModel(), dao.getBrand(), dao.getPrice(), dao.getCurrency()))
 				.collect(Collectors.toList());
 	}
 
