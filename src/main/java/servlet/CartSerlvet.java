@@ -23,6 +23,7 @@ public class CartSerlvet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// TODO fix adding same amount of items in cart when using refresh on browser
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
 		var itemIdFromReq = Long.valueOf(req.getParameter("itemId"));
@@ -51,7 +52,6 @@ public class CartSerlvet extends HttpServlet {
 				var quantityToAdd = mapOfItems.get(itemIdFromReq) + quantityFromRequest;
 				Integer quantityFromDB = ItemsDao.getInstance().getByItemId(itemIdFromReq).get().getQuantity();
 				if (quantityToAdd > quantityFromDB) {
-					// TODO Add html for invalid quantity
 					writer.write("""
 							<h1> Quantity is invalid. You can add only %d </h1>
 							<a href = \"/items-parameters?itemId=%d\">Return to item</a>
@@ -63,7 +63,6 @@ public class CartSerlvet extends HttpServlet {
 				mapOfItems.put(itemIdFromReq, quantityFromRequest);
 			}
 		}
-		// TODO Create HTML with all items in cart
 		writer.write("<h1> %s's cart </h1>".formatted(user.name() + user.surname()));
 		ItemFindByIdService itemFindByIdService = ItemFindByIdService.getInstance();
 		for (var entry : mapOfItems.entrySet()) {
