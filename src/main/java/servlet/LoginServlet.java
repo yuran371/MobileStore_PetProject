@@ -3,11 +3,13 @@ package servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Optional;
 
 import dto.DtoPersonalAccount;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,9 +20,9 @@ import service.PersonalAccountService;
 @WebServlet("/login-status")
 public class LoginServlet extends HttpServlet {
 
-	private final static String AUTHORIZATION_CHECK = "loginCheck";
 	private final static String USER = "User";
 	private final static String AUTHORIZATION_STATUS = "AuthorizationStatus";
+	private final static String LOCAL_COOKIE = "LocalInfo";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -43,6 +45,13 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
+		var cookies = req.getCookies();
+		boolean cookieIsEmpty = Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(LOCAL_COOKIE))
+				.findFirst().isEmpty() || cookies == null;
+		if (cookieIsEmpty) {
+			Cookie localCookie = new Cookie(LOCAL_COOKIE, req.getLocale().toString());
+			resp.addCookie(localCookie);
+		}
 		var session = req.getSession();
 		try (var writer = resp.getWriter()) {
 			var user = (DtoPersonalAccount) session.getAttribute(USER);
