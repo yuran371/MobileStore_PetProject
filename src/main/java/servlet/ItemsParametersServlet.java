@@ -35,7 +35,7 @@ public class ItemsParametersServlet extends HttpServlet {
 					findByIdDto.price(), findByIdDto.currency(), findByIdDto.quantity()));
 			writer.write("</ul>");
 			writer.write("""
-					<form action="items-cart?itemId=%d" method="post">
+					<form action="items-add-to-cart?itemId=%d" method="post">
 					Quantity:<input type="number" min="1" max="%d" name="quantityInCart" required/><br /><br />
 					<input type="submit" value="Add to cart" />
 					</form>
