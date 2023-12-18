@@ -2,9 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ConcurrentHashMap;
 
-import dao.ItemsDao;
 import dto.CartDto;
 import dto.DtoPersonalAccount;
 import jakarta.servlet.ServletException;
@@ -14,61 +12,58 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Cleanup;
 import service.ItemFindByIdService;
+import servlet.AddToCartSerlvet.CartStatus;
 
-@WebServlet("/items-cart")
+@WebServlet("/cart")
 public class CartSerlvet extends HttpServlet {
 
+	private final static String CART_STATUS = "CartStatus";
 	private final static String USER = "User";
 	private final static String CART = "Cart";
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		var session = req.getSession();
 		resp.setContentType("text/html");
-		var itemIdFromReq = Long.valueOf(req.getParameter("itemId"));
-		var quantityFromRequest = Integer.valueOf(req.getParameter("quantityInCart"));
+		req.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		@Cleanup
 		var writer = resp.getWriter();
-		int quantityCheck = quantityFromRequest != null ? quantityFromRequest : 0;
-		var session = req.getSession();
-		var user = (DtoPersonalAccount) session.getAttribute(USER);
-		var cart = (CartDto) session.getAttribute(CART);
-		ConcurrentHashMap<Long, Integer> mapOfItems = null;
-		if (session.isNew() || user == null) {
+		var cartStatus = (CartStatus) session.getAttribute(CART_STATUS);
+		var userEmail = (String) req.getParameter("email");
+		if (userEmail == null || cartStatus == null || cartStatus == CartStatus.NOT_AUTHORIZED) {
 			writer.write("""
-					<h1>ываппYour are not authorized. Please create account before using cart. </h1>
+					<h1>Your are not authorized. Please create account before using cart. </h1>
 					<a href = \"/login.html\">Create account</a>
 					""");
 			return;
-		} else if (cart == null) {
-			mapOfItems = new ConcurrentHashMap<Long, Integer>();
-			mapOfItems.put(itemIdFromReq, quantityFromRequest);
-			var cartDto = new CartDto(mapOfItems, user.email());
-			session.setAttribute(CART, cartDto);
-		} else {
-			mapOfItems = cart.getItemsIdAndQuantity();
-			if (mapOfItems.containsKey(itemIdFromReq)) {
-				var quantityToAdd = mapOfItems.get(itemIdFromReq) + quantityFromRequest;
-				Integer quantityFromDB = ItemsDao.getInstance().getByItemId(itemIdFromReq).get().getQuantity();
-				if (quantityToAdd > quantityFromDB) {
-					// TODO Add html for invalid quantity
-					writer.write("""
-							<h1> Quantity is invalid. You can add only %d </h1>
-							<a href = \"/items-parameters?itemId=%d\">Return to item</a>
-							""".formatted(quantityFromDB - mapOfItems.get(itemIdFromReq), itemIdFromReq));
-					return;
-				}
-				mapOfItems.put(itemIdFromReq, quantityToAdd);
-			} else {
-				mapOfItems.put(itemIdFromReq, quantityFromRequest);
+		}
+		switch (cartStatus) {
+		case INVALID_QUANTITY -> {
+			writer.write("""
+					<h1> Quantity is invalid. You can add only %s </h1>
+					<a href = \"/items-parameters?itemId=%s\">Return to item</a>
+					""".formatted(req.getParameter("canAdd"), req.getParameter("itemId")));
+			return;
+		}
+		case HAVE_ITEMS -> {
+			var user = (DtoPersonalAccount) session.getAttribute(USER);
+			var cart = (CartDto) session.getAttribute(CART);
+			var mapOfItems = cart.getItemsIdAndQuantity();
+			var name = user.name();
+			writer.write("<h1> %s's cart </h1>".formatted(name + user.surname()));
+			ItemFindByIdService itemFindByIdService = ItemFindByIdService.getInstance();
+			for (var entry : mapOfItems.entrySet()) {
+				writer.write("<li> " + itemFindByIdService.findById(entry.getKey()).model() + " " + entry.getValue()
+						+ "шт." + " </li>");
 			}
 		}
-		// TODO Create HTML with all items in cart
-		writer.write("<h1> %s's cart </h1>".formatted(user.name() + user.surname()));
-		ItemFindByIdService itemFindByIdService = ItemFindByIdService.getInstance();
-		for (var entry : mapOfItems.entrySet()) {
-			writer.write("<li> " + itemFindByIdService.findById(entry.getKey()).model() + " " + entry.getValue() + "шт."
-					+ " </li>");
 		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		CartSerlvet servlet = new CartSerlvet();
+		servlet.doGet(req, resp);
 	}
 }

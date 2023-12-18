@@ -31,12 +31,12 @@ public class ItemsParametersServlet extends HttpServlet {
 					<li>
 						%s %s %s %,.2f %s %d шт.
 					</li>
-					""".formatted(findByIdDto.model(), findByIdDto.brand(),
-					findByIdDto.attributes(), findByIdDto.price(), findByIdDto.currency(), findByIdDto.quantity()));
+					""".formatted(findByIdDto.model(), findByIdDto.brand(), findByIdDto.attributes(),
+					findByIdDto.price(), findByIdDto.currency(), findByIdDto.quantity()));
 			writer.write("</ul>");
 			writer.write("""
-					<form action="items-cart?itemId=%d" method="post">
-					Quantity:<input type="number" min="1" max="%d" name="quantityInCart" /><br /><br />
+					<form action="items-add-to-cart?itemId=%d" method="post">
+					Quantity:<input type="number" min="1" max="%d" name="quantityInCart" required/><br /><br />
 					<input type="submit" value="Add to cart" />
 					</form>
 					""".formatted(itemIdd, findByIdDto.quantity()));
