@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CartDto {
-	private ConcurrentHashMap<Long, Integer> itemsIdAndQuantity;
+	private ConcurrentHashMap<Long, ItemsDto> itemsDtoMap;
 	private String email;
 }

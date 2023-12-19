@@ -36,7 +36,7 @@ public class ItemsServlet extends HttpServlet {
 				}
 				printWriter.write("<h1>Список телефонов</h1>");
 				printWriter.write("<ul>");
-				instanceService.itemsServiceMethod().forEach(item -> {
+				instanceService.findAllItems().forEach(item -> {
 					printWriter.write("""
 							<li>
 								<a href="/items-parameters?itemId=%d"> %s %s %,.2f %s </a>
@@ -65,7 +65,7 @@ public class ItemsServlet extends HttpServlet {
 			}
 			printWriter.write("<h2>Список телефонов</h2>");
 			printWriter.write("<ul>");
-			instanceService.itemsServiceMethod().forEach(item -> {
+			instanceService.findAllItems().forEach(item -> {
 				printWriter.write("""
 						<li>
 							<a href="/items-parameters?itemId=%d"> %s %s %,.2f %s </a>
