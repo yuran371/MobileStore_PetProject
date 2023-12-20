@@ -1,7 +1,6 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
@@ -13,32 +12,31 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import lombok.Cleanup;
 import service.PersonalAccountService;
+import utlis.JspHelper;
 
-@WebServlet("/login-status")
+@WebServlet("/registration")
 public class LoginServlet extends HttpServlet {
 
 	private final static String USER = "User";
 	private final static String AUTHORIZATION_STATUS = "AuthorizationStatus";
 	private final static String LOCAL_COOKIE = "LocalInfo";
 
+	public static enum Country {
+		RUSSIA, KAZAKHSTAN, UKRAINE, BELARUS
+	}
+
+	public static enum Gender {
+		MALE, FEMALE
+	}
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
-		HttpSession session = req.getSession();
-		DtoPersonalAccount userAttribute = (DtoPersonalAccount) session.getAttribute(USER);
-		@Cleanup
-		PrintWriter writer = resp.getWriter();
-
-		if (userAttribute == null || session.isNew()) {
-			writer.write("<h1>You are not authorized. Please go to the Registration page</h1>");
-			writer.write("<a href = \"/login.html\">Registration</a>");
-		} else {
-			resp.sendRedirect("/items");
-		}
+		req.setAttribute("countries", Country.values());
+		req.setAttribute("genders", Gender.values());
+		req.getRequestDispatcher(JspHelper.getUrl("registration")).forward(req, resp);
 	}
 
 	@Override
