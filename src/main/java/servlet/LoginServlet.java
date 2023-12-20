@@ -34,6 +34,12 @@ public class LoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
+
+		if (req.getSession().getAttribute(USER) != null) {
+			resp.sendRedirect("/items");
+			return;
+		}
+
 		req.setAttribute("countries", Country.values());
 		req.setAttribute("genders", Gender.values());
 		req.getRequestDispatcher(JspHelper.getUrl("registration")).forward(req, resp);
@@ -51,44 +57,30 @@ public class LoginServlet extends HttpServlet {
 			resp.addCookie(localCookie);
 		}
 		var session = req.getSession();
-		try (var writer = resp.getWriter()) {
-			var user = (DtoPersonalAccount) session.getAttribute(USER);
-			if (session.isNew() || user == null) {
-				var email = req.getParameter("email");
-				var name = req.getParameter("name");
-				var surname = req.getParameter("surname");
-				var country = req.getParameter("country");
-				var city = req.getParameter("city");
-				var address = req.getParameter("address");
-				var phoneNumber = req.getParameter("phoneNumber");
-				var dtoPersonalAccount = new DtoPersonalAccount(null, email, name, surname, country, city, address,
-						phoneNumber);
-				Optional<Long> addAccountResult = PersonalAccountService.getInctance().addAccount(dtoPersonalAccount);
-				if (addAccountResult.isPresent()) {
-					addAccountResult.ifPresent(presented -> session.setAttribute(USER, dtoPersonalAccount));
-					req.setAttribute(AUTHORIZATION_STATUS, Boolean.TRUE);
-					req.getRequestDispatcher("/items").forward(req, resp);
-				} else {
-					writer.write("<h1>Wrong login or phone number. Account is not created</h1>");
-					writer.write("<a href = \"/login.html\">Go back to login</a>");
-				}
-//				addAccountResult.ifPresentOrElse(value -> {
-//					writer.write("""
-//							<h1>Welcome %s. Your account successfully added. </h1>
-//							""".formatted(name));
-//					writer.write("<a href = \"/login.html\">Create another account</a>");
-//				}, () -> {
+
+		var email = req.getParameter("email");
+		var name = req.getParameter("name");
+		var surname = req.getParameter("surname");
+		var country = req.getParameter("country");
+		var city = req.getParameter("city");
+		var address = req.getParameter("address");
+		var phoneNumber = req.getParameter("phoneNumber");
+		var dtoPersonalAccount = new DtoPersonalAccount(null, email, name, surname, country, city, address,
+				phoneNumber);
+		Optional<Long> addAccountResult = PersonalAccountService.getInctance().addAccount(dtoPersonalAccount);
+		if (addAccountResult.isPresent()) {
+			addAccountResult.ifPresent(presented -> session.setAttribute(USER, dtoPersonalAccount));
+			req.setAttribute(AUTHORIZATION_STATUS, Boolean.TRUE);
+			req.getRequestDispatcher("/items").forward(req, resp);
+		}
+//				else {
 //					writer.write("<h1>Wrong login or phone number. Account is not created</h1>");
 //					writer.write("<a href = \"/login.html\">Go back to login</a>");
-//				});
-//				if (addAccountResult.isPresent()) {
-//					session.setAttribute(USER, dtoPersonalAccount);
 //				}
+//		} else {
+//			resp.sendRedirect("/items");
+//		}
 
-			} else {
-				resp.sendRedirect("/items");
-			}
-		}
 	}
 
 }

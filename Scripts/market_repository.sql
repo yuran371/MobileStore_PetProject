@@ -17,15 +17,21 @@ CREATE TABLE Items (item_id BIGSERIAl PRIMARY KEY,
 					UNIQUE (model, attributes)
 				);				
 
+CREATE EXTENSION pgcrypto;			
+			
 CREATE TABLE IF NOT EXISTS personal_account (
 	account_id BIGSERIAL NOT NULL UNIQUE,
-	email VARCHAR(32) PRIMARY KEY,
+	email VARCHAR(128) PRIMARY KEY,
+	password TEXT NOT NULL,
 	name VARCHAR(32) NOT NULL,
 	surname VARCHAR(32) NOT NULL,
+	birthday DATE NOT null,
 	country VARCHAR(64) NOT NULL,
 	city VARCHAR(256) NOT NULL,
 	address VARCHAR(256) NOT NULL,
 	phone_number TEXT CONSTRAINT phone_number_constraint NOT NULL,
+	gender VARCHAR(12) NOT NULL,
+	CONSTRAINT birthday_constraint CHECK(DATE_PART('year',current_date)-DATE_PART('year',birthday) > 18),
 	CONSTRAINT phone_number_constraint CHECK (((phone_number ~ '\+7[0-9]{10}$') AND (country = 'russia' OR country = 'россия')) 
 		OR (country != 'russia' AND country != 'россия'))
 	);

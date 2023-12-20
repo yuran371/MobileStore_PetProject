@@ -24,8 +24,8 @@ public class PersonalAccountDao {
 	}
 
 	private final static String SQL_INSERT_STATEMENT = """
-			INSERT INTO personal_account (email, name, surname, country, city, address, phone_number)
-			VALUES (?, ?, ?, ?, ?, ?, ?);
+			INSERT INTO personal_account (email, password, name, surname, birthday, country, city, address, phone_number, gender)
+			VALUES (?, crypt(?, gen_salt('bf')), ?, ?, ?, ?, ?, ?, ?, ?);
 			""";
 
 	private final static String SQL_GET_BY_LOGIN_STATEMENT = """
