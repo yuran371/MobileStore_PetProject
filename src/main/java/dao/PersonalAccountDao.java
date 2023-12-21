@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import dto.DtoPersonalAccount;
+import dto.CreateAccountDto;
 import entity.PersonalAccountEntity;
 import utlis.ConnectionPoolManager;
 
@@ -98,7 +98,7 @@ public class PersonalAccountDao {
 		}
 	}
 
-	public List<PersonalAccountEntity> sortByParams(DtoPersonalAccount filter) {
+	public List<PersonalAccountEntity> sortByParams(CreateAccountDto filter) {
 		List<String> sqlWhereStatement = new ArrayList<String>();
 		List<String> parameters = new ArrayList<>();
 		if (filter.city() != null) {

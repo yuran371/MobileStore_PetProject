@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import dao.PersonalAccountDao;
-import dto.DtoPersonalAccount;
+import dto.CreateAccountDto;
 import entity.PersonalAccountEntity;
 
 public class PersonalAccountService {
@@ -19,7 +19,7 @@ public class PersonalAccountService {
 		return INCTANCE;
 	}
 
-	public Optional<Long> addAccount(DtoPersonalAccount account) {
+	public Optional<Long> addAccount(CreateAccountDto account) {
 //		if (account.address().isBlank() || account.city().isBlank() || account.country().isBlank()
 //				|| account.name().isBlank() || account.email().isBlank() || account.phoneNumber().isBlank()
 //				|| account.surname().isBlank()) {
@@ -40,9 +40,9 @@ public class PersonalAccountService {
 
 	}
 
-	public DtoPersonalAccount getById(Long id) {
+	public CreateAccountDto getById(Long id) {
 		PersonalAccountEntity byIdEntity = personalAccountDao.getByID(id).get();
-		return new DtoPersonalAccount(byIdEntity.getAccountId(), byIdEntity.getEmail(), byIdEntity.getName(), byIdEntity.getSurname(),
+		return new CreateAccountDto(byIdEntity.getAccountId(), byIdEntity.getEmail(), byIdEntity.getName(), byIdEntity.getSurname(),
 				byIdEntity.getCountry(), byIdEntity.getCity(), byIdEntity.getAddress(), byIdEntity.getPhoneNumber());
 	}
 }

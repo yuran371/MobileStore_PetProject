@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
-import dto.DtoPersonalAccount;
+import dto.CreateAccountDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,7 +25,7 @@ public class ItemsServlet extends HttpServlet {
 			resp.setContentType("text/html");
 			resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 			var session = req.getSession();
-			var userDto = (DtoPersonalAccount) session.getAttribute(USER);
+			var userDto = (CreateAccountDto) session.getAttribute(USER);
 			var authorized = (Boolean) req.getAttribute(AUTHORIZATION_STATUS) == null ? false
 					: (Boolean) req.getAttribute(AUTHORIZATION_STATUS);
 			try (PrintWriter printWriter = resp.getWriter()) {
@@ -54,7 +54,7 @@ public class ItemsServlet extends HttpServlet {
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		var session = req.getSession();
-		var userDto = (DtoPersonalAccount) session.getAttribute(USER);
+		var userDto = (CreateAccountDto) session.getAttribute(USER);
 		var authorized = (Boolean) req.getAttribute(AUTHORIZATION_STATUS) == null ? false
 				: (Boolean) req.getAttribute(AUTHORIZATION_STATUS);
 		try (PrintWriter printWriter = resp.getWriter()) {

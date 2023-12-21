@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
 
-import dto.DtoPersonalAccount;
+import dto.CreateAccountDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -65,7 +65,7 @@ public class LoginServlet extends HttpServlet {
 		var city = req.getParameter("city");
 		var address = req.getParameter("address");
 		var phoneNumber = req.getParameter("phoneNumber");
-		var dtoPersonalAccount = new DtoPersonalAccount(null, email, name, surname, country, city, address,
+		var dtoPersonalAccount = new CreateAccountDto(null, email, name, surname, country, city, address,
 				phoneNumber);
 		Optional<Long> addAccountResult = PersonalAccountService.getInctance().addAccount(dtoPersonalAccount);
 		if (addAccountResult.isPresent()) {
