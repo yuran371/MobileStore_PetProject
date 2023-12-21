@@ -1,31 +1,26 @@
-package entity;
-
-import java.time.LocalDate;
-import java.util.Objects;
+package dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class PersonalAccountEntity {
-
-	Long accountId;
+public class CreateAccountDto {
+	
 	String email;
 	String password;
 	String name;
 	String surname;
-	LocalDate birthday;
-	Country country;
+	String birthday;
+	String country;
 	String city;
 	String address;
 	String phoneNumber;
-	Gender gender;
-
+	String gender;
+	
 }

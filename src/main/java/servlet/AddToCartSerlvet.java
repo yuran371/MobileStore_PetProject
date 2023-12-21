@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 
 import dto.CartDto;
-import dto.DtoPersonalAccount;
+import dto.CreateAccountDto;
 import dto.ItemsDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -32,7 +32,7 @@ public class AddToCartSerlvet extends HttpServlet {
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		var session = req.getSession();
-		var user = (DtoPersonalAccount) session.getAttribute(USER);
+		var user = (CreateAccountDto) session.getAttribute(USER);
 		if (user == null) {
 			req.getRequestDispatcher(JspHelper.getUrl("notAuthorized")).forward(req, resp);
 			return;
