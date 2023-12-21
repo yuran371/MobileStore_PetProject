@@ -12,10 +12,8 @@ import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-
 public class PersonalAccountEntity {
 
 	Long accountId;
@@ -29,4 +27,5 @@ public class PersonalAccountEntity {
 	String address;
 	String phoneNumber;
 	Gender gender;
+
 }

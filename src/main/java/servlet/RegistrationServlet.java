@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import dto.CreateAccountDto;
+import entity.Country;
+import entity.Gender;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -16,19 +18,11 @@ import service.PersonalAccountService;
 import utlis.JspHelper;
 
 @WebServlet("/registration")
-public class LoginServlet extends HttpServlet {
+public class RegistrationServlet extends HttpServlet {
 
 	private final static String USER = "User";
 	private final static String AUTHORIZATION_STATUS = "AuthorizationStatus";
 	private final static String LOCAL_COOKIE = "LocalInfo";
-
-	public static enum Country {
-		RUSSIA, KAZAKHSTAN, UKRAINE, BELARUS
-	}
-
-	public static enum Gender {
-		MALE, FEMALE
-	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -57,30 +51,15 @@ public class LoginServlet extends HttpServlet {
 			resp.addCookie(localCookie);
 		}
 		var session = req.getSession();
-
-		var email = req.getParameter("email");
-		var name = req.getParameter("name");
-		var surname = req.getParameter("surname");
 		var country = req.getParameter("country");
 		var city = req.getParameter("city");
 		var address = req.getParameter("address");
 		var phoneNumber = req.getParameter("phoneNumber");
-		var dtoPersonalAccount = new CreateAccountDto(null, email, name, surname, country, city, address,
-				phoneNumber);
-		Optional<Long> addAccountResult = PersonalAccountService.getInctance().addAccount(dtoPersonalAccount);
-		if (addAccountResult.isPresent()) {
-			addAccountResult.ifPresent(presented -> session.setAttribute(USER, dtoPersonalAccount));
-			req.setAttribute(AUTHORIZATION_STATUS, Boolean.TRUE);
-			req.getRequestDispatcher("/items").forward(req, resp);
-		}
-//				else {
-//					writer.write("<h1>Wrong login or phone number. Account is not created</h1>");
-//					writer.write("<a href = \"/login.html\">Go back to login</a>");
-//				}
-//		} else {
-//			resp.sendRedirect("/items");
-//		}
-
+		CreateAccountDto.builder().email(req.getParameter("email")).password(req.getParameter("password"))
+				.name(req.getParameter("name")).surname(req.getParameter("surname"))
+				.birthday(req.getParameter("dateOfBirth")).country(req.getParameter("country"))
+				.city(req.getParameter("city")).address(req.getParameter("address"))
+				.phoneNumber(req.getParameter("phoneNumber")).gender(req.getParameter("gender")).build();
 	}
 
 }
