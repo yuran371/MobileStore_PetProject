@@ -3,12 +3,17 @@ package validator;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Singleton;
-
-@Singleton(style = Singleton.Style.HOLDER)
 public class ValidationErrors {
 
+	private static ValidationErrors INSTANCE = new ValidationErrors();
 	private static List<Error> CreateAccountErrors = new ArrayList<>();
+
+	private ValidationErrors() {
+	}
+
+	public static ValidationErrors getInstance() {
+		return INSTANCE;
+	}
 
 	public boolean addCreateAccountError(Error error) {
 		try {
@@ -19,7 +24,8 @@ public class ValidationErrors {
 		}
 	}
 
-	public static List<Error> getCreateAccountErrors() {
+	public List<Error> getCreateAccountErrors() {
 		return CreateAccountErrors;
 	}
+
 }

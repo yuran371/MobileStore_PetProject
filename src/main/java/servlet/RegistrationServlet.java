@@ -3,7 +3,6 @@ package servlet;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Optional;
 
 import dto.CreateAccountDto;
 import entity.Country;
@@ -14,7 +13,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.PersonalAccountService;
 import utlis.JspHelper;
 
 @WebServlet("/registration")
@@ -51,10 +49,6 @@ public class RegistrationServlet extends HttpServlet {
 			resp.addCookie(localCookie);
 		}
 		var session = req.getSession();
-		var country = req.getParameter("country");
-		var city = req.getParameter("city");
-		var address = req.getParameter("address");
-		var phoneNumber = req.getParameter("phoneNumber");
 		CreateAccountDto.builder().email(req.getParameter("email")).password(req.getParameter("password"))
 				.name(req.getParameter("name")).surname(req.getParameter("surname"))
 				.birthday(req.getParameter("dateOfBirth")).country(req.getParameter("country"))
