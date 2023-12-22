@@ -53,9 +53,16 @@
 				required>
 		</label>
 		<br>
-		<c:forEach var="gender" genders="${requestScope.genders}">
+		<c:forEach var="gender" items="${requestScope.genders}">
 			<input type="radio" name="gender" value="${gender}"> ${gender}
 		</c:forEach>
 	</form>
+	<div>
+		<c:if test="${not empty requestScope.errors}">
+			<c:forEach var="error" items="${requestScope.errors}">
+				<span>${error.message}</span>
+			</c:forEach>
+		</c:if>
+	</div>
 </body>
 </html>

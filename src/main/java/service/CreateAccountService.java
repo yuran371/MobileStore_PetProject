@@ -19,7 +19,7 @@ public class CreateAccountService {
 	private CreateAccountService() {
 	}
 
-	public static CreateAccountService getINSTANCE() {
+	public static CreateAccountService getInstance() {
 		return INSTANCE;
 	}
 
