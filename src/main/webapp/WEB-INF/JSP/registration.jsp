@@ -40,22 +40,24 @@
 		</select>
 		<br>
 		<label for="cityId">
-			Second name: <input type="text" name="city" id="cityId" required>
+			City: <input type="text" name="city" id="cityId" required>
 		</label>
 		<br>
 		<label for="addressId">
-			Second name: <input type="text" name="address" id="addressId"
+			Home address: <input type="text" name="address" id="addressId"
 				required>
 		</label>
 		<br>
 		<label for="phoneNumberId">
-			Second name: <input type="text" name="phoneNumber" id="phoneNumberId"
+			Phone number: <input type="text" name="phoneNumber" id="phoneNumberId"
 				required>
 		</label>
 		<br>
 		<c:forEach var="gender" items="${requestScope.genders}">
 			<input type="radio" name="gender" value="${gender}"> ${gender}
 		</c:forEach>
+		<br>
+		<button type="submit">Create account</button>
 	</form>
 	<div>
 		<c:if test="${not empty requestScope.errors}">

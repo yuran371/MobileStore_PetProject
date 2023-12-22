@@ -46,9 +46,9 @@ public class AddToCartSerlvet extends HttpServlet {
 			ItemsDto itemDto = itemsService.findById(itemIdFromReq);
 			itemDto.setQuantity(quantityFromRequest);
 			mapOfItems.put(itemIdFromReq, itemDto);
-			session.setAttribute(CART, new CartDto(mapOfItems, user.email()));
+			session.setAttribute(CART, new CartDto(mapOfItems, user.getEmail()));
 			session.setAttribute(CART_STATUS, CartStatus.HAVE_ITEMS);
-			resp.sendRedirect("/cart?email=%s".formatted(user.email()));
+			resp.sendRedirect("/cart?email=%s".formatted(user.getEmail()));
 			return;
 		} else {
 			mapOfItems = cart.getItemsDtoMap();
@@ -58,7 +58,7 @@ public class AddToCartSerlvet extends HttpServlet {
 				Integer quantityFromDB = itemsService.findById(itemIdFromReq).getQuantity();
 				if (quantityToAdd > quantityFromDB) {
 					session.setAttribute(CART_STATUS, CartStatus.INVALID_QUANTITY);
-					resp.sendRedirect("/cart?email=%s&canAdd=%d&itemId=%d".formatted(user.email(),
+					resp.sendRedirect("/cart?email=%s&canAdd=%d&itemId=%d".formatted(user.getEmail(),
 							quantityFromDB - itemFromCart.getQuantity(), itemIdFromReq));
 					return;
 				}
@@ -70,7 +70,7 @@ public class AddToCartSerlvet extends HttpServlet {
 				mapOfItems.put(itemIdFromReq, itemDto);
 			}
 			session.setAttribute(CART_STATUS, CartStatus.HAVE_ITEMS);
-			resp.sendRedirect("/cart?email=%s".formatted(user.email()));
+			resp.sendRedirect("/cart?email=%s".formatted(user.getEmail()));
 			return;
 		}
 	}

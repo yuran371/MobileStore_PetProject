@@ -7,8 +7,7 @@ import java.util.Arrays;
 import dto.CreateAccountDto;
 import entity.Country;
 import entity.Gender;
-import exceptions.ValidationException;
-import jakarta.servlet.RequestDispatcher;
+import io.vavr.control.Either;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -17,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.CreateAccountService;
 import utlis.JspHelper;
+import validator.ValidationErrors;
 
 @WebServlet("/registration")
 public class RegistrationServlet extends HttpServlet {
@@ -24,7 +24,7 @@ public class RegistrationServlet extends HttpServlet {
 	private final static String USER = "User";
 	private final static String AUTHORIZATION_STATUS = "AuthorizationStatus";
 	private final static String LOCAL_COOKIE = "LocalInfo";
-	private final static String AUTHORIZATION_ERRORS = "Errors";
+	private final static String AUTHORIZATION_ERRORS = "errors";
 
 	CreateAccountService createAccountService = CreateAccountService.getInstance();
 
@@ -61,14 +61,14 @@ public class RegistrationServlet extends HttpServlet {
 				.country(req.getParameter("country")).city(req.getParameter("city"))
 				.address(req.getParameter("address")).phoneNumber(req.getParameter("phoneNumber"))
 				.gender(req.getParameter("gender")).build();
-		try {
-			createAccountService.save(accountDto);
-		} catch (ValidationException e) {
-			// TODO Auto-generated catch block
-			req.setAttribute(AUTHORIZATION_ERRORS, e.getErrors());
-			req.getRequestDispatcher(JspHelper.getUrl("registration")).forward(req, resp);
+		Either<Long, ValidationErrors> save = createAccountService.save(accountDto);
+		if (save.isRight()) {
+			req.setAttribute(AUTHORIZATION_ERRORS, save.get().getCreateAccountErrors());
+			doGet(req, resp);
+			return;
 		}
-		resp.sendRedirect(AUTHORIZATION_ERRORS);
+		resp.sendRedirect("/login");
+		return;
 	}
 
 }

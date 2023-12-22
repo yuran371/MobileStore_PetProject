@@ -24,6 +24,9 @@ public class CreateAccountValidator {
 
 	public ValidationErrors isValid(CreateAccountDto account) {
 		List<Error> createAccountErrors = validationErrors.getCreateAccountErrors();
+		if (!createAccountErrors.isEmpty()) {
+			createAccountErrors.removeAll(createAccountErrors);
+		}
 		if (!DateFormatter.isValid(account.getBirthday())) {
 			createAccountErrors.add(new Error("Date is invalid",
 					"Date of birth is invalid. Please, check your birthday date is correct. "));

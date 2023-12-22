@@ -1,13 +1,11 @@
 package service;
 
-import java.util.List;
-
 import dao.PersonalAccountDao;
 import dto.CreateAccountDto;
-import exceptions.ValidationException;
+import io.vavr.control.Either;
 import mapper.CreateAccountMapper;
 import validator.CreateAccountValidator;
-import validator.Error;
+import validator.ValidationErrors;
 
 public class CreateAccountService {
 
@@ -23,11 +21,11 @@ public class CreateAccountService {
 		return INSTANCE;
 	}
 
-	public Long save(CreateAccountDto account) {
-		List<Error> createAccountErrors = validator.isValid(account).getCreateAccountErrors();
-		if (!createAccountErrors.isEmpty()) {
-			throw new ValidationException(createAccountErrors);
+	public Either<Long, ValidationErrors> save(CreateAccountDto account) {
+		ValidationErrors createAccountErrors = validator.isValid(account);
+		if (createAccountErrors.getCreateAccountErrors().isEmpty()) {
+			return Either.left(daoPersonalAccount.insert(mapper.mapOf(account)));
 		}
-		return daoPersonalAccount.insert(mapper.mapOf(account));
+		return Either.right(createAccountErrors);
 	}
 }

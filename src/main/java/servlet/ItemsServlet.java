@@ -32,7 +32,7 @@ public class ItemsServlet extends HttpServlet {
 				if (authorized & userDto != null && !session.isNew()) {
 					printWriter.write("""
 							<h1>Welcome, %s. You are authorized. </h1>
-							""".formatted(userDto.name()));
+							""".formatted(userDto.getName()));
 				}
 				printWriter.write("<h1>Список телефонов</h1>");
 				printWriter.write("<ul>");
@@ -61,7 +61,7 @@ public class ItemsServlet extends HttpServlet {
 			if (authorized & userDto != null && !session.isNew()) {
 				printWriter.write("""
 						<h1>Welcome, %s. You are authorized. </h1>
-						""".formatted(userDto.name()));
+						""".formatted(userDto.getName()));
 			}
 			printWriter.write("<h2>Список телефонов</h2>");
 			printWriter.write("<ul>");

@@ -75,7 +75,7 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 		}
 		return 0L;
 	}
-	
+
 	@Override
 	public Optional<PersonalAccountEntity> getById(Long id) {
 		try (var connection = ConnectionPoolManager.get();
@@ -96,13 +96,13 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 	public List<PersonalAccountEntity> findAll() {
 		return null;
 	}
-	
+
 	@Override
 	public boolean delete(Long params) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	public Optional<PersonalAccountEntity> getByLogin(String login) {
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_GET_BY_LOGIN_STATEMENT)) {
@@ -117,7 +117,6 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 			throw new RuntimeException(e);
 		}
 	}
-
 
 	public List<PersonalAccountEntity> sortByParams(CreateAccountDto filter) {
 		List<String> sqlWhereStatement = new ArrayList<String>();
@@ -148,11 +147,13 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 		}
 	}
 
+	@Deprecated
 	private static PersonalAccountEntity createEntityByResultSet(ResultSet executeQuery) throws SQLException {
-		return new PersonalAccountEntity(executeQuery.getLong("account_id"), executeQuery.getString("email"),
-				executeQuery.getString("name"), executeQuery.getString("surname"), executeQuery.getString("country"),
-				null, null, executeQuery.getString("city"), executeQuery.getString("address"),
-				executeQuery.getString("phone_number"), null);
+		// TODO wrong realization. Need to think about security problems when getting
+		// password from DB. Maybe dont save it in entity. Making Deprecated until find
+		// solution.
+		return PersonalAccountEntity.builder().accountId(executeQuery.getLong("account_id"))
+				.email(executeQuery.getString("email")).build();
 	}
 
 }
