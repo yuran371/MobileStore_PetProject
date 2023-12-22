@@ -1,5 +1,9 @@
 package validator;
 
+import java.sql.Date;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 import dto.CreateAccountDto;
@@ -38,6 +42,10 @@ public class CreateAccountValidator {
 		if (!Gender.isValid(account.getGender())) {
 			createAccountErrors.add(new Error("Gender is invalid",
 					"Choosen gender is invalid. Please, check that choosen gender is correct"));
+		}
+		
+		if (Period.between(LocalDate.now(), DateFormatter.getDate(account.getBirthday())).getYears() < 18) {
+			createAccountErrors.add(new Error("Age is invalid", "Age is invalid. To register you must be over 18 y.o."));
 		}
 		return validationErrors;
 	}
