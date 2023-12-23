@@ -12,10 +12,13 @@ import java.util.stream.Collectors;
 
 import entity.ItemsEntity;
 import utlis.ConnectionPoolManager;
+import utlis.SqlExceptionLogger;
 
-public class ItemsDao {
+public class ItemsDao implements Dao<Long, ItemsEntity>{
 
 	private static ItemsDao INSTANCE = new ItemsDao();
+	
+	private static SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
 
 	public static ItemsDao getInstance() {
 		return INSTANCE;
@@ -42,8 +45,13 @@ public class ItemsDao {
 			SELECT *
 			FROM items
 			""";
+	
+	private final static String SQL_DELETE_BY_ID = """
+			DELETE FROM items
+			WHERE item_id = ?
+			""";
 
-	public int Insert(List<ItemsEntity> arrayList) {
+	public Long Insert(List<ItemsEntity> arrayList) {
 		String innerSql = "(?, ?, ?, ?, ?, ?)";
 		ArrayList<String> valuesList = new ArrayList<String>();
 		for (int i = 0; i < arrayList.size(); i++) {
@@ -71,7 +79,7 @@ public class ItemsDao {
 			while (generatedKeys.next()) {
 				System.out.println(generatedKeys.getLong("item_id"));
 			}
-			return executeUpdate;
+			return (long) executeUpdate;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -92,7 +100,8 @@ public class ItemsDao {
 		}
 	}
 
-	public Optional<ItemsEntity> getByItemId(long itemId) {
+	@Override
+	public Optional<ItemsEntity> getById(Long itemId) {
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_GET_STATEMENT)) {
 			prepareStatement.setLong(1, itemId);
@@ -105,13 +114,46 @@ public class ItemsDao {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	private ItemsEntity buildItems(ResultSet resultSet) throws SQLException {
 		return new ItemsEntity(resultSet.getLong("item_id"), resultSet.getString("model"), resultSet.getString("brand"),
 				resultSet.getString("attributes"), resultSet.getDouble("price"), resultSet.getString("currency"),
 				resultSet.getInt("quantity"));
+	}
+	
+	@Override
+	public Long insert(ItemsEntity entity) {
+		try (Connection connection = ConnectionPoolManager.get();
+				PreparedStatement statement = connection.prepareStatement(SQL_INSERT_STATEMENT, Statement.RETURN_GENERATED_KEYS)) {
+			statement.setString(1, entity.getModel());
+			statement.setString(2, entity.getBrand());
+			statement.setString(3, entity.getAttributes());
+			statement.setDouble(4, entity.getPrice());
+			statement.setString(5, entity.getCurrency());
+			statement.setInt(6, entity.getQuantity());
+			statement.executeUpdate();
+			ResultSet generatedKeys = statement.getGeneratedKeys();
+			if (generatedKeys.next()) {
+				return generatedKeys.getLong("account_id");
+			}
+		} catch (SQLException e) {
+			SQL_EXCEPTION_LOGGER.addException(e);
+		}
+		return 0l;
+	}
+
+	@Override
+	public boolean delete(Long params) {
+		try (Connection connection = ConnectionPoolManager.get();
+				PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+			statement.setLong(1, params);
+			return statement.executeUpdate() > 0;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			SQL_EXCEPTION_LOGGER.addException(e);
+		}
+		return false;
 	}
 
 	public Integer changeQuantity(int quantity, long itemId) {
@@ -131,4 +173,5 @@ public class ItemsDao {
 			throw new RuntimeException(e);
 		}
 	}
+
 }

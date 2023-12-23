@@ -1,6 +1,8 @@
 package dao;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -49,6 +51,11 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 				FROM personal_account
 			""";
 
+	private final static String SQL_DELETE_BY_ID = """
+			DELETE FROM items
+			WHERE item_id = ?
+			""";
+	
 	@Override
 	public Long insert(PersonalAccountEntity accountEntity) {
 		try (var connection = ConnectionPoolManager.get();
@@ -99,7 +106,13 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 
 	@Override
 	public boolean delete(Long params) {
-		// TODO Auto-generated method stub
+		try (Connection connection = ConnectionPoolManager.get();
+				PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+			statement.setLong(1, params);
+			return statement.executeUpdate() > 0;
+		} catch (SQLException e) {
+			SQL_EXCEPTION_LOGGER.addException(e);
+		}
 		return false;
 	}
 
