@@ -25,12 +25,14 @@ public class ImageService {
 
 	@SneakyThrows
 	public void upload(String imagePath, InputStream stream) {
-		if (imagePath == null) {
+		if (imagePath.equals("user\\")) {
 			Path path = Path.of(BASE_PATH, DEFAULT_IMAGE);
 			return;
 		}
 		Path path = Path.of(BASE_PATH, imagePath);
-		Files.createDirectory(path.getParent());
+		if(!Files.exists(path.getParent())) {
+			Files.createDirectory(path.getParent());
+		}
 		try (stream) {
 			Files.write(path, stream.readAllBytes(), CREATE, TRUNCATE_EXISTING);
 		}

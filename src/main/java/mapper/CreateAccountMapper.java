@@ -10,6 +10,7 @@ public class CreateAccountMapper {
 
 	private static CreateAccountMapper INSTANCE = new CreateAccountMapper();
 	private static final String USER_FOLDER = "user\\";
+	private static final String DEFAULT_AVATAR = "user\\default-avatar-icon-of-social-media-user-vector.jpg";
 
 	private CreateAccountMapper() {
 	}
@@ -19,12 +20,17 @@ public class CreateAccountMapper {
 	}
 
 	public PersonalAccountEntity mapOf(CreateAccountDto account) {
-		return PersonalAccountEntity.builder().email(account.getEmail()).password(account.getPassword())
+		
+		PersonalAccountEntity personalAccountEntity = PersonalAccountEntity.builder().email(account.getEmail()).password(account.getPassword())
 				.name(account.getName()).surname(account.getSurname())
 				.image(USER_FOLDER + account.getImage().getSubmittedFileName())
 				.birthday(DateFormatter.getDate(account.getBirthday())).country(Country.getValue(account.getCountry()))
 				.city(account.getCity()).address(account.getAddress()).phoneNumber(account.getPhoneNumber())
 				.gender(Gender.valueOf(account.getGender())).build();
+		if (account.getImage().getSubmittedFileName().isBlank()) {
+			personalAccountEntity.setImage(DEFAULT_AVATAR);
+		}
+		return personalAccountEntity;
 	}
 
 }
