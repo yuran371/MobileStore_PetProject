@@ -2,7 +2,9 @@ package service;
 
 import dao.PersonalAccountDao;
 import dto.CreateAccountDto;
+import entity.PersonalAccountEntity;
 import io.vavr.control.Either;
+import lombok.SneakyThrows;
 import mapper.CreateAccountMapper;
 import validator.CreateAccountValidator;
 import validator.ValidationErrors;
@@ -13,6 +15,7 @@ public class CreateAccountService {
 	private final CreateAccountValidator validator = CreateAccountValidator.getInstance();
 	private final CreateAccountMapper mapper = CreateAccountMapper.getInstance();
 	private final PersonalAccountDao daoPersonalAccount = PersonalAccountDao.getInstance();
+	private final ImageService imageService = ImageService.getInstance();
 
 	private CreateAccountService() {
 	}
@@ -21,10 +24,13 @@ public class CreateAccountService {
 		return INSTANCE;
 	}
 
+	@SneakyThrows
 	public Either<Long, ValidationErrors> save(CreateAccountDto account) {
 		ValidationErrors createAccountErrors = validator.isValid(account);
 		if (createAccountErrors.getCreateAccountErrors().isEmpty()) {
-			return Either.left(daoPersonalAccount.insert(mapper.mapOf(account)));
+			PersonalAccountEntity accountEntity = mapper.mapOf(account);
+			imageService.upload(accountEntity.getImage(), account.getImage().getInputStream());
+			return Either.left(daoPersonalAccount.insert(accountEntity));
 		}
 		return Either.right(createAccountErrors);
 	}

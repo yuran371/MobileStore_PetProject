@@ -8,7 +8,7 @@
 <title>Create account</title>
 </head>
 <body>
-	<form action="/registration" method="post">
+	<form action="/registration" method="post" enctype="multipart/form-data">
 		<label for="emailId">
 			Email: <input type="email" name="email" id="emailId" required>
 		</label>
@@ -27,9 +27,12 @@
 				required>
 		</label>
 		<br>
+		<label for="imageId">
+			Image: <input type="file" name="image" id="imageId">
+		</label>
+		<br>
 		<label for="dateId">
-			Date of birth: <input type="date" name="dateOfBirth" id="dateId"
-				required>
+			Date of birth: <input type="date" name="dateOfBirth" id="dateId">
 		</label>
 		<br>
 		<label>Your country:</label>
@@ -49,8 +52,7 @@
 		</label>
 		<br>
 		<label for="phoneNumberId">
-			Phone number: <input type="text" name="phoneNumber" id="phoneNumberId"
-				required>
+			Phone number: <input type="text" name="phoneNumber" id="phoneNumberId">
 		</label>
 		<br>
 		<c:forEach var="gender" items="${requestScope.genders}">
