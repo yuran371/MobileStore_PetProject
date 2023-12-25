@@ -8,6 +8,7 @@
 <title>Create account</title>
 </head>
 <body>
+<img alt="User Image" src="/images/user/me.jpg">
 	<form action="/registration" method="post" enctype="multipart/form-data">
 		<label for="emailId">
 			Email: <input type="email" name="email" id="emailId" required>

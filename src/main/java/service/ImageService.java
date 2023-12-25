@@ -6,6 +6,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -30,11 +31,17 @@ public class ImageService {
 			return;
 		}
 		Path path = Path.of(BASE_PATH, imagePath);
-		if(!Files.exists(path.getParent())) {
-			Files.createDirectory(path.getParent());
+		if (!Files.exists(path.getParent())) {
+			Files.createDirectories(path.getParent());
 		}
 		try (stream) {
 			Files.write(path, stream.readAllBytes(), CREATE, TRUNCATE_EXISTING);
 		}
+	}
+
+	@SneakyThrows
+	public Optional<InputStream> get(String URL) {
+		Path imagePath = Path.of(BASE_PATH, URL);
+		return Files.exists(imagePath) ? Optional.of(Files.newInputStream(imagePath)) : Optional.empty();
 	}
 }
