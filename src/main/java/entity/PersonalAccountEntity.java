@@ -1,13 +1,11 @@
 package entity;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -21,6 +19,7 @@ public class PersonalAccountEntity {
 	String password;
 	String name;
 	String surname;
+	String image;
 	LocalDate birthday;
 	Country country;
 	String city;

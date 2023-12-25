@@ -9,6 +9,7 @@ import entity.Country;
 import entity.Gender;
 import io.vavr.control.Either;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +19,7 @@ import service.CreateAccountService;
 import utlis.JspHelper;
 import validator.ValidationErrors;
 
+@MultipartConfig(fileSizeThreshold = 1024 * 1024)
 @WebServlet("/registration")
 public class RegistrationServlet extends HttpServlet {
 
@@ -57,10 +59,10 @@ public class RegistrationServlet extends HttpServlet {
 		var session = req.getSession();
 		CreateAccountDto accountDto = CreateAccountDto.builder().email(req.getParameter("email"))
 				.password(req.getParameter("password")).name(req.getParameter("name"))
-				.surname(req.getParameter("surname")).birthday(req.getParameter("dateOfBirth"))
-				.country(req.getParameter("country")).city(req.getParameter("city"))
-				.address(req.getParameter("address")).phoneNumber(req.getParameter("phoneNumber"))
-				.gender(req.getParameter("gender")).build();
+				.surname(req.getParameter("surname")).image(req.getPart("image"))
+				.birthday(req.getParameter("dateOfBirth")).country(req.getParameter("country"))
+				.city(req.getParameter("city")).address(req.getParameter("address"))
+				.phoneNumber(req.getParameter("phoneNumber")).gender(req.getParameter("gender")).build();
 		Either<Long, ValidationErrors> save = createAccountService.save(accountDto);
 		if (save.isRight()) {
 			req.setAttribute(AUTHORIZATION_ERRORS, save.get().getCreateAccountErrors());

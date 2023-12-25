@@ -30,8 +30,8 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 	}
 
 	private final static String SQL_INSERT_STATEMENT = """
-			INSERT INTO personal_account (email, password, name, surname, birthday, country, city, address, phone_number, gender)
-			VALUES (?, crypt(?, gen_salt('bf')), ?, ?, ?, ?, ?, ?, ?, ?);
+			INSERT INTO personal_account (email, password, name, surname, image, birthday, country, city, address, phone_number, gender)
+			VALUES (?, crypt(?, gen_salt('bf')), ?, ?, ?, ?, ?, ?, ?, ?, ?);
 			""";
 
 	private final static String SQL_GET_BY_LOGIN_STATEMENT = """
@@ -55,7 +55,7 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 			DELETE FROM items
 			WHERE item_id = ?
 			""";
-	
+
 	@Override
 	public Long insert(PersonalAccountEntity accountEntity) {
 		try (var connection = ConnectionPoolManager.get();
@@ -65,12 +65,13 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 			prepareStatement.setString(2, accountEntity.getPassword());
 			prepareStatement.setString(3, accountEntity.getName());
 			prepareStatement.setString(4, accountEntity.getSurname());
-			prepareStatement.setDate(5, Date.valueOf(accountEntity.getBirthday()));
-			prepareStatement.setString(6, accountEntity.getCountry().name());
-			prepareStatement.setString(7, accountEntity.getCity());
-			prepareStatement.setString(8, accountEntity.getAddress());
-			prepareStatement.setString(9, accountEntity.getPhoneNumber());
-			prepareStatement.setString(10, accountEntity.getGender().name());
+			prepareStatement.setString(5, accountEntity.getImage());
+			prepareStatement.setDate(6, Date.valueOf(accountEntity.getBirthday()));
+			prepareStatement.setString(7, accountEntity.getCountry().name());
+			prepareStatement.setString(8, accountEntity.getCity());
+			prepareStatement.setString(9, accountEntity.getAddress());
+			prepareStatement.setString(10, accountEntity.getPhoneNumber());
+			prepareStatement.setString(11, accountEntity.getGender().name());
 			prepareStatement.executeUpdate();
 			var generatedKeys = prepareStatement.getGeneratedKeys();
 			if (generatedKeys.next()) {

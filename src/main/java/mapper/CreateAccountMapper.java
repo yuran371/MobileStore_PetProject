@@ -9,6 +9,7 @@ import utlis.DateFormatter;
 public class CreateAccountMapper {
 
 	private static CreateAccountMapper INSTANCE = new CreateAccountMapper();
+	private static final String USER_FOLDER = "user\\";
 
 	private CreateAccountMapper() {
 	}
@@ -20,6 +21,7 @@ public class CreateAccountMapper {
 	public PersonalAccountEntity mapOf(CreateAccountDto account) {
 		return PersonalAccountEntity.builder().email(account.getEmail()).password(account.getPassword())
 				.name(account.getName()).surname(account.getSurname())
+				.image(USER_FOLDER + account.getImage().getSubmittedFileName())
 				.birthday(DateFormatter.getDate(account.getBirthday())).country(Country.getValue(account.getCountry()))
 				.city(account.getCity()).address(account.getAddress()).phoneNumber(account.getPhoneNumber())
 				.gender(Gender.valueOf(account.getGender())).build();
