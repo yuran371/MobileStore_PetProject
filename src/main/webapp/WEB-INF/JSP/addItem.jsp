@@ -8,7 +8,7 @@
 <title>Create account</title>
 </head>
 <body>
-	<form action="/items" method="post">
+	<form action="/add-item" method="post">
 		<label for="modelId">
 			Model: <input type="text" name="model" id="modelId" required>
 		</label>

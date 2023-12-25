@@ -32,7 +32,7 @@
 		</label>
 		<br>
 		<label for="dateId">
-			Date of birth: <input type="date" name="dateOfBirth" id="dateId">
+			Date of birth: <input type="date" name="dateOfBirth" id="dateId" required>
 		</label>
 		<br>
 		<label>Your country:</label>
