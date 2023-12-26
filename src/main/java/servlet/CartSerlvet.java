@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import utlis.JspHelper;
 
-@WebServlet("/cart")
+@WebServlet(value = "/cart", name = "cart")
 public class CartSerlvet extends HttpServlet {
 
 	private final static String USER = "User";
