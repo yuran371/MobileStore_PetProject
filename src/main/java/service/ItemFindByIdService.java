@@ -1,8 +1,5 @@
 package service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import dao.ItemsDao;
 import dto.ItemsFindByIdDto;
 import entity.ItemsEntity;
@@ -20,7 +17,7 @@ public class ItemFindByIdService {
 	static ItemsDao itemsDao = ItemsDao.getInstance();
 
 	public ItemsFindByIdDto findById(Long itemId) {
-		ItemsEntity itemsEntity = ItemsDao.getInstance().getByItemId(itemId).get();
+		ItemsEntity itemsEntity = ItemsDao.getInstance().getById(itemId).get();
 		return new ItemsFindByIdDto(itemsEntity.getItemId(), itemsEntity.getModel(), itemsEntity.getBrand(),
 				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency(),
 				itemsEntity.getQuantity());

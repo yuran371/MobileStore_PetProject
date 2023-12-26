@@ -34,7 +34,6 @@ public class RegistrationServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
-
 		if (req.getSession().getAttribute(USER) != null) {
 			resp.sendRedirect("/items");
 			return;

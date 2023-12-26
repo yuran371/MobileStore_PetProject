@@ -12,7 +12,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import dto.CreateAccountDto;
+import entity.Country;
 import entity.PersonalAccountEntity;
+import lombok.SneakyThrows;
 import utlis.ConnectionPoolManager;
 import utlis.SqlExceptionLogger;
 
@@ -44,6 +46,12 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 			SELECT account_id, email, password, name, surname, birthday, country, city, address, phone_number, gender
 			FROM personal_account
 			WHERE account_id = ?;
+			""";
+
+	private final static String SQL_GET_BY_EMAIL_AND_PASSWORD = """
+			SELECT account_id, email, name, surname, birthday, country, city, address, phone_number, gender, image
+			FROM personal_account
+			WHERE email = ? AND password = crypt(?, password);
 			""";
 
 	private final static String SQL_SELECT_STATEMENT = """
@@ -117,6 +125,21 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 		return false;
 	}
 
+	@SneakyThrows
+	public Optional<PersonalAccountEntity> getByPasswordAndLogin(String login, String password) {
+		try (Connection connection = ConnectionPoolManager.get();
+				PreparedStatement prepareStatement = connection.prepareStatement(SQL_GET_BY_EMAIL_AND_PASSWORD)) {
+			prepareStatement.setString(1, login);
+			prepareStatement.setString(2, password);
+			ResultSet resultSet = prepareStatement.executeQuery();
+			PersonalAccountEntity result = null;
+			if (resultSet.next()) {
+				result = readUser(resultSet);
+			}
+			return Optional.ofNullable(result);
+		}
+	}
+
 	public Optional<PersonalAccountEntity> getByLogin(String login) {
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_GET_BY_LOGIN_STATEMENT)) {
@@ -170,4 +193,11 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 				.email(executeQuery.getString("email")).build();
 	}
 
+	private PersonalAccountEntity readUser(ResultSet resultSet) throws SQLException {
+		return PersonalAccountEntity.builder().email(resultSet.getObject("email", String.class))
+				.name(resultSet.getObject("name", String.class)).surname(resultSet.getObject("surname", String.class))
+				.image(resultSet.getObject("image", String.class)).birthday(resultSet.getDate("birthday").toLocalDate())
+				.country(Country.getValue(resultSet.getObject("country", String.class)))
+				.city(resultSet.getObject("city", String.class)).build();
+	}
 }

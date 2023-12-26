@@ -5,8 +5,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 import dto.CreateAccountDto;
-import entity.Country;
-import entity.Gender;
+import dto.ReadUserDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,28 +21,24 @@ public class ItemsServlet extends HttpServlet {
 	private final static String AUTHORIZATION_STATUS = "AuthorizationStatus";
 	private final static String USER = "User";
 
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		
+
 		if (req.getSession().getAttribute(USER) == null) {
 			resp.sendRedirect("/registration");
 			return;
 		}
-		
+
 		req.getRequestDispatcher(JspHelper.getUrl("items")).forward(req, resp);
-		
-		
+
 //		==================================
-		
+
 		var session = req.getSession();
-		var userDto = (CreateAccountDto) session.getAttribute(USER);
-		var authorized = (Boolean) req.getAttribute(AUTHORIZATION_STATUS) == null ? false
-				: (Boolean) req.getAttribute(AUTHORIZATION_STATUS);
+		var userDto = (ReadUserDto) session.getAttribute(USER);
 		try (PrintWriter printWriter = resp.getWriter()) {
-			if (authorized & userDto != null && !session.isNew()) {
+			if (userDto != null && !session.isNew()) {
 				printWriter.write("""
 						<h1>Welcome, %s. You are authorized. </h1>
 						""".formatted(userDto.getName()));
@@ -61,7 +56,7 @@ public class ItemsServlet extends HttpServlet {
 			printWriter.write("</ul>");
 		}
 	}
-	
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		{
@@ -69,10 +64,8 @@ public class ItemsServlet extends HttpServlet {
 			resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 			var session = req.getSession();
 			var userDto = (CreateAccountDto) session.getAttribute(USER);
-			var authorized = (Boolean) req.getAttribute(AUTHORIZATION_STATUS) == null ? false
-					: (Boolean) req.getAttribute(AUTHORIZATION_STATUS);
 			try (PrintWriter printWriter = resp.getWriter()) {
-				if (authorized & userDto != null && !session.isNew()) {
+				if (userDto != null && !session.isNew()) {
 					printWriter.write("""
 							<h1>Welcome, %s. You are authorized. </h1>
 							""".formatted(userDto.getName()));

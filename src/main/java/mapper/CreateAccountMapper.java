@@ -20,9 +20,9 @@ public class CreateAccountMapper {
 	}
 
 	public PersonalAccountEntity mapOf(CreateAccountDto account) {
-		
-		PersonalAccountEntity personalAccountEntity = PersonalAccountEntity.builder().email(account.getEmail()).password(account.getPassword())
-				.name(account.getName()).surname(account.getSurname())
+
+		PersonalAccountEntity personalAccountEntity = PersonalAccountEntity.builder().email(account.getEmail())
+				.password(account.getPassword()).name(account.getName()).surname(account.getSurname())
 				.image(USER_FOLDER + account.getImage().getSubmittedFileName())
 				.birthday(DateFormatter.getDate(account.getBirthday())).country(Country.getValue(account.getCountry()))
 				.city(account.getCity()).address(account.getAddress()).phoneNumber(account.getPhoneNumber())
@@ -32,5 +32,4 @@ public class CreateAccountMapper {
 		}
 		return personalAccountEntity;
 	}
-
 }

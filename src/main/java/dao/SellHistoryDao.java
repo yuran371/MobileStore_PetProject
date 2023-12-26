@@ -86,7 +86,7 @@ public class SellHistoryDao {
 	}
 
 	private SellHistoryEntity createSellHistoryEntityFromResultSet(ResultSet resultSet) throws SQLException {
-		return new SellHistoryEntity(itemsDao.getByItemId(resultSet.getLong("item_id")).orElseThrow(),
+		return new SellHistoryEntity(itemsDao.getById(resultSet.getLong("item_id")).orElseThrow(),
 				personalAccountDao.getByLogin(resultSet.getString("login")).orElseThrow(), resultSet.getInt("quantity"),
 				OffsetDateTime.ofInstant(Instant.ofEpochMilli(resultSet.getTimestamp("sell_date").getTime()),
 						ZoneOffset.UTC));
