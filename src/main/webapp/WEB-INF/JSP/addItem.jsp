@@ -6,7 +6,9 @@
 <html>
 <head>
 <title>Create account</title>
+<%@ include file="Header.jsp" %>
 </head>
+
 <body>
 	<form action="/add-item" method="post">
 		<label for="modelId">

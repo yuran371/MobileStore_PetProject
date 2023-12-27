@@ -7,9 +7,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>${sessionScope.User} корзина</title>
+	<title>${sessionScope.User.name} корзина</title>
 </head>
 <body>
+	<%@ include file="Header.jsp"%>
 	<c:choose>
 		<c:when test="${sessionScope.CartStatus == 'HAVE_ITEMS'}">
 			<ul>
@@ -24,7 +25,7 @@
 			<a href="/items-parameters?itemId=${param.itemId}">Return to item</a>
 		</c:when>
 		<c:otherwise>
-		<h3>Cart is empty</h3>
+		<div>Cart is empty</div>
 		</c:otherwise>
 	</c:choose>
 </body>

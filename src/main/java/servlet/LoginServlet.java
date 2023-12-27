@@ -18,7 +18,7 @@ import utlis.JspHelper;
 public class LoginServlet extends HttpServlet {
 
 	private final LoginService loginService = LoginService.getInstance();
-	private final static String USER = "User";
+	public final static String USER = "User";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,7 +32,6 @@ public class LoginServlet extends HttpServlet {
 				.password(req.getParameter("password")).build();
 		loginService.checkUser(dto).ifPresentOrElse(user -> successLogin(user, session, req, resp),
 				() -> loginError(req, resp));
-		;
 	}
 
 	@SneakyThrows
