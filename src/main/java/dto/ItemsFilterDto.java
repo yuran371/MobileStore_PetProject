@@ -10,4 +10,7 @@ public class ItemsFilterDto {
 	String brand;
 	Double price;
 	String currency;
+	String getCartParams() {
+		return model + " " + brand + " " + price + " " + currency + " " + " шт";
+	}
 }
