@@ -1,0 +1,616 @@
+[33mcommit ae43395e7b957b8ba7a1dd554cdff48b1e6aba9c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31mjoin/master[m[33m, [m[1;32mjoin[m[33m)[m
+Merge: 9f575b2 eee6229
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 27 17:39:14 2023 +0300
+
+    Fix conflicts of merging
+
+[33mcommit 9f575b2dd0b75a5d40361246906349530f83784e[m
+Merge: 7e697e0 dbe89af
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 27 17:33:14 2023 +0300
+
+    Merge pull request #13 from yuran371/master
+    
+    Implement switch lang buttons
+
+[33mcommit dbe89af7f158b6c77a807ab636f556512b8316a7[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Wed Dec 27 19:31:41 2023 +0300
+
+    Implement switch lang buttons
+
+[33mcommit eee62294b5bd31588f352c00649220a603701448[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 27 17:29:08 2023 +0300
+
+    Add EN and RU language for application + filter for language determination
+
+[33mcommit ed02edbe3cb22ca0cebc54206600bb2741e7abf4[m[33m ([m[1;32mLogoutAndAuthorization[m[33m)[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Wed Dec 27 16:31:22 2023 +0300
+
+    Implement logout and authorization
+
+[33mcommit 7e697e09a7770cb542dd82610f47878007b13666[m
+Merge: 76d4f85 ed02edb
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 27 14:35:39 2023 +0300
+
+    Merge pull request #12 from yuran371/master
+    
+    Implement logout and authorization
+
+[33mcommit 76d4f850b4f25c840e0afd027cfca1b2a7b971fb[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Tue Dec 26 17:13:04 2023 +0300
+
+    Add tested login on site
+
+[33mcommit 514b832b8e2ba6ef1d4e41591ca642c7aeacad1b[m
+Merge: 3fb1bd4 8dc52e4
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Tue Dec 26 12:49:21 2023 +0300
+
+    Merge pull request #11 from yuran371/master
+    
+    Add filters
+
+[33mcommit 8dc52e48a3de51cf7a834d7eb522820249f88a19[m[33m ([m[1;32mFilter[m[33m)[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Tue Dec 26 14:46:32 2023 +0300
+
+    Add Encoding&Registration filters
+
+[33mcommit 97860658b4602b2f095e71d7a948b3a9d9743e21[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Tue Dec 26 14:11:05 2023 +0300
+
+    Start realize filter
+
+[33mcommit 5a7ef17a3203869d10febd93362bc9db2d304452[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Mon Dec 25 17:00:42 2023 +0300
+
+    Realize avatar&defaultAva
+
+[33mcommit 3fb1bd46dbe71b362dc40681d3943578c79561d3[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Mon Dec 25 16:03:02 2023 +0300
+
+    Add image to JSP
+
+[33mcommit c061d7825e53947d4241fb8075e3c99154585220[m
+Merge: cc9e7d1 68f8eb7
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Mon Dec 25 15:56:40 2023 +0300
+
+    Merge branch 'join'
+
+[33mcommit cc9e7d17cc255e8aa0a0054c6ca6735f25e9b1be[m[33m ([m[1;32mCreateItemsEnum[m[33m)[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Mon Dec 25 15:33:58 2023 +0300
+
+    Items: add enums and addItemsJSP
+
+[33mcommit 36ac925543631fe2050aba17c02f9cd176d0f667[m
+Merge: 68f8eb7 5a7ef17
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Mon Dec 25 15:02:45 2023 +0300
+
+    Merge pull request #10 from yuran371/master
+    
+    Add avatar
+
+[33mcommit 68f8eb7aa5b8881060dac8249e59dfe004ef454a[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Mon Dec 25 13:26:36 2023 +0300
+
+    Add Image upload function. Need to fix add default image
+
+[33mcommit 5fa1e556ae4ed46ef47fd6c57c7d0212feb16ccb[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sat Dec 23 12:24:11 2023 +0300
+
+    Date resitriction now working
+
+[33mcommit 2dad04fa53794f9c0fa71f764977bfee0abcace3[m
+Merge: f0e3332 f03c6f8
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sat Dec 23 12:03:00 2023 +0300
+
+    Merge pull request #9 from yuran371/master
+    
+    WiP AgeCheck and itemsJSP
+
+[33mcommit f03c6f8855bd54453e27b576b14c6b4486d7c3ed[m[33m ([m[1;32mAddItemsJSP[m[33m)[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Sat Dec 23 13:05:11 2023 +0300
+
+    WiP ageCheck, itemsJSP
+
+[33mcommit 6252c410e65a42b1fe168db35dbd66abc22b4aa0[m[33m ([m[1;32mAddBirthdayValid[m[33m)[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Fri Dec 22 21:44:09 2023 +0300
+
+    Add age check
+
+[33mcommit f0e3332c92c79a62a5d159baa56a6200ffcafd59[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Fri Dec 22 13:11:51 2023 +0300
+
+    Tested + add Either + easter egg
+
+[33mcommit 8b494f334f3acef9c9a262237b3923732c31fd60[m
+Merge: b4af96a 12cdeb7
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Fri Dec 22 11:11:33 2023 +0300
+
+    Merge pull request #8 from yuran371/master
+    
+    Add redirect login/registration
+
+[33mcommit 12cdeb74f3645d14aeb15e40cd10d21dc1e4bb6c[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Fri Dec 22 13:00:07 2023 +0300
+
+    Add redirect login/registration
+
+[33mcommit b4af96a291731bb81ee28de4d52e1b540ed629f2[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Thu Dec 21 18:15:55 2023 +0300
+
+    Add untested validation and need to end servletLogin with new addons
+
+[33mcommit 4061458431bdddc611f7e2ef0b84288475abfeb8[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Thu Dec 21 15:31:43 2023 +0300
+
+    Add validators
+
+[33mcommit a2a7a7ba3a9f0c65d8e0217fa6c83159a492df2e[m
+Merge: 0770bd4 e756cac
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Thu Dec 21 14:52:46 2023 +0300
+
+    Merge pull request #7 from yuran371/master
+    
+    Refactor PersonalAccount dto & dao
+
+[33mcommit e756cac5c4673250b25c5ad22b818a6c2e572b7e[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Thu Dec 21 16:47:24 2023 +0300
+
+    Refactor PersonalAccount dto & dao
+
+[33mcommit 5bdf52755be884e83a8e12f9b5eecbee2f3e35a5[m
+Author: Artemy Eranov <yuoran371@gmail.com>
+Date:   Thu Dec 21 14:40:34 2023 +0300
+
+    refactor CreateAccountDto
+
+[33mcommit d08390783e41c260b8a188026d1544415c9b150c[m[33m ([m[1;32mRefactorLoginServlet[m[33m)[m
+Author: unknown <yuran371>
+Date:   Wed Dec 20 19:42:56 2023 +0300
+
+    Start ref. Registry: add enum and ref. Dao
+
+[33mcommit 01a2c8479db21657de744d96875822d4c8b59bb4[m
+Merge: 62e0b2c 0770bd4
+Author: unknown <yuran371>
+Date:   Wed Dec 20 16:28:03 2023 +0300
+
+    Fix merge conflict
+
+[33mcommit 0770bd444d2995145fdd23ce246d2e90aa289095[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 20 13:08:57 2023 +0300
+
+    Add registration.jsp
+
+[33mcommit 62e0b2ca944b4f25278f3edde61a195595f03a58[m
+Merge: 71ce336 7edd1cf
+Author: unknown <yuran371>
+Date:   Tue Dec 19 21:32:28 2023 +0300
+
+    Merge branch 'master' of https://github.com/DmitryAnisimovJava/Shop into join
+
+[33mcommit 7edd1cf96947ba4880adb6133bf17410720909b1[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Tue Dec 19 17:08:26 2023 +0300
+
+    Now we have JSP pages for cart! Congratz!
+
+[33mcommit 71ce336309f65882f1a74a2e3880284b2e9267a5[m
+Merge: f238178 6721545
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Mon Dec 18 16:20:14 2023 +0300
+
+    fix merge conflict
+
+[33mcommit f23817835232dc40762abf6888d722e6afbda85c[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Mon Dec 18 16:10:55 2023 +0300
+
+    delete conflicting file loginServlet
+
+[33mcommit 6721545cddba708b1be560798ade8b776b8498cf[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Mon Dec 18 14:45:43 2023 +0300
+
+    Add pom.xml for JSTL
+
+[33mcommit 9c55b8cdb858b71b32bc4327fa15cb41c28a2b75[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sun Dec 17 15:30:00 2023 +0300
+
+    Fix bug 'adding items in cart when refresh cart page' via add new AddToCartServlet
+
+[33mcommit d2d64726cfa43e8131a2df6132ccb8c86021fd13[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sat Dec 16 12:17:47 2023 +0300
+
+    Add Locale cookie in LoginServlet
+
+[33mcommit a3ea1352534275c89ffbc5ea1485be252f1126a1[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Fri Dec 15 17:40:45 2023 +0300
+
+    Add redirect and forward to login-status servlet
+
+[33mcommit f8dbe123cf1f2e626c33ef43680105c4cbc3646e[m
+Merge: 993cffd 60b3b87
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Fri Dec 15 14:49:01 2023 +0300
+
+    Merge pull request #6 from yuran371/master
+    
+    Add cart and many refactors
+
+[33mcommit 60b3b87ee8c51f2a555e76d754ad44d0898a500a[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Fri Dec 15 14:46:48 2023 +0300
+
+    Add cart and many refactors
+
+[33mcommit 993cffd8fcbe570dde8479b1227348e769dc9077[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Thu Dec 14 17:54:59 2023 +0300
+
+    Add CartDto, CartServlet (not tested, not finished), CartService
+
+[33mcommit d4f41b889dbc5f6cf4b7c405548b02010a1fd1fd[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Thu Dec 14 15:59:44 2023 +0300
+
+    Add session in LoginServlet.java
+
+[33mcommit 369b3c1e62b6226d11969a4bcdb6f74868a1c506[m
+Merge: 5abf155 ab20f02
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Thu Dec 14 11:56:20 2023 +0300
+
+    Merge pull request #5 from yuran371/master
+    
+    LoginServlet.doGet()
+
+[33mcommit ab20f02a3adb325182b1cd08052595dc2c225f40[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Thu Dec 14 11:50:45 2023 +0300
+
+    Add LoginServlet.doGet()
+
+[33mcommit e2c3b019dab87d334237f9033537b48fd2e60ddc[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Thu Dec 14 11:34:46 2023 +0300
+
+    Rename loginServlet
+
+[33mcommit 634749a7a40c36914563ea7eef830851d039ecdd[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Thu Dec 14 11:27:32 2023 +0300
+
+    Start realization LoginServlet.doGet() and small refactor
+
+[33mcommit 5abf155c80f1e3b7a8bf8faa3acf1a4eedc69130[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 13 19:12:00 2023 +0300
+
+    Add cookie in doGet() from loginServlet
+
+[33mcommit bd1833cb8806abd794c568190f6699487bf4b764[m
+Merge: b02b8c5 a52dbbc
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 13 17:04:22 2023 +0300
+
+    Merge pull request #4 from yuran371/master
+    
+    Add lombok
+
+[33mcommit a52dbbc375355ce18a80305d0b2b71e541da3a22[m
+Merge: 2915230 b02b8c5
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Wed Dec 13 17:00:09 2023 +0300
+
+    Fix conflicts
+
+[33mcommit b02b8c5012420c95b2324a778b23cb498a421b35[m
+Merge: b455a06 c3290c7
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 13 16:47:47 2023 +0300
+
+    Merge branch 'addCookies'
+
+[33mcommit c3290c76ca9641a1f37f38800e657cbd5195c5bd[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 13 16:42:38 2023 +0300
+
+    Improve and fix bugs in PersAcc table and classes
+
+[33mcommit 29152307f780b5ea235248a5c7e494180020dab2[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Wed Dec 13 12:32:19 2023 +0300
+
+    Add lombok into ItemsFilterDto
+
+[33mcommit b455a06efdab0c28fee95128074629bbbe94c74c[m
+Merge: d139427 872493f
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 13 10:29:49 2023 +0300
+
+    Merge pull request #3 from yuran371/master
+    
+    Create items and items-parameters servlet
+
+[33mcommit 872493f8a11a7065f41cbb7a6c5ace89b9d2c35a[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Wed Dec 13 10:16:56 2023 +0300
+
+    Add items-parameters Servlet
+
+[33mcommit b8100998820712fe9665955f1351c81991eeb9d2[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Wed Dec 13 10:14:13 2023 +0300
+
+    Add items-parameters Servlet
+
+[33mcommit c6270f724d4c938462e83dd6b6d28ef9cf646bed[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 12 23:59:32 2023 +0300
+
+    Rename url
+
+[33mcommit d1394273c9b7768c1f9534086bb1c3b1270f72a9[m
+Merge: 6229afc 80250ac
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Tue Dec 12 17:31:11 2023 +0300
+
+    Merge pull request #2 from yuran371/master
+    
+    Add ItemsServlet
+
+[33mcommit 80250ac07179b263f24a415af74e06da3100a1f8[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 12 17:20:34 2023 +0300
+
+    Change .classpath and .gitignore
+
+[33mcommit b9e97dd9b8058b78c7e8ddaa6d7c5d10cf304807[m
+Merge: b25faf8 66db113
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 12 16:58:44 2023 +0300
+
+    Merge branch 'CreateItemsServlet'
+
+[33mcommit b25faf81b0ed755406e259a2ec759baa50cd6c12[m
+Merge: 0cee783 fef6f70
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 12 16:56:06 2023 +0300
+
+    fix git conflicts
+
+[33mcommit fef6f703bc12a4248b4aa076c253f20307fa16bd[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 12 16:45:03 2023 +0300
+
+    Rename package service
+
+[33mcommit 6229afca86c5cae81d2f74bb3d8ec41e95b0afaa[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Tue Dec 12 16:39:11 2023 +0300
+
+    Add Registration servlet and page
+
+[33mcommit 66db113660af70b4db001a2aa2fe5845fd25474e[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 12 16:37:40 2023 +0300
+
+    Add servlet ItemsServlet; fix ItemsDto
+
+[33mcommit 0cee783103a5ae6c9adb9f8b2c50b201ba8f1348[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 12 12:25:29 2023 +0300
+
+    Add ItemsService; fix ItemsDto
+
+[33mcommit 0c801d0580be97ca6bdee46c6f03e84a3f2e86ff[m
+Merge: 65e6182 8c53699
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Mon Dec 11 16:22:31 2023 +0300
+
+    Merge pull request #1 from yuran371/master
+    
+    Add currency column and add more data
+
+[33mcommit 8c5369917f4a202f6b016872ca037eff6dfc30ad[m
+Author: DmitryAnisimovJava <130083398+DmitryAnisimovJava@users.noreply.github.com>
+Date:   Mon Dec 11 16:20:49 2023 +0300
+
+    Update project-metadata.json
+
+[33mcommit cd4272ce2599ec843c1b5e73f7b4dc765e66dfe0[m
+Merge: 342a653 65e6182
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Mon Dec 11 16:15:11 2023 +0300
+
+    Merge branch 'join'
+
+[33mcommit 342a653800ddb74ecaba8af9083eb94d3353bcc8[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Mon Dec 11 16:11:37 2023 +0300
+
+    Add currency column and add more data
+
+[33mcommit 65e618237c928465e5ecef77f752f96707eac667[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Mon Dec 11 16:08:06 2023 +0300
+
+    Add more persons in tests
+
+[33mcommit f1fc1ffda1533c28a2603015c598f556352cb7b6[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sun Dec 10 20:31:16 2023 +0300
+
+    Add untested filter method in SellHistory Dao and little change in OffsetDateTime to Timestamp convertion
+
+[33mcommit f7a565f97f6105d026d637c9f245139bde34768f[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sun Dec 10 19:31:24 2023 +0300
+
+    Add dto for SellHistory and Items filters
+
+[33mcommit 8dafa465ded3095f64e21da7cb4835386237fc52[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sat Dec 9 12:49:53 2023 +0300
+
+    Add test for SellHistory and change constructor for SellHist and Items Entities
+
+[33mcommit 1af340cda7b688f111bcab1ed6b141b1fc64059d[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sat Dec 9 12:20:11 2023 +0300
+
+    Add get() in ItemsDao and Test for this method
+
+[33mcommit 84e450b9f5d248c9a6bdcd9254690b20a06dc69a[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sat Dec 9 11:34:03 2023 +0300
+
+    Add exception for incorrect Quantity
+
+[33mcommit 2f73b43416ced00a46e10cc9b9bd22ae87f0bf2f[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Fri Dec 8 18:21:13 2023 +0300
+
+    Add untested method changeQuantity()
+
+[33mcommit 96364e6768b8009c72821f61a94ba7af9f383b41[m
+Merge: e0fb4e5 4d48fd3
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Fri Dec 8 17:55:15 2023 +0300
+
+    Merge master
+
+[33mcommit e0fb4e5eb73a83868b3a2bdfc286f3074dde1908[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Fri Dec 8 17:54:08 2023 +0300
+
+    Fix pull conflict
+
+[33mcommit 4d48fd3d56c36855832372f688055568893bef7d[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Fri Dec 8 17:46:29 2023 +0300
+
+    Add SellHistory Dao and Entity + add dto for PerAcc
+
+[33mcommit 161e9fa12b3f5d795f59ad86afe2488e7da55470[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Thu Dec 7 17:20:03 2023 +0300
+
+    ItemsDao testing error
+
+[33mcommit 51c18bf48e94c5629146f42d561edb2617a077f2[m
+Merge: 0464c75 c8484cf
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Thu Dec 7 16:35:11 2023 +0300
+
+    merge
+
+[33mcommit c8484cfb87ee5eceda3b92dabc248803e8321d53[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Thu Dec 7 16:27:04 2023 +0300
+
+    Delete conficting file
+
+[33mcommit 8fed94e796d4729ea8a0d5782d16dc74890d3b9d[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Thu Dec 7 16:13:06 2023 +0300
+
+    Add ItemsDao&Entity
+
+[33mcommit 0464c75d69e3604ee8a251cfe63624edc041f51e[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Thu Dec 7 15:31:38 2023 +0300
+
+    Add accounts Dao and tests. Add methods in ConnectionManager for close() reflection
+
+[33mcommit 03d2275c959517e3bb251ffd6c9d3607c326c0a6[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Wed Dec 6 16:07:11 2023 +0300
+
+    Add custom exceptions
+
+[33mcommit 38e06a401e00cd2c5e1c430c8fbb571913cbb0f5[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 6 14:17:47 2023 +0300
+
+    Add .properties file, all util classes and test for Util classes.
+
+[33mcommit 77f3402049bccb037ca8d2cc835be12f3d17f5d1[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Wed Dec 6 11:13:10 2023 +0300
+
+    Add sell_history table
+
+[33mcommit 275842cf031ce8b57436c64c155e17dfe501a25a[m
+Merge: bd5222e 2ca5155
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Tue Dec 5 17:31:28 2023 +0300
+
+    Merge branch 'create_tables'
+    Merged create_tables
+
+[33mcommit 2ca515503b743b2b02cde7f8cf284892e87f75b3[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Tue Dec 5 17:20:36 2023 +0300
+
+    Create personal_account table in PSQL.
+
+[33mcommit bd5222e57d9dfa64b957a7dde4f6d4081390aa1e[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 5 17:19:01 2023 +0300
+
+    Add script (Items)
+
+[33mcommit a40b4b86b6a8da2cd205dfa552a2e635155eda38[m
+Author: Artem Yuran <yuoran371@gmail.com>
+Date:   Tue Dec 5 12:53:15 2023 +0300
+
+    Check commit #2
+
+[33mcommit 30957bc5accd79bd3906e3d6ba1955b791339c7f[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Tue Dec 5 12:24:55 2023 +0300
+
+    refactor: add in docker-compose final ports and restart param.
+
+[33mcommit 21ebaea3406772a179f4e2308d6dce8c3a0031de[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Mon Dec 4 11:59:26 2023 +0300
+
+    add Docker-compose.yml and refactor POM.xml
+
+[33mcommit 44d37b59e43e470abe2a7f6ebe6e52a620057c31[m
+Author: DmitryAnisimovJava <DmitryAnisimovJava@users.noreply.github.com>
+Date:   Sat Dec 2 12:56:03 2023 +0300
+
+    Add base structure of project

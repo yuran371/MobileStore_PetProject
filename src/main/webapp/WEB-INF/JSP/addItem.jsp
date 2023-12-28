@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Create account</title>
+<title>Add item</title>
 <%@ include file="Header.jsp" %>
 </head>
 

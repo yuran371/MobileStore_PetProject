@@ -14,10 +14,10 @@ import entity.ItemsEntity;
 import utlis.ConnectionPoolManager;
 import utlis.SqlExceptionLogger;
 
-public class ItemsDao implements Dao<Long, ItemsEntity>{
+public class ItemsDao implements Dao<Long, ItemsEntity> {
 
 	private static ItemsDao INSTANCE = new ItemsDao();
-	
+
 	private static SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
 
 	public static ItemsDao getInstance() {
@@ -45,10 +45,16 @@ public class ItemsDao implements Dao<Long, ItemsEntity>{
 			SELECT *
 			FROM items
 			""";
-	
+
 	private final static String SQL_DELETE_BY_ID = """
 			DELETE FROM items
 			WHERE item_id = ?
+			""";
+
+	private final static String SQL_FIND_BY_BRAND = """
+			SELECT *
+			FROM items
+			WHERE brand = ?
 			""";
 
 	public Long Insert(List<ItemsEntity> arrayList) {
@@ -116,16 +122,11 @@ public class ItemsDao implements Dao<Long, ItemsEntity>{
 		}
 	}
 
-	private ItemsEntity buildItems(ResultSet resultSet) throws SQLException {
-		return new ItemsEntity(resultSet.getLong("item_id"), resultSet.getString("model"), resultSet.getString("brand"),
-				resultSet.getString("attributes"), resultSet.getDouble("price"), resultSet.getString("currency"),
-				resultSet.getInt("quantity"));
-	}
-	
 	@Override
 	public Long insert(ItemsEntity entity) {
 		try (Connection connection = ConnectionPoolManager.get();
-				PreparedStatement statement = connection.prepareStatement(SQL_INSERT_STATEMENT, Statement.RETURN_GENERATED_KEYS)) {
+				PreparedStatement statement = connection.prepareStatement(SQL_INSERT_STATEMENT,
+						Statement.RETURN_GENERATED_KEYS)) {
 			statement.setString(1, entity.getModel());
 			statement.setString(2, entity.getBrand());
 			statement.setString(3, entity.getAttributes());
@@ -172,6 +173,27 @@ public class ItemsDao implements Dao<Long, ItemsEntity>{
 			// TODO Auto-generated catch block
 			throw new RuntimeException(e);
 		}
+	}
+
+	public List<ItemsEntity> findByBrand(String brand) {
+		try (var connection = ConnectionPoolManager.get();
+				var prepareStatement = connection.prepareStatement(SQL_FIND_BY_BRAND)) {
+			prepareStatement.setString(1, brand);
+			var resultSet = prepareStatement.executeQuery();
+			List<ItemsEntity> itemsList = new ArrayList<>();
+			while (resultSet.next()) {
+				itemsList.add(buildItems(resultSet));
+			}
+			return itemsList;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private ItemsEntity buildItems(ResultSet resultSet) throws SQLException {
+		return new ItemsEntity(resultSet.getLong("item_id"), resultSet.getString("model"), resultSet.getString("brand"),
+				resultSet.getString("attributes"), resultSet.getDouble("price"), resultSet.getString("currency"),
+				resultSet.getInt("quantity"));
 	}
 
 }
