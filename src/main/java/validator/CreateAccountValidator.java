@@ -41,7 +41,6 @@ public class CreateAccountValidator {
 			createAccountErrors.add(new Error("Gender is invalid",
 					"Choosen gender is invalid. Please, check that choosen gender is correct"));
 		}
-
 		if (Period.between(DateFormatter.getDate(account.getBirthday()), LocalDate.now()).getYears() < 18) {
 			createAccountErrors
 					.add(new Error("Age is invalid", "Age is invalid. To register you must be over 18 y.o."));

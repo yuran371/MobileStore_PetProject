@@ -5,18 +5,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
-import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 import entity.Country;
 import entity.Gender;
@@ -53,8 +51,8 @@ public class UserCreator extends Thread {
 		String email = getSaltString() + "@yandex.ru";
 		String password = getSaltString();
 		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-			ClassicHttpRequest httpPost = ClassicRequestBuilder.post("http://localhost:8081/registration")
-					.setEntity(createEntity(email, password)).build();
+			HttpPost httpPost = new HttpPost("http://localhost:8081/registration");
+			httpPost.setEntity(createEntity(email, password));
 			httpClient.execute(httpPost, response -> {
 				HttpEntity entity = response.getEntity();
 				Path path = Path.of("src", "test", "resources", "response_files", currentThread().getName() + ".txt");
@@ -78,18 +76,20 @@ public class UserCreator extends Thread {
 
 	}
 
-	private UrlEncodedFormEntity createEntity(String email, String password) {
+	private HttpEntity createEntity(String email, String password) {
 		String address = getAddressRandom();
-		return new UrlEncodedFormEntity(Arrays.asList(new BasicNameValuePair(RegistrationParams.EMAIL.label, email),
-				new BasicNameValuePair(RegistrationParams.PASSWORD.label, password),
-				new BasicNameValuePair(RegistrationParams.NAME.label, getSaltString()),
-				new BasicNameValuePair(RegistrationParams.SURNAME.label, getSaltString()),
-				new BasicNameValuePair(RegistrationParams.BIRTHDAY.label, getDateRandom()),
-				new BasicNameValuePair(RegistrationParams.COUNTRY.label, getCountryRandom()),
-				new BasicNameValuePair(RegistrationParams.CITY.label, getCity(address)),
-				new BasicNameValuePair(RegistrationParams.ADDRESS.label, address),
-				new BasicNameValuePair(RegistrationParams.PHONE_NUMBER.label, getPhoneRandom()),
-				new BasicNameValuePair(RegistrationParams.GENDER.label, getGenderRandom())));
+		HttpEntity reqEntity = MultipartEntityBuilder.create().setContentType(ContentType.MULTIPART_FORM_DATA)
+				.addTextBody(RegistrationParams.EMAIL.label, email)
+				.addTextBody(RegistrationParams.PASSWORD.label, password)
+				.addTextBody(RegistrationParams.NAME.label, getSaltString())
+				.addTextBody(RegistrationParams.SURNAME.label, getSaltString())
+				.addTextBody(RegistrationParams.BIRTHDAY.label, getDateRandom())
+				.addTextBody(RegistrationParams.COUNTRY.label, getCountryRandom())
+				.addTextBody(RegistrationParams.CITY.label, getCity(address))
+				.addTextBody(RegistrationParams.ADDRESS.label, address)
+				.addTextBody(RegistrationParams.PHONE_NUMBER.label, getPhoneRandom())
+				.addTextBody(RegistrationParams.GENDER.label, getGenderRandom()).build();
+		return reqEntity;
 	}
 
 	protected String getSaltString() {
@@ -116,15 +116,15 @@ public class UserCreator extends Thread {
 	private static String getDateRandom() {
 		long randomDayOfEpoch = RANDOM.nextLong(0L, LocalDate.now().minusYears(5).toEpochDay());
 		LocalDate dateOfBirth = LocalDate.ofEpochDay(randomDayOfEpoch);
-		return String.format("%02d.%02d.%d", dateOfBirth.getDayOfMonth(), dateOfBirth.getMonthValue(),
-				dateOfBirth.getYear());
+		return String.format("%d-%02d-%02d", dateOfBirth.getYear(), dateOfBirth.getMonthValue(),
+				dateOfBirth.getDayOfMonth());
 	}
 
 	@SneakyThrows
 	private static String getAddressRandom() {
 		Path path = Path.of("src", "test", "resources", "RU.txt");
 		String result = "";
-		int addressLineFromFile = RANDOM.nextInt(2000);
+		int addressLineFromFile = RANDOM.nextInt(200);
 		try (Scanner scanner = new Scanner(path)) {
 			long counter = 0L;
 			while (scanner.hasNextLine()) {
@@ -152,4 +152,7 @@ public class UserCreator extends Thread {
 		return phoneNumber.toString();
 	}
 
+	public static void main(String[] args) {
+		System.out.println(getDateRandom());
+	}
 }
