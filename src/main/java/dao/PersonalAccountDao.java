@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import dto.CreateAccountDto;
 import entity.Country;
 import entity.PersonalAccountEntity;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import utlis.ConnectionPoolManager;
 import utlis.SqlExceptionLogger;
@@ -65,7 +66,7 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 			""";
 
 	@Override
-	public Long insert(PersonalAccountEntity accountEntity) {
+	public Long insert(@NonNull PersonalAccountEntity accountEntity) {
 		try (var connection = ConnectionPoolManager.get();
 				var prepareStatement = connection.prepareStatement(SQL_INSERT_STATEMENT,
 						Statement.RETURN_GENERATED_KEYS)) {
