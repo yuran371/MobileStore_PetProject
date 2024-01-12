@@ -21,7 +21,7 @@
 	<br>
 	<ul>
 		<c:forEach var="item" items="${requestScope.items}">
-			<li>${item.model} ${item.price} ${item.currency} </li>
+			<li>${item.getCartParams()}</li>
 		</c:forEach>
 	</ul>
 </body>

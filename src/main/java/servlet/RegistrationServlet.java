@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Enumeration;
 
 import dto.CreateAccountDto;
 import entity.Country;
@@ -49,12 +50,13 @@ public class RegistrationServlet extends HttpServlet {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
 		var cookies = req.getCookies();
-		boolean cookieIsEmpty = Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(LOCAL_COOKIE))
-				.findFirst().isEmpty() || cookies == null;
+		boolean cookieIsEmpty = cookies == null
+				|| Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(LOCAL_COOKIE)).findFirst().isEmpty();
 		if (cookieIsEmpty) {
 			Cookie localCookie = new Cookie(LOCAL_COOKIE, req.getLocale().toString());
 			resp.addCookie(localCookie);
 		}
+		Enumeration<String> parameterNames = req.getParameterNames();
 		var session = req.getSession();
 		CreateAccountDto accountDto = CreateAccountDto.builder().email(req.getParameter("email"))
 				.password(req.getParameter("password")).name(req.getParameter("name"))

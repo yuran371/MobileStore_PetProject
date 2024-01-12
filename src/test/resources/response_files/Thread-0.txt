@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><title>HTTP Status 500 – Internal Server Error</title><style type="text/css">body {font-family:Tahoma,Arial,sans-serif;} h1, h2, h3, b {color:white;background-color:#525D76;} h1 {font-size:22px;} h2 {font-size:16px;} h3 {font-size:14px;} p {font-size:12px;} a {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 500 – Internal Server Error</h1><hr class="line" /><p><b>Type</b> Exception Report</p><p><b>Message</b> Text &#39;.1990.02.14&#39; could not be parsed at index 0</p><p><b>Description</b> The server encountered an unexpected condition that prevented it from fulfilling the request.</p><p><b>Exception</b></p><pre>java.time.format.DateTimeParseException: Text &#39;.1990.02.14&#39; could not be parsed at index 0
+	java.base&#47;java.time.format.DateTimeFormatter.parseResolved0(DateTimeFormatter.java:2052)
+	java.base&#47;java.time.format.DateTimeFormatter.parse(DateTimeFormatter.java:1954)
+	java.base&#47;java.time.LocalDate.parse(LocalDate.java:430)
+	utlis.DateFormatter.getDate(DateFormatter.java:15)
+	validator.CreateAccountValidator.isValid(CreateAccountValidator.java:44)
+	service.CreateAccountService.save(CreateAccountService.java:29)
+	servlet.RegistrationServlet.doPost(RegistrationServlet.java:67)
+	jakarta.servlet.http.HttpServlet.service(HttpServlet.java:547)
+	jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614)
+	org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	filter.GetLanguageFilter.doFilter(GetLanguageFilter.java:29)
+	jakarta.servlet.http.HttpFilter.doFilter(HttpFilter.java:97)
+	filter.EncodingFilter.doFilter(EncodingFilter.java:22)
+	jakarta.servlet.http.HttpFilter.doFilter(HttpFilter.java:97)
+	filter.AuthorizationFilter.doFilter(AuthorizationFilter.java:26)
+	jakarta.servlet.http.HttpFilter.doFilter(HttpFilter.java:97)
+</pre><p><b>Note</b> The full stack trace of the root cause is available in the server logs.</p><hr class="line" /><h3>Apache Tomcat/10.1.12</h3></body></html>
