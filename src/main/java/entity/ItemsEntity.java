@@ -2,6 +2,8 @@ package entity;
 
 import java.util.Objects;
 
+import lombok.Builder;
+@Builder
 public class ItemsEntity {
 	private Long itemId;
 	private String model;
