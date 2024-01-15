@@ -20,7 +20,7 @@ import dao.PersonalAccountDao;
 import dto.LoginUserDto;
 import dto.ReadUserDto;
 import entity.PersonalAccountEntity;
-import extentions.PersonalAccountServiceExtension;
+import extentions.LoginServiceExtension;
 import service.LoginService;
 
 public class ServiceTest {
@@ -28,8 +28,8 @@ public class ServiceTest {
 	@Nested
 	@Tag("PersonalAccountService")
 	@TestInstance(Lifecycle.PER_METHOD)
-	@ExtendWith({ PersonalAccountServiceExtension.class, MockitoExtension.class })
-	class PersonalAccount {
+	@ExtendWith({ LoginServiceExtension.class, MockitoExtension.class })
+	class Login {
 
 		@Mock
 		private LoginUserDto userDto;

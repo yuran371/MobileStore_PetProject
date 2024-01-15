@@ -14,7 +14,7 @@ import entity.Country;
 import entity.Gender;
 import entity.PersonalAccountEntity;
 
-public class PersonalAccountServiceExtension implements BeforeAllCallback, ParameterResolver {
+public class LoginServiceExtension implements BeforeAllCallback, ParameterResolver {
 
 	private String personalAccountEntity = "Entity";
 	private Namespace storeName = Namespace.create(personalAccountEntity);

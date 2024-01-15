@@ -40,7 +40,7 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 	private final static String SQL_GET_BY_LOGIN_STATEMENT = """
 			SELECT account_id, email, name, surname, country, city, address, phone_number
 			FROM personal_account
-			WHERE login LIKE ?;
+			WHERE email LIKE ?;
 			""";
 
 	private final static String SQL_GET_BY_ID_STATEMENT = """
@@ -61,8 +61,8 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 			""";
 
 	private final static String SQL_DELETE_BY_ID = """
-			DELETE FROM items
-			WHERE item_id = ?
+			DELETE FROM personal_account
+			WHERE account_id = ?
 			""";
 
 	@Override
@@ -185,11 +185,7 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 		}
 	}
 
-	@Deprecated
 	private static PersonalAccountEntity createEntityByResultSet(ResultSet executeQuery) throws SQLException {
-		// TODO wrong realization. Need to think about security problems when getting
-		// password from DB. Maybe dont save it in entity. Making Deprecated until find
-		// solution.
 		return PersonalAccountEntity.builder().accountId(executeQuery.getLong("account_id"))
 				.email(executeQuery.getString("email")).build();
 	}
