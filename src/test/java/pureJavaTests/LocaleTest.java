@@ -1,3 +1,4 @@
+package pureJavaTests;
 import java.util.Locale;
 
 public class LocaleTest {

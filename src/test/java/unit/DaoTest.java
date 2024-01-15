@@ -1,3 +1,5 @@
+package unit;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
@@ -16,13 +18,13 @@ import dao.PersonalAccountDao;
 import entity.Country;
 import entity.Gender;
 import entity.PersonalAccountEntity;
-import resolvers.PersonalAccountParameterResolver;
+import extentions.PersonalAccountParameterResolver;
 
 public class DaoTest {
 
 	@Nested
 	@TestInstance(value = Lifecycle.PER_CLASS)
-	@Tag(value = "PersonalAccount")
+	@Tag(value = "PersonalAccountDao")
 	@ExtendWith(value = { PersonalAccountParameterResolver.class })
 	class PersonalAccount {
 
