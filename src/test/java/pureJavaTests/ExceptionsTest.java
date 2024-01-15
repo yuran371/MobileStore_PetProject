@@ -1,3 +1,4 @@
+package pureJavaTests;
 import utlis.ConnectionPoolManager;
 import utlis.PropertiesUtil;
 

@@ -1,3 +1,4 @@
+package pureJavaTests;
 import dao.PersonalAccountDao;
 import utlis.ConnectionPoolManager;
 

@@ -1,3 +1,4 @@
+package pureJavaTests;
 import java.util.Arrays;
 
 import dao.ItemsDao;

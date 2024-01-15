@@ -13,7 +13,11 @@ import lombok.NoArgsConstructor;
 public class LoginService {
 
 	private static final LoginService INSTANCE = new LoginService();
-	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
+	private PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
+
+	public static LoginService getInstance() {
+		return INSTANCE;
+	}
 
 	public Optional<ReadUserDto> checkUser(LoginUserDto user) {
 		Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao
@@ -27,7 +31,4 @@ public class LoginService {
 		return Optional.empty();
 	}
 
-	public static LoginService getInstance() {
-		return INSTANCE;
-	}
 }
