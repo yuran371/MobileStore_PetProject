@@ -3,3 +3,6 @@
 /.settings/
 /.classpath/
 .idea
+.dbeaver
+*.iml
+.settings

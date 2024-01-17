@@ -1,5 +1,4 @@
 version: '3.1'
-name: pet-project-shop-db
 services:
 
   db:
