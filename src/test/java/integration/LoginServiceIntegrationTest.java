@@ -3,6 +3,8 @@ package integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterAll;
@@ -33,7 +35,11 @@ public class LoginServiceIntegrationTest extends IntegrationTestBase {
 
 	@Test
 	void serviceReturnExistingUserFromDb(PersonalAccountEntity entity) {
-		personalAccountDao.insert(entity);
+        try {
+            addUser();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 		LoginUserDto user = LoginUserDto.builder().email(entity.getEmail()).password(entity.getPassword()).build();
 		Optional<ReadUserDto> checkUser = service.checkUser(user);
 		userId = checkUser.isPresent() ? checkUser.get().getEmail() : "";
@@ -42,10 +48,7 @@ public class LoginServiceIntegrationTest extends IntegrationTestBase {
 	}
 
 	@AfterAll
-	void deleteUser() {
-		Optional<PersonalAccountEntity> byLogin = personalAccountDao.getByLogin(userId);
-		if (!userId.isBlank() && byLogin.isPresent()) {
-			personalAccountDao.delete(byLogin.get().getAccountId());
-		}
+	void clear() throws SQLException, IOException {
+		deleteUser();
 	}
 }

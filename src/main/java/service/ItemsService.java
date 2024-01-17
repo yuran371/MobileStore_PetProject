@@ -31,11 +31,11 @@ public class ItemsService {
 				.collect(Collectors.toList());
 	}
 
-//	public ItemsDto findById(Long itemId) {
-//		ItemsEntity itemsEntity = InstanceDao.getByItemId(itemId).get();
-//		return new ItemsDto(itemsEntity.getItemId(), itemsEntity.getModel(), itemsEntity.getBrand(),
-//				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency(),
-//				itemsEntity.getQuantity());
-//	}
+	public ItemsDto findById(Long itemId) {
+		ItemsEntity itemsEntity = InstanceDao.getById(itemId).get();
+		return new ItemsDto(itemsEntity.getItemId(), itemsEntity.getModel(), itemsEntity.getBrand(),
+				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency(),
+				itemsEntity.getQuantity());
+	}
 
 }

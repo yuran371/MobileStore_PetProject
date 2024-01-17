@@ -34,7 +34,7 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
 	private final static String SQL_CHANGE_QUANTITY = """
 			UPDATE items
 			SET quantity=quantity-?
-			WHERE item_id=?
+	WHERE item_id=?
 			""";
 	private final static String SQL_GET_STATEMENT = """
 			SELECT *
