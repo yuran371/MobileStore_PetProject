@@ -1,12 +1,13 @@
 package utlis;
 
 import entity.ItemsEntity;
+import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.hibernate.cfg.Configuration;
-
+@UtilityClass
 public class HibernateSessionFactory {
-    public static SessionFactory getSessionFactory() {
+    public SessionFactory getSessionFactory() {
         Configuration configuration = new Configuration().configure();
         configuration.addAnnotatedClass(ItemsEntity.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
