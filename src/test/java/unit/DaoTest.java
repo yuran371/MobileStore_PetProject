@@ -1,13 +1,9 @@
 package unit;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.time.LocalDate;
-import java.util.stream.Stream;
-
 import dao.ItemsDao;
+import dao.PersonalAccountDao;
 import entity.*;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
+import extentions.PersonalAccountParameterResolver;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,8 +14,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import dao.PersonalAccountDao;
-import extentions.PersonalAccountParameterResolver;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DaoTest {
     @Nested
@@ -28,16 +27,25 @@ public class DaoTest {
         ItemsDao itemsDao = ItemsDao.getInstance();
         ItemsEntity itemsEntity = ItemsEntity.builder().model("xperia").brand("sony").attributes("32gb").price(999.99)
                 .currency(CurrencyEnum.₸.name()).quantity(13).build();
+
         @Test
         void insertMethodReturnsUserIdFromDB() {
             itemsDao.insert(itemsEntity);
         }
+
+        @Test
+        void findAllMethodReturnList() {
+            List<ItemsEntity> all = itemsDao.findAll();
+            assertThat(all).hasSize(15);
+        }
     }
+
 
     @Nested
     @TestInstance(value = Lifecycle.PER_CLASS)
     @Tag(value = "PersonalAccountDao")
     @ExtendWith(value = {PersonalAccountParameterResolver.class})
+
     class PersonalAccount {
 
         private PersonalAccountDao instance;

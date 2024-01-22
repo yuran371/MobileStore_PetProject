@@ -3,11 +3,15 @@ package entity;
 import java.util.Objects;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "items")
 public class ItemsEntity {
     @Id
