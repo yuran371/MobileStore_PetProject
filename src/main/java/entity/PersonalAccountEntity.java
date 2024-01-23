@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnTransformer;
 
 import java.time.LocalDate;
 
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "personal_account", schema = "market", indexes = {
-        @Index(name = "emailIndex",columnList = "email", unique = true)
+        @Index(name = "emailIndex", columnList = "email", unique = true)
 })
 public class PersonalAccountEntity {
 
@@ -22,6 +23,14 @@ public class PersonalAccountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
     private String email;
+    @ColumnTransformer(read = "pgp_sym_decrypt(" +
+            "    password, " +
+            "    current_setting('encrypt.key')" +
+            ")", write = "pgp_sym_encrypt( " +
+            "    ?, " +
+            "    current_setting('encrypt.key')" +
+            ") ")
+    @Column(columnDefinition = "bytea")
     private String password;
     private String name;
     private String surname;
@@ -34,5 +43,6 @@ public class PersonalAccountEntity {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
 
 }

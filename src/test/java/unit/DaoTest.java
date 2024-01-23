@@ -4,12 +4,16 @@ import dao.ItemsDao;
 import dao.PersonalAccountDao;
 import entity.*;
 import extentions.PersonalAccountParameterResolver;
+import lombok.Cleanup;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
 import java.util.stream.Stream;
@@ -45,9 +49,20 @@ public class DaoTest {
         @Tag("Unit")
         @ParameterizedTest
         @MethodSource("getArgumentForPersonalAccountTest")
-        void insertMethodReturnsUserIdFromDB(PersonalAccountEntity account) {
+        void insert_NewUser_notNull(PersonalAccountEntity account) {
+            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+            @Cleanup Session session = sessionFactory.openSession();
+            sessionFactory.close();
+
             Long insert = instance.insert(account);
-            assertThat(insert).isNotEqualTo(0);
+            assertThat(insert).isNotNull();
+        }
+        @Tag("Unit")
+        @ParameterizedTest
+        @MethodSource("getArgumentForPersonalAccountTest")
+        void insertMethodAddUserReturnsUserIdFromDB(PersonalAccountEntity account) {
+            Long insert = instance.insert(account);
+            assertThat(insert).isNotNull();
         }
 
         static Stream<Arguments> getArgumentForPersonalAccountTest() {

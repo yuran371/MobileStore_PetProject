@@ -5,6 +5,7 @@ import entity.Country;
 import entity.PersonalAccountEntity;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Slf4j
 public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 
     private static PersonalAccountDao INSTANCE = new PersonalAccountDao();
@@ -34,11 +35,6 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
     public static PersonalAccountDao getInstance() {
         return INSTANCE;
     }
-
-    private final static String SQL_INSERT_STATEMENT = """
-            INSERT INTO personal_account (email, password, name, surname, image, birthday, country, city, address, phone_number, gender)
-            VALUES (?, crypt(?, gen_salt('bf')), ?, ?, ?, ?, ?, ?, ?, ?, ?);
-            """;
 
     private final static String SQL_GET_BY_LOGIN_STATEMENT = """
             SELECT account_id, email, name, surname, country, city, address, phone_number
@@ -75,10 +71,12 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
             Transaction transaction = session.beginTransaction();
             session.persist(accountEntity);
             transaction.commit();
+            log.info("User {} successfully added", accountEntity);
             return accountEntity.getAccountId();
         }
         catch (ConstraintViolationException constraintViolationException) {
-            return 0L;
+            log.info("New user not added. User with {} email already exist in database", accountEntity.getEmail());
+            return null;
         }
     }
 
