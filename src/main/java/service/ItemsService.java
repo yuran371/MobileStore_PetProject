@@ -22,19 +22,19 @@ public class ItemsService {
 
 	public List<ItemsFilterDto> findAllItems() {
 		return InstanceDao.findAll().stream().map(entity -> new ItemsFilterDto(entity.getItemId(), entity.getModel(),
-				entity.getBrand(), entity.getPrice(), entity.getCurrency())).collect(Collectors.toList());
+				entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name())).collect(Collectors.toList());
 	}
 
 	public List<ItemsFilterDto> findBrand(String brand) {
 		return InstanceDao.findByBrand(brand).stream().map(entity -> new ItemsFilterDto(entity.getItemId(),
-				entity.getModel(), entity.getBrand(), entity.getPrice(), entity.getCurrency()))
+				entity.getModel(), entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name()))
 				.collect(Collectors.toList());
 	}
 
 	public ItemsDto findById(Long itemId) {
 		ItemsEntity itemsEntity = InstanceDao.getById(itemId).get();
-		return new ItemsDto(itemsEntity.getItemId(), itemsEntity.getModel(), itemsEntity.getBrand(),
-				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency(),
+		return new ItemsDto(itemsEntity.getItemId(), itemsEntity.getModel(), itemsEntity.getBrand().name(),
+				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency().name(),
 				itemsEntity.getQuantity());
 	}
 
