@@ -19,9 +19,11 @@ public class ItemsEntity {
     @Column(name = "item_id")
     private Long itemId;
     private String model;
-    private String brand;
+    @Enumerated(EnumType.STRING)
+    private BrandEnum brand;
     private String attributes;
     private Double price;
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    private CurrencyEnum currency;
     private Integer quantity;
 }

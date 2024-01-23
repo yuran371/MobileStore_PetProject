@@ -4,6 +4,7 @@ import dao.ItemsDao;
 import dao.PersonalAccountDao;
 import entity.*;
 import extentions.PersonalAccountParameterResolver;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,17 +21,21 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 public class DaoTest {
     @Nested
     @Tag(value = "ItemsDao")
     class Items {
         ItemsDao itemsDao = ItemsDao.getInstance();
-        ItemsEntity itemsEntity = ItemsEntity.builder().model("xperia").brand("sony").attributes("32gb").price(999.99)
-                .currency(CurrencyEnum.₸.name()).quantity(13).build();
+        ItemsEntity itemsEntity = ItemsEntity.builder().model("12").brand(BrandEnum.OnePlus)
+                .attributes("512 gb white").price(99_999.99)
+                .currency(CurrencyEnum.₽).quantity(233).build();
 
         @Test
         void insertMethodReturnsUserIdFromDB() {
             itemsDao.insert(itemsEntity);
+            log.info("Just added: {} {} {} {} qt: {}", itemsEntity.getBrand(), itemsEntity.getModel(),
+                    itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
         }
 
         @Test
@@ -45,7 +50,6 @@ public class DaoTest {
     @TestInstance(value = Lifecycle.PER_CLASS)
     @Tag(value = "PersonalAccountDao")
     @ExtendWith(value = {PersonalAccountParameterResolver.class})
-
     class PersonalAccount {
 
         private PersonalAccountDao instance;

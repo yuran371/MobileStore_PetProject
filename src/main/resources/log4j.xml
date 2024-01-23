@@ -13,7 +13,7 @@
         <param name="file" value="logs/shop-mvc-noframeworks.log"/>
 
         <param name="append" value="true"/>
-        <param name="maxFileSize" value="1KB"/>
+        <param name="maxFileSize" value="10KB"/>
         <param name="maxBackupIndex" value="10"/>
         <!-- For Tomcat -->
         <!--        <param name="file" value="${catalina.home}/logs/myStruts1App.log" />-->
@@ -22,16 +22,17 @@
                    value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="LevelMin" value="ALL"/>
+            <param name="LevelMin" value="info"/>
         </filter>
     </appender>
 
-    <logger name="dao" additivity="false">
-        <level value="info"/>
+    <logger name="dao" additivity="true">
+        <level value="trace"/>
         <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
     </logger>
     <root>
-        <level value="info"/>
+        <level value="trace"/>
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </root>
