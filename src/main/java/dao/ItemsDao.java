@@ -1,24 +1,23 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import entity.ItemsEntity;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import utlis.ConnectionPoolManager;
 import utlis.HibernateSessionFactory;
 import utlis.SqlExceptionLogger;
 
-public class ItemsDao implements Dao<Long, ItemsEntity> {
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+@Slf4j
+public class ItemsDao implements Dao<Long, ItemsEntity> {
     private static ItemsDao INSTANCE;
 
     private static SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
@@ -28,6 +27,8 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
             synchronized (ItemsDao.class) {
                 if (INSTANCE == null) {
                     INSTANCE = new ItemsDao();
+                    log.info("Info: Jump in synchronized block to take ItemsDao instance");
+                    log.trace("Trace: Jump in synchronized block to take ItemsDao instance");
                 }
             }
         }
@@ -69,14 +70,38 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     public Long insert(ItemsEntity items) {
         try (SessionFactory factory = HibernateSessionFactory.getSessionFactory();
              Session session = factory.openSession()) {
-            session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
+            log.info("Transaction {} for insert ItemsEntity {} just opening", transaction, items);
             session.persist(items);
+            log.info("Item in persistant state: {}", items);
             session.getTransaction().commit();
+            log.info("Just committed");
             return items.getItemId();
         }
     }
 
-//    public Long Insert(List<ItemsEntity> arrayList) {
+    /*
+    * Bad practice!
+    * An anti-pattern is a common response to a recurring problem that is usually
+    * ineffective and risks being highly counterproductive.
+    */
+    @Override
+    public List<ItemsEntity> findAll() {
+        SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+        List<ItemsEntity> resultList;
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            log.info("Transaction {} for findAll just opening", transaction);
+            Query<ItemsEntity> selectQuery = session.createQuery("SELECT o FROM items o", ItemsEntity.class);
+            log.info("Query in persistant state: {}", selectQuery.getResultList());
+            resultList = selectQuery.getResultList();
+            log.info("Resulting list of entity {}", resultList);
+            session.getTransaction().commit();
+        }
+        return resultList;
+    }
+
+    //    public Long Insert(List<ItemsEntity> arrayList) {
 //        String innerSql = "(?, ?, ?, ?, ?, ?)";
 //        ArrayList<String> valuesList = new ArrayList<String>();
 //        for (int i = 0; i < arrayList.size(); i++) {
@@ -111,19 +136,19 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
 //
 //    }
 
-    public List<ItemsEntity> findAll() {
-        try (Connection connection = ConnectionPoolManager.get();
-             PreparedStatement prepareStatement = connection.prepareStatement(SQL_FIND_ALL)) {
-            ResultSet resultSet = prepareStatement.executeQuery();
-            List<ItemsEntity> itemsList = new ArrayList<>();
-            while (resultSet.next()) {
-                itemsList.add(buildItems(resultSet));
-            }
-            return itemsList;
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
-    }
+//    public List<ItemsEntity> findAll() {
+//        try (Connection connection = ConnectionPoolManager.get();
+//             PreparedStatement prepareStatement = connection.prepareStatement(SQL_FIND_ALL)) {
+//            ResultSet resultSet = prepareStatement.executeQuery();
+//            List<ItemsEntity> itemsList = new ArrayList<>();
+//            while (resultSet.next()) {
+//                itemsList.add(buildItems(resultSet));
+//            }
+//            return itemsList;
+//        } catch (SQLException e) {
+//            throw new RuntimeException();
+//        }
+//    }
 
     @Override
     public Optional<ItemsEntity> getById(Long itemId) {

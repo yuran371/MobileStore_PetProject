@@ -1,5 +1,10 @@
 package unit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDate;
+import java.util.stream.Stream;
+
 import dao.ItemsDao;
 import dao.PersonalAccountDao;
 import entity.*;
@@ -8,6 +13,12 @@ import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+import extentions.PersonalAccountParameterResolver;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,23 +27,36 @@ import org.junit.jupiter.params.provider.MethodSource;
 import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
+@Slf4j
 public class DaoTest {
     @Nested
     @Tag(value = "ItemsDao")
     class Items {
         ItemsDao itemsDao = ItemsDao.getInstance();
-        ItemsEntity itemsEntity = ItemsEntity.builder().model("xperia").brand("sony").attributes("32gb").price(999.99)
-                .currency(CurrencyEnum.₸.name()).quantity(13).build();
+        ItemsEntity itemsEntity = ItemsEntity.builder().model("12").brand(BrandEnum.OnePlus)
+                .attributes("512 gb white").price(99_999.99)
+                .currency(CurrencyEnum.₽).quantity(233).build();
 
         @Test
         void insertMethodReturnsUserIdFromDB() {
             itemsDao.insert(itemsEntity);
+            log.info("Just added: {} {} {} {} qt: {}", itemsEntity.getBrand(), itemsEntity.getModel(),
+                    itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
+        }
+
+        @Test
+        void findAllMethodReturnList() {
+            List<ItemsEntity> all = itemsDao.findAll();
+            assertThat(all).hasSize(15);
         }
     }
+
 
     @Nested
     @TestInstance(value = Lifecycle.PER_CLASS)
