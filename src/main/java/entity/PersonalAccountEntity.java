@@ -1,28 +1,48 @@
 package entity;
 
-import java.time.LocalDate;
-
-import lombok.AccessLevel;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnTransformer;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
+import java.time.LocalDate;
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "personal_account", schema = "market", indexes = {
+        @Index(name = "emailIndex", columnList = "email", unique = true)
+})
 public class PersonalAccountEntity {
 
-	Long accountId;
-	String email;
-	String password;
-	String name;
-	String surname;
-	String image;
-	LocalDate birthday;
-	Country country;
-	String city;
-	String address;
-	String phoneNumber;
-	Gender gender;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long accountId;
+    private String email;
+    @ColumnTransformer(read = "pgp_sym_decrypt(" +
+            "    password, " +
+            "    current_setting('encrypt.key')" +
+            ")", write = "pgp_sym_encrypt( " +
+            "    ?, " +
+            "    current_setting('encrypt.key')" +
+            ") ")
+    @Column(columnDefinition = "bytea")
+    private String password;
+    private String name;
+    private String surname;
+    private String image;
+    private LocalDate birthday;
+    @Enumerated(EnumType.STRING)
+    private Country country;
+    private String city;
+    private String address;
+    private String phoneNumber;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
 
 }

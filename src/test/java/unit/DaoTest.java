@@ -1,8 +1,18 @@
 package unit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDate;
+import java.util.stream.Stream;
+
 import dao.ItemsDao;
 import dao.PersonalAccountDao;
 import entity.*;
+import extentions.PersonalAccountParameterResolver;
+import lombok.Cleanup;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.jupiter.api.*;
 import extentions.PersonalAccountParameterResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
@@ -14,12 +24,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 @Slf4j
 public class DaoTest {
@@ -60,18 +72,31 @@ public class DaoTest {
 
         @Tag("Unit")
         @ParameterizedTest
-        @MethodSource("DaoTest#getArgumentForPersonalAccountTest")
-        void insertMethodReturnsUserIdFromDB(PersonalAccountEntity account) {
+        @MethodSource("getArgumentForPersonalAccountTest")
+        void insert_NewUser_notNull(PersonalAccountEntity account) {
+            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+            @Cleanup Session session = sessionFactory.openSession();
+            sessionFactory.close();
+
             Long insert = instance.insert(account);
-            assertThat(insert).isNotEqualTo(0);
+            assertThat(insert).isNotNull();
+        }
+        @Tag("Unit")
+        @ParameterizedTest
+        @MethodSource("getArgumentForPersonalAccountTest")
+        void insertMethodAddUserReturnsUserIdFromDB(PersonalAccountEntity account) {
+            Long insert = instance.insert(account);
+            assertThat(insert).isNotNull();
         }
 
-    }
+        static Stream<Arguments> getArgumentForPersonalAccountTest() {
+            return Stream.of(Arguments.of(PersonalAccountEntity.builder().address("no address")
+                                                  .birthday(LocalDate.now().minusYears(20)).city("no city")
+                                                  .country(Country.KAZAKHSTAN)
+                                                  .email("noemail@email.ru").gender(Gender.MALE).image("").name("Sasha")
+                                                  .password("123")
+                                                  .phoneNumber("+79214050505").surname("nonamich").build()));
+        }
 
-    static Stream<Arguments> getArgumentForPersonalAccountTest() {
-        return Stream.of(Arguments.of(PersonalAccountEntity.builder().address("no address")
-                .birthday(LocalDate.now().minusYears(20)).city("no city").country(Country.KAZAKHSTAN)
-                .email("noemail@email.ru").gender(Gender.MALE).image("").name("Sasha").password("123")
-                .phoneNumber("+79214050505").surname("nonamich").build()));
     }
 }
