@@ -6,3 +6,4 @@
 .dbeaver
 *.iml
 .settings
+logs
