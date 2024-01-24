@@ -24,11 +24,11 @@ public class PersonalAccountEntity {
     private Long accountId;
     private String email;
     @ColumnTransformer(read = "pgp_sym_decrypt(" +
-            "    password, " +
-            "    current_setting('encrypt.key')" +
-            ")", write = "pgp_sym_encrypt( " +
-            "    ?, " +
-            "    current_setting('encrypt.key')" +
+            "password::bytea, " +
+            "current_setting('encrypt.key')" +
+            ")", write = "pgp_sym_encrypt(" +
+            "?, " +
+            "current_setting('encrypt.key')" +
             ") ")
     @Column(columnDefinition = "bytea")
     private String password;

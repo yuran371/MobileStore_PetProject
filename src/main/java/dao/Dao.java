@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface Dao<T, E> {
 
-	T insert(E entity);
+	Optional<T> insert(E entity);
 
 	List<E> findAll();
 

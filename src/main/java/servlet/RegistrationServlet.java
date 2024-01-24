@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Optional;
 
 import dto.CreateAccountDto;
 import entity.Country;
@@ -64,7 +65,7 @@ public class RegistrationServlet extends HttpServlet {
 				.birthday(req.getParameter("dateOfBirth")).country(req.getParameter("country"))
 				.city(req.getParameter("city")).address(req.getParameter("address"))
 				.phoneNumber(req.getParameter("phoneNumber")).gender(req.getParameter("gender")).build();
-		Either<Long, ValidationErrors> save = createAccountService.save(accountDto);
+		Either<Optional<Long>, ValidationErrors> save = createAccountService.save(accountDto);
 		if (save.isRight()) {
 			req.setAttribute(AUTHORIZATION_ERRORS, save.get().getCreateAccountErrors());
 			doGet(req, resp);
