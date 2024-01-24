@@ -41,15 +41,13 @@ CREATE TABLE IF NOT EXISTS personal_account (
 CREATE TABLE IF NOT EXISTS sell_history (
 	sell_id BIGSERIAl PRIMARY KEY,
 	item_id BIGINT REFERENCES Items (item_id) ON UPDATE CASCADE ON DELETE RESTRICT,
-	email VARCHAR(32) NOT NULL, 
-	FOREIGN KEY (email) REFERENCES personal_account (email) ON DELETE RESTRICT,
+	user_id BIGINT NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES personal_account (account_id) ON DELETE RESTRICT,
 	quantity INT CHECK (quantity >= 0) NOT NULL,
 	sell_date TIMESTAMPTZ NOT NULL  
 );
  
 CREATE INDEX IF NOT EXISTS item_id_idx ON sell_history (item_id);
-
-CREATE INDEX IF NOT EXISTS login_idx ON sell_history (login);
 
 ALTER SEQUENCE items_item_id_seq RESTART WITH 1;
 TRUNCATE TABLE items CASCADE;

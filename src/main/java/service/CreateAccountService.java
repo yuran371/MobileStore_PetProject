@@ -9,6 +9,8 @@ import mapper.CreateAccountMapper;
 import validator.CreateAccountValidator;
 import validator.ValidationErrors;
 
+import java.util.Optional;
+
 public class CreateAccountService {
 
 	private static final CreateAccountService INSTANCE = new CreateAccountService();
@@ -25,7 +27,7 @@ public class CreateAccountService {
 	}
 
 	@SneakyThrows
-	public Either<Long, ValidationErrors> save(CreateAccountDto account) {
+	public Either<Optional<Long>, ValidationErrors> save(CreateAccountDto account) {
 		ValidationErrors createAccountErrors = validator.isValid(account);
 		if (createAccountErrors.getCreateAccountErrors().isEmpty()) {
 			PersonalAccountEntity accountEntity = mapper.mapOf(account);

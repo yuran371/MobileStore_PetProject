@@ -1,7 +1,6 @@
 package dao;
 
 import entity.ItemsEntity;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -67,7 +66,7 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
             """;
 
     @Override
-    public Long insert(ItemsEntity items) {
+    public Optional<Long> insert(ItemsEntity items) {
         try (SessionFactory factory = HibernateSessionFactory.getSessionFactory();
              Session session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -76,7 +75,7 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
             log.info("Item in persistant state: {}", items);
             session.getTransaction().commit();
             log.info("Just committed");
-            return items.getItemId();
+            return Optional.ofNullable(items.getItemId());
         }
     }
 
