@@ -65,18 +65,18 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
             """;
 
     @Override
-    public Long insert(@NonNull PersonalAccountEntity accountEntity) {
+    public Optional<Long> insert(@NonNull PersonalAccountEntity accountEntity) {
         try (SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
              Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.persist(accountEntity);
             transaction.commit();
             log.info("User {} successfully added", accountEntity);
-            return accountEntity.getAccountId();
+            return Optional.ofNullable(accountEntity.getAccountId());
         }
         catch (ConstraintViolationException constraintViolationException) {
             log.info("New user not added. User with {} email already exist in database", accountEntity.getEmail());
-            return null;
+            return Optional.empty();
         }
     }
 
