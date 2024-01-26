@@ -1,17 +1,19 @@
 package entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "email")
+@ToString(exclude = "orders")
 @Builder
 @Entity
 @Table(name = "personal_account", schema = "market", indexes = {
@@ -43,6 +45,13 @@ public class PersonalAccountEntity {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<SellHistoryEntity> orders = new HashSet<>();
 
-
+    public void addOrder(SellHistoryEntity order) {
+        orders.add(order);
+        order.setUser(this);
+    }
 }
+
