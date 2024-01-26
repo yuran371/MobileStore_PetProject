@@ -37,46 +37,14 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     private ItemsDao() {
     }
 
-    private final static Integer DEFAULT_COLUMNS_QT_IN_ITEMS_TABLE = 6;
-
-    private final static String SQL_CHANGE_QUANTITY = """
-            		UPDATE items
-            		SET quantity=quantity-?
-            WHERE item_id=?
-            		""";
-    private final static String SQL_GET_STATEMENT = """
-            SELECT *
-            FROM items
-            WHERE item_id = ?
-            """;
-    private final static String SQL_FIND_ALL = """
-            SELECT *
-            FROM items
-            """;
-
-    private final static String SQL_DELETE_BY_ID = """
-            DELETE FROM items
-            WHERE item_id = ?
-            """;
-
-    private final static String SQL_FIND_BY_BRAND = """
-            SELECT *
-            FROM items
-            WHERE brand = ?
-            """;
+    public Optional<Long> insert2(ItemsEntity items, Session session) {
+            session.persist(items);
+            return Optional.ofNullable(items.getItemId());
+    }
 
     @Override
-    public Optional<Long> insert(ItemsEntity items) {
-        try (SessionFactory factory = HibernateSessionFactory.getSessionFactory();
-             Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            log.info("Transaction {} for insert ItemsEntity {} just opening", transaction, items);
-            session.persist(items);
-            log.info("Item in persistant state: {}", items);
-            session.getTransaction().commit();
-            log.info("Just committed");
-            return Optional.ofNullable(items.getItemId());
-        }
+    public Optional<Long> insert(ItemsEntity entity) {
+        return Optional.empty();
     }
 
     /*
@@ -152,7 +120,11 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     @Override
     public Optional<ItemsEntity> getById(Long itemId) {
         try (var connection = ConnectionPoolManager.get();
-             var prepareStatement = connection.prepareStatement(SQL_GET_STATEMENT)) {
+             var prepareStatement = connection.prepareStatement("""
+            SELECT *
+            FROM items
+            WHERE item_id = ?
+            """)) {
             prepareStatement.setLong(1, itemId);
             var resultSet = prepareStatement.executeQuery();
             ItemsEntity entityResult = null;
@@ -190,7 +162,10 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     @Override
     public boolean delete(Long params) {
         try (Connection connection = ConnectionPoolManager.get();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+             PreparedStatement statement = connection.prepareStatement("""
+            DELETE FROM items
+            WHERE item_id = ?
+            """)) {
             statement.setLong(1, params);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -202,7 +177,11 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
 
     public Integer changeQuantity(int quantity, long itemId) {
         try (Connection connection = ConnectionPoolManager.get();
-             PreparedStatement prepareStatement = connection.prepareStatement(SQL_CHANGE_QUANTITY,
+             PreparedStatement prepareStatement = connection.prepareStatement("""
+            		UPDATE items
+            		SET quantity=quantity-?
+            WHERE item_id=?
+            		""",
                      Statement.RETURN_GENERATED_KEYS)) {
             prepareStatement.setInt(1, quantity);
             prepareStatement.setLong(2, itemId);
@@ -220,7 +199,11 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
 
     public List<ItemsEntity> findByBrand(String brand) {
         try (var connection = ConnectionPoolManager.get();
-             var prepareStatement = connection.prepareStatement(SQL_FIND_BY_BRAND)) {
+             var prepareStatement = connection.prepareStatement("""
+            SELECT *
+            FROM items
+            WHERE brand = ?
+            """)) {
             prepareStatement.setString(1, brand);
             var resultSet = prepareStatement.executeQuery();
             List<ItemsEntity> itemsList = new ArrayList<>();

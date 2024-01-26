@@ -1,10 +1,7 @@
 package entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -14,15 +11,16 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(of = {"itemId", "sellDate"})
 @Table(name = "sell_history", schema = "market", catalog = "market_repository")
 public class SellHistoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "sell_id")
     private Long sellId;
-    @Basic
-    @Column(name = "item_id")
-    private Long itemId;
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private ItemsEntity itemId;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private PersonalAccountEntity user;

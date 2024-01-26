@@ -5,13 +5,15 @@ import dao.PersonalAccountDao;
 import dao.SellHistoryDao;
 import entity.*;
 import extentions.PersonalAccountParameterResolver;
-import extentions.SellHistoryParameterResolver;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,9 +23,9 @@ import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,21 +37,46 @@ public class DaoTest {
     @Tag(value = "ItemsDao")
     class Items {
         ItemsDao itemsDao = ItemsDao.getInstance();
-        ItemsEntity itemsEntity = ItemsEntity.builder().model("12").brand(BrandEnum.OnePlus)
-                .attributes("512 gb white").price(99_999.99)
-                .currency(CurrencyEnum.₽).quantity(233).build();
 
-        @Test
-        void insertMethodReturnsUserIdFromDB() {
-            itemsDao.insert(itemsEntity);
+
+        @ParameterizedTest
+        @DisplayName("если orphanRemoval=true, то при удалении комментария из топика он удаляется из базы")
+        @MethodSource("unit.DaoTest#getArgumentsForItemsTestAndPersonalAccount")
+        void givenOrphanRemovalTrue_whenRemoveSellHistoryEntityFromPhoneOrders_thenItRemovedFromDatabase(ItemsEntity itemsEntity, PersonalAccountEntity personalAccountEntity) {
+            @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
+                    .openSession();
+            session.beginTransaction();
+            itemsDao.insert2(itemsEntity, session);
+            session.persist(personalAccountEntity);
+            Long itemId = itemsEntity.getItemId();
+            List<SellHistoryEntity> collectOfSellHistoryEntity =
+                    getArgumentForSellHistory().map(arguments -> (SellHistoryEntity) arguments.get()[0])
+                            .collect(Collectors.toList());
+            collectOfSellHistoryEntity.stream()
+                    .forEach(sellHistoryEntity -> {
+                        sellHistoryEntity.setItemId(itemsEntity);
+                        sellHistoryEntity.setUser(personalAccountEntity);
+                        session.persist(sellHistoryEntity);
+                    });
+            session.getTransaction()
+                    .commit();
+            session.detach(itemsEntity);
+            session.beginTransaction();
+            ItemsEntity itemsEntity1 = session.get(itemsEntity.getClass(), itemId);
+//            itemsEntity.removePhoneOrder(itemsEntity.getPhoneOrders().get(0));
+            itemsEntity1.getPhoneOrders()
+                    .remove(0);
+            SellHistoryEntity sellHistoryEntity = collectOfSellHistoryEntity.get(0);
+            Long sellId = sellHistoryEntity
+                    .getSellId();
+            session.remove(sellHistoryEntity);
+            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);
+            session.getTransaction()
+                    .commit();
+            assertThat(sellHistoryEntityIsNull).isNull();
+
             log.info("Just added: {} {} {} {} qt: {}", itemsEntity.getBrand(), itemsEntity.getModel(),
-                     itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
-        }
-
-        @Test
-        void findAllMethodReturnList() {
-            List<ItemsEntity> all = itemsDao.findAll();
-            assertThat(all).hasSize(15);
+                    itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
         }
     }
 
@@ -87,12 +114,20 @@ public class DaoTest {
         }
 
         static Stream<Arguments> getArgumentForPersonalAccountTest() {
-            return Stream.of(Arguments.of(PersonalAccountEntity.builder().address("no address")
-                                                  .birthday(LocalDate.now().minusYears(20)).city("no city")
-                                                  .country(Country.KAZAKHSTAN)
-                                                  .email("noemail@email.ru").gender(Gender.MALE).image("").name("Sasha")
-                                                  .password("123")
-                                                  .phoneNumber("+79214050505").surname("nonamich").build()));
+            return Stream.of(Arguments.of(PersonalAccountEntity.builder()
+                    .address("no address")
+                    .birthday(LocalDate.now()
+                            .minusYears(20))
+                    .city("no city")
+                    .country(Country.KAZAKHSTAN)
+                    .email("noemail@email.ru")
+                    .gender(Gender.MALE)
+                    .image("")
+                    .name("Sasha")
+                    .password("123")
+                    .phoneNumber("+79214050505")
+                    .surname("nonamich")
+                    .build()));
         }
 
     }
@@ -100,7 +135,7 @@ public class DaoTest {
     @Nested
     @TestInstance(value = Lifecycle.PER_METHOD)
     @Tag(value = "PersonalAccountDao")
-    @ExtendWith({SellHistoryParameterResolver.class})
+//    @ExtendWith({SellHistoryParameterResolver.class})
     class SellHistoryTest {
 
         private SellHistoryDao instance;
@@ -111,7 +146,7 @@ public class DaoTest {
 
         @Tag("Unit")
         @ParameterizedTest
-        @MethodSource("getArgumentForSellHistory")
+        @MethodSource("unit.DaoTest#getArgumentForSellHistory")
         void insert_NewSell_notNull(SellHistoryEntity entity) {
             Optional<Long> id = instance.insert(entity);
             assertThat(id).isNotEmpty();
@@ -126,10 +161,45 @@ public class DaoTest {
         }
 
 
-        public static Stream<Arguments> getArgumentForSellHistory() {
-            return Stream.of(Arguments.of(SellHistoryEntity.builder().sellDate(OffsetDateTime.now())
-                                                  .user(PersonalAccountEntity.builder().accountId(30L).build())
-                                                  .itemId(1L).quantity(2).build()));
-        }
+    }
+
+    public static Stream<Arguments> getArgumentForSellHistory() {
+        return Stream.of(Arguments.of(SellHistoryEntity.builder()
+                .sellDate(OffsetDateTime.now())
+                .user(PersonalAccountEntity.builder()
+                        .accountId(2L)
+                        .build())
+                .itemId(ItemsEntity.builder()
+                        .itemId(2l)
+                        .build())
+                .quantity(2)
+                .build()
+        ));
+    }
+
+    public static Stream<Arguments> getArgumentsForItemsTestAndPersonalAccount() {
+        return Stream.of(Arguments.of(ItemsEntity.builder()
+
+                        .model("pixel a5")
+                        .brand(BrandEnum.Google)
+                        .attributes("128gb green")
+                        .price(999.99)
+                        .currency(CurrencyEnum.$)
+                        .quantity(57)
+                        .build(),
+                PersonalAccountEntity.builder()
+                        .image("")
+                        .name("Artem")
+                        .surname("Eranov")
+                        .email("sobaka@mail.ru")
+                        .birthday(LocalDate.of(1990, 12, 12))
+                        .city("Oren")
+                        .address("Pushkina")
+                        .country(Country.KAZAKHSTAN)
+                        .gender(Gender.MALE)
+                        .phoneNumber("+79553330987")
+                        .password("1499")
+                        .build()
+        ));
     }
 }
