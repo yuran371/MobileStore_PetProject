@@ -4,13 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.OffsetDateTime;
-import java.util.Objects;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"itemId", "sellDate"})
 @Builder
 @EqualsAndHashCode(of = {"itemId", "sellDate"})
 @Table(name = "sell_history", schema = "market", catalog = "market_repository")
