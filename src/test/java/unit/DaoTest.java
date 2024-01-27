@@ -93,10 +93,11 @@ public class DaoTest {
         @Tag("Unit")
         @ParameterizedTest
         @MethodSource("unit.DaoTest#getArgumentForPersonalAccountTest")
-        void get_getUser_ConsistAllOrders(PersonalAccountEntity account) {
+        void get_OrdersList_ConsistAllOrders(PersonalAccountEntity account) {
             List<SellHistoryEntity> sellHistoryEntityList = DaoTest.getArgumentsForSellHistory()
                     .flatMap(arguments -> Arrays.stream(arguments.get()))
-                    .map(objectOfEntity -> (SellHistoryEntity) objectOfEntity).collect(Collectors.toList());
+                    .map(objectOfEntity -> (SellHistoryEntity) objectOfEntity)
+                    .collect(Collectors.toList());
             @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
             @Cleanup Session session = sessionFactory.openSession();
             session.beginTransaction();
@@ -146,8 +147,6 @@ public class DaoTest {
                 transaction.commit();
             });
         }
-
-
 
     }
     public static Stream<Arguments> getArgumentsForSellHistory() {

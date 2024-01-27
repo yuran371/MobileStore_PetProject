@@ -5,15 +5,15 @@ import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "email")
-@ToString(exclude = "orders")
+@ToString(exclude = {"orders", "profileInfo"})
 @Builder
 @Entity
 @Table(name = "personal_account", schema = "market", indexes = {
@@ -45,9 +45,12 @@ public class PersonalAccountEntity {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @OneToOne(mappedBy = "personalAccount")
+    private ProfileInfoEntity profileInfo;
     @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<SellHistoryEntity> orders = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SellHistoryEntity> orders = new ArrayList<>();
+
 
     public void addOrder(SellHistoryEntity order) {
         orders.add(order);

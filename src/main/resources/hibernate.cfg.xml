@@ -14,6 +14,7 @@
         <mapping class="entity.PersonalAccountEntity"/>
         <mapping class="entity.SellHistoryEntity"/>
         <mapping class="entity.ItemsEntity"/>
+        <mapping class="entity.ProfileInfoEntity"/>
 
 
         <!-- DB schema will be updated if needed -->
