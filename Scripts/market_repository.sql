@@ -62,6 +62,15 @@ CREATE TABLE IF NOT EXISTS profile_info
 );
 drop table profile_info;
 
+CREATE TABLE IF NOT EXISTS user_payment_options
+(
+    account_id BIGINT REFERENCES personal_account (account_id) ON DELETE  CASCADE ,
+    added_payment_type VARCHAR(128) NOT NULL,
+    PRIMARY KEY (account_id, added_payment_type)
+);
+
+DROP TABLE user_payment_options;
+
 CREATE INDEX IF NOT EXISTS item_id_idx ON sell_history (item_id);
 
 ALTER SEQUENCE items_item_id_seq RESTART WITH 1;

@@ -51,6 +51,10 @@ public class PersonalAccountEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SellHistoryEntity> orders = new ArrayList<>();
 
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "user_payment_options", joinColumns = @JoinColumn(name = "account_id"))
+    private List<UserPaymentOptions> paymentOptions = new ArrayList<>();
 
     public void addOrder(SellHistoryEntity order) {
         orders.add(order);
