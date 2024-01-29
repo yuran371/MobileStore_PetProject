@@ -1,19 +1,19 @@
 package entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString(exclude = "phonePurchases")
 @Table(name = "personal_account", schema = "market", indexes = {
         @Index(name = "emailIndex", columnList = "email", unique = true)
 })
@@ -43,6 +43,16 @@ public class PersonalAccountEntity {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SellHistoryEntity> phonePurchases = new ArrayList<>();
+    public void addPurchase(SellHistoryEntity phonePurchase) {
+        phonePurchases.add(phonePurchase);
+        phonePurchase.setUser(this);
+    }
+    public void removePurchase(SellHistoryEntity phonePurchase) {
+        phonePurchases.remove(phonePurchase);
+        phonePurchase.setUser(null);
+    }
 
 }
