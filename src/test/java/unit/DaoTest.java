@@ -5,6 +5,7 @@ import dao.PersonalAccountDao;
 import dao.SellHistoryDao;
 import entity.*;
 import extentions.PersonalAccountParameterResolver;
+import extentions.SellHistoryParameterResolver;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -23,6 +24,7 @@ import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -76,7 +78,7 @@ public class DaoTest {
             assertThat(sellHistoryEntityIsNull).isNull();
 
             log.info("Just added: {} {} {} {} qt: {}", itemsEntity.getBrand(), itemsEntity.getModel(),
-                    itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
+                     itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
         }
     }
 
@@ -95,7 +97,7 @@ public class DaoTest {
 
         @Tag("Unit")
         @ParameterizedTest
-        @MethodSource("getArgumentForPersonalAccountTest")
+        @MethodSource("unit.DaoTest#getArgumentForPersonalAccountTest")
         void insert_NewUser_notNull(PersonalAccountEntity account) {
             @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
             @Cleanup Session session = sessionFactory.openSession();
@@ -107,27 +109,37 @@ public class DaoTest {
 
         @Tag("Unit")
         @ParameterizedTest
-        @MethodSource("getArgumentForPersonalAccountTest")
+        @MethodSource("unit.DaoTest#getArgumentForPersonalAccountTest")
         void insertMethodAddUserReturnsUserIdFromDB(PersonalAccountEntity account) {
             Optional<Long> insert = instance.insert(account);
             assertThat(insert).isNotEmpty();
         }
 
-        static Stream<Arguments> getArgumentForPersonalAccountTest() {
-            return Stream.of(Arguments.of(PersonalAccountEntity.builder()
-                    .address("no address")
-                    .birthday(LocalDate.now()
-                            .minusYears(20))
-                    .city("no city")
-                    .country(Country.KAZAKHSTAN)
-                    .email("noemail@email.ru")
-                    .gender(Gender.MALE)
-                    .image("")
-                    .name("Sasha")
-                    .password("123")
-                    .phoneNumber("+79214050505")
-                    .surname("nonamich")
-                    .build()));
+        @Tag("Unit")
+        @ParameterizedTest
+        @MethodSource("unit.DaoTest#getArgumentForPersonalAccountTest")
+        void get_OrdersList_ConsistAllOrders(PersonalAccountEntity account) {
+            List<SellHistoryEntity> sellHistoryEntityList = DaoTest.getArgumentsForSellHistory()
+                    .flatMap(arguments -> Arrays.stream(arguments.get()))
+                    .map(objectOfEntity -> (SellHistoryEntity) objectOfEntity)
+                    .collect(Collectors.toList());
+            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+            @Cleanup Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.persist(account);
+            Long accountId = account.getAccountId();
+            sellHistoryEntityList.stream().forEach(sellHistoryEntity -> {
+                sellHistoryEntity.setUser(account);
+                session.persist(sellHistoryEntity);
+            });
+            session.detach(account);
+            session.getTransaction().commit();
+            session.beginTransaction();
+            PersonalAccountEntity personalAccountEntity = session.get(PersonalAccountEntity.class, accountId);
+            assertThat(personalAccountEntity.getOrders().size()).isEqualTo(sellHistoryEntityList.size());
+            sellHistoryEntityList.stream().forEach(sellHistoryEntity -> session.remove(sellHistoryEntity));
+            session.remove(personalAccountEntity);
+            session.getTransaction().commit();
         }
 
     }
@@ -135,10 +147,10 @@ public class DaoTest {
     @Nested
     @TestInstance(value = Lifecycle.PER_METHOD)
     @Tag(value = "PersonalAccountDao")
-//    @ExtendWith({SellHistoryParameterResolver.class})
+    @ExtendWith({SellHistoryParameterResolver.class})
     class SellHistoryTest {
 
-        private SellHistoryDao instance;
+        private final SellHistoryDao instance;
 
         public SellHistoryTest(SellHistoryDao instance) {
             this.instance = instance;
@@ -146,7 +158,7 @@ public class DaoTest {
 
         @Tag("Unit")
         @ParameterizedTest
-        @MethodSource("unit.DaoTest#getArgumentForSellHistory")
+        @MethodSource("unit.DaoTest#getArgumentsForSellHistory")
         void insert_NewSell_notNull(SellHistoryEntity entity) {
             Optional<Long> id = instance.insert(entity);
             assertThat(id).isNotEmpty();
@@ -160,46 +172,68 @@ public class DaoTest {
             });
         }
 
+    }
+
+    public static Stream<Arguments> getArgumentsForSellHistory() {
+        return Stream.of(Arguments.of(SellHistoryEntity.builder().sellDate(OffsetDateTime.now())
+                                              .user(PersonalAccountEntity.builder().accountId(30L).build())
+                                              .itemId(ItemsEntity.builder().itemId(1L).build()).quantity(2).build(),
+                                      SellHistoryEntity.builder()
+                                              .sellDate(OffsetDateTime.now())
+                                              .user(PersonalAccountEntity.builder().accountId(30L).build())
+                                              .itemId(ItemsEntity.builder().itemId(2L).build()).quantity(3).build(),
+                                      SellHistoryEntity.builder().sellDate(OffsetDateTime.now())
+                                              .user(PersonalAccountEntity.builder().accountId(30L).build())
+                                              .itemId(ItemsEntity.builder().itemId(2L).build()).quantity(10).build()));
+    }
+
+    public static Stream<Arguments> getArgumentForPersonalAccountTest() {
+        return Stream.of(Arguments.of(PersonalAccountEntity.builder().address("no address")
+                                              .birthday(LocalDate.now().minusYears(20)).city("no city")
+                                              .country(Country.KAZAKHSTAN)
+                                              .email("noemail@email.ru").gender(Gender.MALE).image("").name("Sasha")
+                                              .password("123")
+                                              .phoneNumber("+79214050505").surname("nonamich").build()));
 
     }
 
     public static Stream<Arguments> getArgumentForSellHistory() {
         return Stream.of(Arguments.of(SellHistoryEntity.builder()
-                .sellDate(OffsetDateTime.now())
-                .user(PersonalAccountEntity.builder()
-                        .accountId(2L)
-                        .build())
-                .itemId(ItemsEntity.builder()
-                        .itemId(2l)
-                        .build())
-                .quantity(2)
-                .build()
+                                              .sellDate(OffsetDateTime.now())
+                                              .user(PersonalAccountEntity.builder()
+                                                            .accountId(2L)
+                                                            .build())
+                                              .itemId(ItemsEntity.builder()
+                                                              .itemId(2l)
+                                                              .build())
+                                              .quantity(2)
+                                              .build()
         ));
     }
 
     public static Stream<Arguments> getArgumentsForItemsTestAndPersonalAccount() {
         return Stream.of(Arguments.of(ItemsEntity.builder()
 
-                        .model("pixel a5")
-                        .brand(BrandEnum.Google)
-                        .attributes("128gb green")
-                        .price(999.99)
-                        .currency(CurrencyEnum.$)
-                        .quantity(57)
-                        .build(),
-                PersonalAccountEntity.builder()
-                        .image("")
-                        .name("Artem")
-                        .surname("Eranov")
-                        .email("sobaka@mail.ru")
-                        .birthday(LocalDate.of(1990, 12, 12))
-                        .city("Oren")
-                        .address("Pushkina")
-                        .country(Country.KAZAKHSTAN)
-                        .gender(Gender.MALE)
-                        .phoneNumber("+79553330987")
-                        .password("1499")
-                        .build()
+                                              .model("pixel a5")
+                                              .brand(BrandEnum.Google)
+                                              .attributes("128gb green")
+                                              .price(999.99)
+                                              .currency(CurrencyEnum.$)
+                                              .quantity(57)
+                                              .build(),
+                                      PersonalAccountEntity.builder()
+                                              .image("")
+                                              .name("Artem")
+                                              .surname("Eranov")
+                                              .email("sobaka@mail.ru")
+                                              .birthday(LocalDate.of(1990, 12, 12))
+                                              .city("Oren")
+                                              .address("Pushkina")
+                                              .country(Country.KAZAKHSTAN)
+                                              .gender(Gender.MALE)
+                                              .phoneNumber("+79553330987")
+                                              .password("1499")
+                                              .build()
         ));
     }
 }

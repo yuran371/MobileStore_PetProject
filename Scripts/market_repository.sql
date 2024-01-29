@@ -53,6 +53,15 @@ CREATE TABLE IF NOT EXISTS sell_history
     sell_date TIMESTAMPTZ               NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS profile_info
+(
+    id           BIGSERIAL PRIMARY KEY,
+    user_id      BIGINT UNIQUE REFERENCES personal_account (account_id),
+    language     VARCHAR(2),
+    special_info VARCHAR(256)
+);
+drop table profile_info;
+
 CREATE INDEX IF NOT EXISTS item_id_idx ON sell_history (item_id);
 
 ALTER SEQUENCE items_item_id_seq RESTART WITH 1;
