@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS sell_history
 (
     sell_id   BIGSERIAl PRIMARY KEY,
     item_id   BIGINT REFERENCES Items (item_id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    user_id   BIGINT                    NOT NULL,
+    user_id   BIGINT,
     FOREIGN KEY (user_id) REFERENCES personal_account (account_id) ON DELETE RESTRICT,
     quantity  INT CHECK (quantity >= 0) NOT NULL,
     sell_date TIMESTAMPTZ               NOT NULL
