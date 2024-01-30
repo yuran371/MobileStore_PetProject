@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "email")
-@ToString(exclude = {"orders", "profileInfo"})
+@ToString(exclude = {"phonePurchases", "profileInfo"})
 @Builder
 @Entity
 @Table(name = "personal_account", schema = "market", indexes = {
@@ -45,6 +45,17 @@ public class PersonalAccountEntity {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SellHistoryEntity> phonePurchases = new ArrayList<>();
+    public void addPurchase(SellHistoryEntity phonePurchase) {
+        phonePurchases.add(phonePurchase);
+        phonePurchase.setUser(this);
+    }
+    public void removePurchase(SellHistoryEntity phonePurchase) {
+        phonePurchases.remove(phonePurchase);
+        phonePurchase.setUser(null);
+    }
     @OneToOne(mappedBy = "personalAccount")
     private ProfileInfoEntity profileInfo;
     @Builder.Default
@@ -56,9 +67,4 @@ public class PersonalAccountEntity {
     @CollectionTable(name = "user_payment_options", joinColumns = @JoinColumn(name = "account_id"))
     private List<UserPaymentOptions> paymentOptions = new ArrayList<>();
 
-    public void addOrder(SellHistoryEntity order) {
-        orders.add(order);
-        order.setUser(this);
-    }
 }
-
