@@ -64,12 +64,19 @@ drop table profile_info;
 
 CREATE TABLE IF NOT EXISTS user_payment_options
 (
-    account_id BIGINT REFERENCES personal_account (account_id) ON DELETE  CASCADE ,
+    account_id         BIGINT REFERENCES personal_account (account_id) ON DELETE CASCADE,
     added_payment_type VARCHAR(128) NOT NULL,
     PRIMARY KEY (account_id, added_payment_type)
 );
-
 DROP TABLE user_payment_options;
+
+CREATE TABLE item_currency
+(
+    item_id  INT        NOT NULL REFERENCES items (item_id),
+    currency VARCHAR(1) NOT NULL,
+    price    NUMERIC(12, 2) CHECK (price > 0),
+    PRIMARY KEY (currency, price)
+);
 
 CREATE INDEX IF NOT EXISTS item_id_idx ON sell_history (item_id);
 

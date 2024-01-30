@@ -40,6 +40,22 @@ public class DaoTest {
     class Items {
         ItemsDao itemsDao = ItemsDao.getInstance();
 
+        @Test
+        void currencyInfo() {
+            @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
+                    .openSession();
+            session.beginTransaction();
+            ItemsEntity itemsEntity = session.get(ItemsEntity.class, 2l);
+            itemsEntity.getCurrencyInfos()
+                    .add(CurrencyInfo.of(1000.00, CurrencyEnum.$)
+                    );
+            itemsEntity.getCurrencyInfos()
+                    .add(CurrencyInfo.of(89_000.00, CurrencyEnum.₽)
+                    );
+            session.getTransaction()
+                    .commit();
+
+        }
 
         @ParameterizedTest
         @DisplayName("если orphanRemoval=true, то при удалении комментария из топика он удаляется из базы")
@@ -68,7 +84,8 @@ public class DaoTest {
 //            session.detach(itemsEntity);
 //            session.beginTransaction();
 //            ItemsEntity itemsEntity1 = session.get(itemsEntity.getClass(), itemId);
-            itemsEntity.getPhoneOrders().remove(0);
+            itemsEntity.getPhoneOrders()
+                    .remove(0);
             itemsEntity.removePhoneOrder(itemsEntity.getPhoneOrders()
                     .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
             personalAccountEntity.removePurchase(personalAccountEntity.getPhonePurchases()
@@ -78,7 +95,8 @@ public class DaoTest {
             Long sellId = sellHistoryEntity
                     .getSellId();
             session.remove(sellHistoryEntity);
-            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);  // sellHistoryEntity должен быть null после session.remove(sellHistoryEntity);
+            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);  //
+            // sellHistoryEntity должен быть null после session.remove(sellHistoryEntity);
             session.remove(itemsEntity);
             session.remove(personalAccountEntity);
             session.flush();

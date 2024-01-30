@@ -33,6 +33,9 @@ public class ItemsEntity {
     private CurrencyEnum currency;
     @Column(name = "quantity")
     private Integer quantity;
+    @ElementCollection
+    @CollectionTable(name = "item_currency", joinColumns = @JoinColumn(name = "item_id"))
+    private List<CurrencyInfo> currencyInfos;
     @Builder.Default
     @OneToMany(mappedBy = "itemId", orphanRemoval = true)
     private List<SellHistoryEntity> phoneOrders = new ArrayList<>();
