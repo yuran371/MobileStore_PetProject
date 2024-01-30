@@ -37,7 +37,7 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     private ItemsDao() {
     }
 
-    public Optional<Long> insert2(ItemsEntity items, Session session) {
+    public Optional<Long> insertViaHibernate(ItemsEntity items, Session session) {
             session.persist(items);
             return Optional.ofNullable(items.getItemId());
     }

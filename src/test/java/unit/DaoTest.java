@@ -48,7 +48,7 @@ public class DaoTest {
             @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
                     .openSession();
             session.beginTransaction();
-            itemsDao.insert2(itemsEntity, session);
+            itemsDao.insertViaHibernate(itemsEntity, session);
             session.persist(personalAccountEntity);
             Long itemId = itemsEntity.getItemId();
             List<SellHistoryEntity> collectOfSellHistoryEntity =
@@ -56,26 +56,35 @@ public class DaoTest {
                             .collect(Collectors.toList());
             collectOfSellHistoryEntity.stream()
                     .forEach(sellHistoryEntity -> {
-                        sellHistoryEntity.setItemId(itemsEntity);
-                        sellHistoryEntity.setUser(personalAccountEntity);
+                        itemsEntity.addPhoneOrder(sellHistoryEntity);
+                        personalAccountEntity.addPurchase(sellHistoryEntity);
                         session.persist(sellHistoryEntity);
                     });
-            session.getTransaction()
-                    .commit();
-            session.detach(itemsEntity);
-            session.beginTransaction();
-            ItemsEntity itemsEntity1 = session.get(itemsEntity.getClass(), itemId);
-//            itemsEntity.removePhoneOrder(itemsEntity.getPhoneOrders().get(0));
-            itemsEntity1.getPhoneOrders()
-                    .remove(0);
+            /*
+             * 64-68стр Нужны были для "обновления" данных (актуализации List). После добавления 57стр deprecated
+             * */
+//            session.getTransaction()
+//                    .commit();
+//            session.detach(itemsEntity);
+//            session.beginTransaction();
+//            ItemsEntity itemsEntity1 = session.get(itemsEntity.getClass(), itemId);
+            itemsEntity.getPhoneOrders().remove(0);
+            itemsEntity.removePhoneOrder(itemsEntity.getPhoneOrders()
+                    .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
+            personalAccountEntity.removePurchase(personalAccountEntity.getPhonePurchases()
+                    .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
+
             SellHistoryEntity sellHistoryEntity = collectOfSellHistoryEntity.get(0);
             Long sellId = sellHistoryEntity
                     .getSellId();
             session.remove(sellHistoryEntity);
-            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);
+            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);  // sellHistoryEntity должен быть null после session.remove(sellHistoryEntity);
+            session.remove(itemsEntity);
+            session.remove(personalAccountEntity);
+            session.flush();
             session.getTransaction()
                     .commit();
-            assertThat(sellHistoryEntityIsNull).isNull();
+            assertThat(sellHistoryEntityIsNull).isNull();   //  Проверка, удалился ли SellHistory из таблицы
 
             log.info("Just added: {} {} {} {} qt: {}", itemsEntity.getBrand(), itemsEntity.getModel(),
                      itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
