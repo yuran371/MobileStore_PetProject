@@ -11,7 +11,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import utlis.HibernateSessionFactory;
+import util.HibernateTestUtil;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class EntityTest {
             Optional<Object> argument = DaoTest.getArgumentForPersonalAccountTest()
                     .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
             PersonalAccountEntity personalAccountEntity = (PersonalAccountEntity) argument.get();
-            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+            @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
             @Cleanup Session session = sessionFactory.openSession();
             session.beginTransaction();
             session.persist(personalAccountEntity);
@@ -64,7 +64,7 @@ public class EntityTest {
             Optional<Object> argument = DaoTest.getArgumentForPersonalAccountTest()
                     .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
             PersonalAccountEntity personalAccountEntity = (PersonalAccountEntity) argument.get();
-            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+            @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
             @Cleanup Session session = sessionFactory.openSession();
             session.beginTransaction();
             session.persist(personalAccountEntity);
