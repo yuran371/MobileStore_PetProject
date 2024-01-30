@@ -13,6 +13,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"model", "attributes"})
 @ToString(exclude = "phoneOrders")
 @Entity(name = "items")
+@Table(schema = "market")
 public class ItemsEntity {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)

@@ -1,3 +1,5 @@
+package util;
+
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -18,6 +20,8 @@ public class HibernateTestUtil {
         configuration.setProperty("hibernate.connection.url", testContainer.getJdbcUrl());
         configuration.setProperty("hibernate.connection.username", testContainer.getUsername());
         configuration.setProperty("hibernate.connection.password", testContainer.getPassword());
+        configuration.setProperty("jakarta.persistence.create-database-schemas", "true");
+        configuration.setProperty("hibernate.hbm2ddl.import_files", "addPgcrypto.sql");
         configuration.configure();
         return configuration.buildSessionFactory();
     }
