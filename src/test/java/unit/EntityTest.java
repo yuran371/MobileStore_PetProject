@@ -2,14 +2,12 @@ package unit;
 
 import entity.PersonalAccountEntity;
 import entity.ProfileInfoEntity;
+import entity.UserPaymentOptions;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -55,6 +53,34 @@ public class EntityTest {
             session.getTransaction().commit();
         }
     }
+
+    @Nested
+    @TestInstance(value = Lifecycle.PER_CLASS)
+    @Tag(value = "PersonalAccountEntity")
+    class PersonalAccount {
+
+        @Test
+        void add_newUserPaymentOptions_returnUserPaymentOptionFromDb() {
+            Optional<Object> argument = DaoTest.getArgumentForPersonalAccountTest()
+                    .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
+            PersonalAccountEntity personalAccountEntity = (PersonalAccountEntity) argument.get();
+            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+            @Cleanup Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.persist(personalAccountEntity);
+            Long accountId = personalAccountEntity.getAccountId();
+            personalAccountEntity.getPaymentOptions().add(UserPaymentOptions.of("credit card"));
+            personalAccountEntity.getPaymentOptions().add(UserPaymentOptions.of("cash"));
+            session.flush();
+            session.getTransaction().commit();
+            session.beginTransaction();
+            PersonalAccountEntity accountFromDb = session.get(PersonalAccountEntity.class, accountId);
+            assertThat(accountFromDb.getPaymentOptions().size()).isEqualTo(2);
+            session.remove(accountFromDb);
+            session.getTransaction().commit();
+        }
+    }
+
 
     public static Stream<Arguments> getArgumentsForProfileInfo() {
         return Stream.of(Arguments.of(ProfileInfoEntity.builder().language("RU")
