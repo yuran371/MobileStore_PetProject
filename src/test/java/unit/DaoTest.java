@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import util.HibernateTestUtil;
 import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
@@ -40,28 +41,47 @@ public class DaoTest {
     class Items {
         ItemsDao itemsDao = ItemsDao.getInstance();
 
-        @Test
-        void currencyInfo() {
-            @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
+        @ParameterizedTest
+        @MethodSource("unit.DaoTest#getListOfItemsOfArguments")
+        void countItems_countIs3_True(List<ItemsEntity> list) {
+            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
                     .openSession();
             session.beginTransaction();
-            ItemsEntity itemsEntity = session.get(ItemsEntity.class, 2l);
-            itemsEntity.getCurrencyInfos()
-                    .add(CurrencyInfo.of(1000.00, CurrencyEnum.$)
-                    );
-            itemsEntity.getCurrencyInfos()
-                    .add(CurrencyInfo.of(89_000.00, CurrencyEnum.₽)
-                    );
+            for (ItemsEntity item : list) {
+                session.persist(item);
+            }
+            List<ItemsEntity> offsetLimitList = itemsDao.findItemsLimitOffsetViaHibernate(3, 0, session);
+
             session.getTransaction()
                     .commit();
+            assertThat(offsetLimitList.size()).isEqualTo(3);
+            // Написать тест: смещение списка и сравнение полученных items
+        }
 
+        @ParameterizedTest
+        @MethodSource("unit.DaoTest#getArgumentsForItemsTest")
+        void currencyInfo(ItemsEntity itemsEntity) {
+            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
+                    .openSession();
+            session.beginTransaction();
+            session.persist(itemsEntity);
+            ItemsEntity item = session.get(ItemsEntity.class, 1l);
+            item.getCurrencyInfos()
+                    .add(CurrencyInfo.of(1000.00, CurrencyEnum.$)
+                    );
+            item.getCurrencyInfos()
+                    .add(CurrencyInfo.of(89_000.00, CurrencyEnum.₽)
+                    );
+            System.out.println(item.getCurrencyInfos());
+            session.getTransaction()
+                    .commit();
         }
 
         @ParameterizedTest
         @DisplayName("если orphanRemoval=true, то при удалении комментария из топика он удаляется из базы")
         @MethodSource("unit.DaoTest#getArgumentsForItemsTestAndPersonalAccount")
         void givenOrphanRemovalTrue_whenRemoveSellHistoryEntityFromPhoneOrders_thenItRemovedFromDatabase(ItemsEntity itemsEntity, PersonalAccountEntity personalAccountEntity) {
-            @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
+            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
                     .openSession();
             session.beginTransaction();
             itemsDao.insertViaHibernate(itemsEntity, session);
@@ -262,5 +282,92 @@ public class DaoTest {
                                               .password("1499")
                                               .build()
         ));
+    }
+
+    public static Stream<Arguments> getArgumentsForItemsTest() {
+        return Stream.of(Arguments.of(ItemsEntity.builder()
+                .model("pixel a5")
+                .brand(BrandEnum.Google)
+                .attributes("128gb green")
+                .price(999.99)
+                .currency(CurrencyEnum.$)
+                .quantity(57)
+                .build()));
+    }
+
+    public static Stream<Arguments> getListOfItemsOfArguments() {
+        return Stream.of(Arguments.of(List.of(ItemsEntity.builder()
+                        .model("iPhone 14")
+                        .brand(BrandEnum.Apple)
+                        .attributes("128gb black")
+                        .price(89_990.00)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(83)
+                        .build(),
+                ItemsEntity.builder()
+                        .model("iPhone 11")
+                        .brand(BrandEnum.Apple)
+                        .attributes("64gb red")
+                        .price(79_999.99)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(55)
+                        .build(),
+                ItemsEntity.builder()
+                        .model("iPhone 15 Pro Max")
+                        .brand(BrandEnum.Apple)
+                        .attributes("1024gb white")
+                        .price(215_999.99)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(14)
+                        .build(),
+                ItemsEntity.builder()
+                        .model("iPhone 14 Pro Max")
+                        .brand(BrandEnum.Apple)
+                        .attributes("512gb spaceGrey")
+                        .price(36_999.99)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(99)
+                        .build(),
+                ItemsEntity.builder()
+                        .model("Redmi A2+")
+                        .brand(BrandEnum.Xiaomi)
+                        .attributes("128gb black")
+                        .price(30_999.99)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(114)
+                        .build(),
+                ItemsEntity.builder()
+                        .model("13T")
+                        .brand(BrandEnum.Xiaomi)
+                        .attributes("64gb black")
+                        .price(8_999.99)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(223)
+                        .build(),
+                ItemsEntity.builder()
+                        .model("Galaxy S21 FE")
+                        .brand(BrandEnum.Samsung)
+                        .attributes("128gb grey")
+                        .price(28_999.99)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(99)
+                        .build(),
+                ItemsEntity.builder()
+                        .model("Galaxy S23 Ultra")
+                        .brand(BrandEnum.Samsung)
+                        .attributes("256gb white")
+                        .price(119_999.99)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(8)
+                        .build(),
+                ItemsEntity.builder()
+                        .model("Galaxy A04")
+                        .brand(BrandEnum.Samsung)
+                        .attributes("8gb black")
+                        .price(5_999.99)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(99)
+                        .build()
+        )));
     }
 }

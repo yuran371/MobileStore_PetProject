@@ -2,6 +2,7 @@ package entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +34,13 @@ public class ItemsEntity {
     private CurrencyEnum currency;
     @Column(name = "quantity")
     private Integer quantity;
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "item_currency", joinColumns = @JoinColumn(name = "item_id"))
-    private List<CurrencyInfo> currencyInfos;
+    private List<CurrencyInfo> currencyInfos = new ArrayList<>();
     @Builder.Default
     @OneToMany(mappedBy = "itemId", orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.PERSIST)     // При вызове session.persist(ItemEntity) также сохранятся все связанные sellHistoryEntity
     private List<SellHistoryEntity> phoneOrders = new ArrayList<>();
 
     public void addPhoneOrder(SellHistoryEntity phoneOrder) {
