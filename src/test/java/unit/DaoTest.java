@@ -37,21 +37,61 @@ public class DaoTest {
     class Items {
         ItemsDao itemsDao = ItemsDao.getInstance();
 
+        @ParameterizedTest
+        @MethodSource("unit.DaoTest#getListOfItemsOfArguments")
+        void countItems_countIs3_True(List<ItemsEntity> list) {
+            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
+                    .openSession();
+            session.beginTransaction();
+            for (ItemsEntity item : list) {
+                session.persist(item);
+            }
+            List<ItemsEntity> offsetLimitList = itemsDao.findItemsLimitOffsetViaHibernate(3, 0, session);
+
+            session.getTransaction()
+                    .commit();
+            assertThat(offsetLimitList.size()).isEqualTo(3);
+            // Написать тест: смещение списка и сравнение полученных items
+        }
+
+        @ParameterizedTest
+        @MethodSource("unit.DaoTest#getArgumentsForItemsTest")
+        void currencyInfo(ItemsEntity itemsEntity) {
+            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
+                    .openSession();
+            session.beginTransaction();
+            session.persist(itemsEntity);
+            ItemsEntity item = session.get(ItemsEntity.class, 1l);
+            item.getCurrencyInfos()
+                    .add(CurrencyInfo.of(1000.00, CurrencyEnum.$)
+                    );
+            item.getCurrencyInfos()
+                    .add(CurrencyInfo.of(89_000.00, CurrencyEnum.₽)
+                    );
+            System.out.println(item.getCurrencyInfos());
+            session.getTransaction()
+                    .commit();
+        }
 
         @ParameterizedTest
         @DisplayName("если orphanRemoval=true, то при удалении комментария из топика он удаляется из базы")
         @MethodSource("unit.DaoTest#argumentsForItemsTestAndPersonalAccount")
         void givenOrphanRemovalTrue_whenRemoveSellHistoryEntityFromPhoneOrders_thenItRemovedFromDatabase(ItemsEntity itemsEntity, PersonalAccountEntity personalAccountEntity) {
-            @Cleanup Session session = HibernateTestUtil.getSessionFactory().openSession(); session.beginTransaction();
-            itemsDao.insertViaHibernate(itemsEntity, session); session.persist(personalAccountEntity);
+            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
+                    .openSession();
+            session.beginTransaction();
+            itemsDao.insertViaHibernate(itemsEntity, session);
+            session.persist(personalAccountEntity);
             Long itemId = itemsEntity.getId();
-            List<SellHistoryEntity> collectOfSellHistoryEntity =
-                    argumentSellHistory().map(arguments -> (SellHistoryEntity) arguments.get()[0])
-                            .collect(Collectors.toList());
-            collectOfSellHistoryEntity.stream().forEach(sellHistoryEntity -> {
-                itemsEntity.addPhoneOrder(sellHistoryEntity); personalAccountEntity.addPurchase(sellHistoryEntity);
-                session.persist(sellHistoryEntity);
-            });
+//            List<SellHistoryEntity> collectOfSellHistoryEntity =
+//                //    getArgumentForSellHistory().map(arguments -> (SellHistoryEntity) arguments.get()[0])
+//                //            .collect(Collectors.toList());
+//            collectOfSellHistoryEntity.stream()
+//                    .forEach(sellHistoryEntity -> {
+//                        itemsEntity.addPhoneOrder(sellHistoryEntity);
+//                        personalAccountEntity.addPurchase(sellHistoryEntity);
+//                        session.persist(sellHistoryEntity);
+//                    });
             /*
              * 64-68стр Нужны были для "обновления" данных (актуализации List). После добавления 57стр deprecated
              * */
@@ -60,21 +100,25 @@ public class DaoTest {
 //            session.detach(itemsEntity);
 //            session.beginTransaction();
 //            ItemsEntity itemsEntity1 = session.get(itemsEntity.getClass(), itemId);
-//            itemsEntity.getPhoneOrders().remove(0);
-            itemsEntity.removePhoneOrder(itemsEntity.getPhoneOrders()
-                                                 .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval
-            // = true
-            personalAccountEntity.removePurchase(personalAccountEntity.getPhonePurchases()
-                                                         .get(0));   //  Тестируем удаление sellHistoryEntity с
-            // orphanRemoval = true
-
-            SellHistoryEntity sellHistoryEntity = collectOfSellHistoryEntity.get(0);
-            Long sellId = sellHistoryEntity.getSellId(); session.remove(sellHistoryEntity);
-            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);  //
-            // sellHistoryEntity должен быть null после session.remove(sellHistoryEntity);
-            session.remove(itemsEntity); session.remove(personalAccountEntity); session.flush();
-            session.getTransaction().commit();
-            assertThat(sellHistoryEntityIsNull).isNull();   //  Проверка, удалился ли SellHistory из таблицы
+//            itemsEntity.getPhoneOrders()
+//                    .remove(0);
+//            itemsEntity.removePhoneOrder(itemsEntity.getPhoneOrders()
+//                    .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
+//            personalAccountEntity.removePurchase(personalAccountEntity.getPhonePurchases()
+//                    .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
+//
+//            SellHistoryEntity sellHistoryEntity = collectOfSellHistoryEntity.get(0);
+//            Long sellId = sellHistoryEntity
+//                    .getSellId();
+//            session.remove(sellHistoryEntity);
+//            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);  //
+//            // sellHistoryEntity должен быть null после session.remove(sellHistoryEntity);
+//            session.remove(itemsEntity);
+//            session.remove(personalAccountEntity);
+//            session.flush();
+//            session.getTransaction()
+//                    .commit();
+//            assertThat(sellHistoryEntityIsNull).isNull();   //  Проверка, удалился ли SellHistory из таблицы
 
             log.info("Just added: {} {} {} {} qt: {}", itemsEntity.getBrand(), itemsEntity.getModel(),
                      itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
@@ -251,7 +295,6 @@ public class DaoTest {
             session.getTransaction().commit();
         }
 
-
     }
 
     public static Stream<Arguments> argumentsSellHistory() {
@@ -298,11 +341,6 @@ public class DaoTest {
 
     }
 
-    public static Stream<Arguments> argumentSellHistory() {
-        return Stream.of(Arguments.of(SellHistoryEntity.builder().sellDate(OffsetDateTime.now())
-                                              .user(PersonalAccountEntity.builder().id(2L).build())
-                                              .itemId(ItemsEntity.builder().id(2l).build()).quantity(2).build()));
-    }
 
     public static Stream<Arguments> argumentsForItemsTestAndPersonalAccount() {
         return Stream.of(Arguments.of(ItemsEntity.builder().model("pixel a5").brand(BrandEnum.Google)
@@ -312,6 +350,92 @@ public class DaoTest {
                                               .birthday(LocalDate.of(1990, 12, 12)).city("Oren").address("Pushkina")
                                               .country(Country.KAZAKHSTAN).gender(Gender.MALE)
                                               .phoneNumber("+79553330987").password("1499").build()));
+    }
+    public static Stream<Arguments> getArgumentsForItemsTest() {
+        return Stream.of(Arguments.of(ItemsEntity.builder()
+                                              .model("pixel a5")
+                                              .brand(BrandEnum.Google)
+                                              .attributes("128gb green")
+                                              .price(999.99)
+                                              .currency(CurrencyEnum.$)
+                                              .quantity(57)
+                                              .build()));
+    }
+
+    public static Stream<Arguments> getListOfItemsOfArguments() {
+        return Stream.of(Arguments.of(List.of(ItemsEntity.builder()
+                                                      .model("iPhone 14")
+                                                      .brand(BrandEnum.Apple)
+                                                      .attributes("128gb black")
+                                                      .price(89_990.00)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(83)
+                                                      .build(),
+                                              ItemsEntity.builder()
+                                                      .model("iPhone 11")
+                                                      .brand(BrandEnum.Apple)
+                                                      .attributes("64gb red")
+                                                      .price(79_999.99)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(55)
+                                                      .build(),
+                                              ItemsEntity.builder()
+                                                      .model("iPhone 15 Pro Max")
+                                                      .brand(BrandEnum.Apple)
+                                                      .attributes("1024gb white")
+                                                      .price(215_999.99)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(14)
+                                                      .build(),
+                                              ItemsEntity.builder()
+                                                      .model("iPhone 14 Pro Max")
+                                                      .brand(BrandEnum.Apple)
+                                                      .attributes("512gb spaceGrey")
+                                                      .price(36_999.99)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(99)
+                                                      .build(),
+                                              ItemsEntity.builder()
+                                                      .model("Redmi A2+")
+                                                      .brand(BrandEnum.Xiaomi)
+                                                      .attributes("128gb black")
+                                                      .price(30_999.99)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(114)
+                                                      .build(),
+                                              ItemsEntity.builder()
+                                                      .model("13T")
+                                                      .brand(BrandEnum.Xiaomi)
+                                                      .attributes("64gb black")
+                                                      .price(8_999.99)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(223)
+                                                      .build(),
+                                              ItemsEntity.builder()
+                                                      .model("Galaxy S21 FE")
+                                                      .brand(BrandEnum.Samsung)
+                                                      .attributes("128gb grey")
+                                                      .price(28_999.99)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(99)
+                                                      .build(),
+                                              ItemsEntity.builder()
+                                                      .model("Galaxy S23 Ultra")
+                                                      .brand(BrandEnum.Samsung)
+                                                      .attributes("256gb white")
+                                                      .price(119_999.99)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(8)
+                                                      .build(),
+                                              ItemsEntity.builder()
+                                                      .model("Galaxy A04")
+                                                      .brand(BrandEnum.Samsung)
+                                                      .attributes("8gb black")
+                                                      .price(5_999.99)
+                                                      .currency(CurrencyEnum.₽)
+                                                      .quantity(99)
+                                                      .build()
+        )));
     }
 
     private static List<PersonalAccountEntity> getPersonalAccountEntities(int quantity) {

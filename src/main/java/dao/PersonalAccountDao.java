@@ -24,9 +24,9 @@ import java.util.Optional;
 @Slf4j
 public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 
-    private static PersonalAccountDao INSTANCE = new PersonalAccountDao();
+    private static final PersonalAccountDao INSTANCE = new PersonalAccountDao();
 
-    private static SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
+    private static final SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
 
     private PersonalAccountDao() {
     }
@@ -34,29 +34,6 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
     public static PersonalAccountDao getInstance() {
         return INSTANCE;
     }
-
-    private final static String SQL_GET_BY_LOGIN_STATEMENT = """
-            SELECT account_id, email, name, surname, country, city, address, phone_number
-            FROM personal_account
-            WHERE email LIKE ?;
-            """;
-
-    private final static String SQL_GET_BY_ID_STATEMENT = """
-            SELECT account_id, email, password, name, surname, birthday, country, city, address, phone_number, gender
-            FROM personal_account
-            WHERE account_id = ?;
-            """;
-
-    private final static String SQL_GET_BY_EMAIL_AND_PASSWORD = """
-            SELECT account_id, email, name, surname, birthday, country, city, address, phone_number, gender, image
-            FROM personal_account
-            WHERE email = ? AND password = crypt(?, password);
-            """;
-
-    private final static String SQL_SELECT_STATEMENT = """
-            	SELECT account_id, email, name, surname, country, city, address, phone_number
-            	FROM personal_account
-            """;
 
     private final static String SQL_DELETE_BY_ID = """
             DELETE FROM personal_account
