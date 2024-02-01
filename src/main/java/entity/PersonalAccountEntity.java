@@ -19,11 +19,13 @@ import java.util.List;
 @Table(name = "personal_account", schema = "market", indexes = {
         @Index(name = "emailIndex", columnList = "email", unique = true)
 })
-public class PersonalAccountEntity {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type")
+public class PersonalAccountEntity implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accountId;
+    private Long id;
     private String email;
     @ColumnTransformer(read = "pgp_sym_decrypt(" +
             "password::bytea, " +
@@ -46,7 +48,7 @@ public class PersonalAccountEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
     @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SellHistoryEntity> phonePurchases = new ArrayList<>();
     public void addPurchase(SellHistoryEntity phonePurchase) {
         phonePurchases.add(phonePurchase);

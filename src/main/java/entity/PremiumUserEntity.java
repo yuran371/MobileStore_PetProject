@@ -30,7 +30,7 @@ public class PremiumUserEntity extends PersonalAccountEntity {
         this.discount = discount;
     }
 
-    private PremiumUserEntity(@NonNull PersonalAccountEntity defaultAccount, Discount discount) {
+    public PremiumUserEntity(@NonNull PersonalAccountEntity defaultAccount, Discount discount) {
         super(defaultAccount.getId(),
               defaultAccount.getEmail(),
               defaultAccount.getPassword(),

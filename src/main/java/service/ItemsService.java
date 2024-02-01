@@ -1,12 +1,12 @@
 package service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import dao.ItemsDao;
 import dto.ItemsDto;
 import dto.ItemsFilterDto;
 import entity.ItemsEntity;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemsService {
 	private static ItemsService INSTANCE = new ItemsService();
@@ -21,19 +21,19 @@ public class ItemsService {
 	}
 
 	public List<ItemsFilterDto> findAllItems() {
-		return InstanceDao.findAll().stream().map(entity -> new ItemsFilterDto(entity.getItemId(), entity.getModel(),
+		return InstanceDao.findAll().stream().map(entity -> new ItemsFilterDto(entity.getId(), entity.getModel(),
 				entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name())).collect(Collectors.toList());
 	}
 
 	public List<ItemsFilterDto> findBrand(String brand) {
-		return InstanceDao.findByBrand(brand).stream().map(entity -> new ItemsFilterDto(entity.getItemId(),
+		return InstanceDao.findByBrand(brand).stream().map(entity -> new ItemsFilterDto(entity.getId(),
 				entity.getModel(), entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name()))
 				.collect(Collectors.toList());
 	}
 
 	public ItemsDto findById(Long itemId) {
 		ItemsEntity itemsEntity = InstanceDao.getById(itemId).get();
-		return new ItemsDto(itemsEntity.getItemId(), itemsEntity.getModel(), itemsEntity.getBrand().name(),
+		return new ItemsDto(itemsEntity.getId(), itemsEntity.getModel(), itemsEntity.getBrand().name(),
 				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency().name(),
 				itemsEntity.getQuantity());
 	}

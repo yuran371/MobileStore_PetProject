@@ -39,7 +39,7 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
 
     public Optional<Long> insertViaHibernate(ItemsEntity items, Session session) {
             session.persist(items);
-            return Optional.ofNullable(items.getItemId());
+            return Optional.ofNullable(items.getId());
     }
 
     @Override
