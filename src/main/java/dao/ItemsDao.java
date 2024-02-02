@@ -1,5 +1,7 @@
 package dao;
 
+import com.querydsl.jpa.impl.JPAQuery;
+import dto.AttributesFilter;
 import entity.ItemsEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -14,6 +16,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static entity.QItemsEntity.itemsEntity;
 
 @Slf4j
 public class ItemsDao implements Dao<Long, ItemsEntity> {
@@ -42,18 +46,29 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
         return Optional.ofNullable(items.getItemId());
     }
 
-    public List<ItemsEntity> findByBrandViaHibernate(String brand, Session session) {
+    public List<ItemsEntity> findByBrandViaHQL(String brand, Session session) {
         return session.createQuery("select i from items i " +
                         "where i.brand = :brand", ItemsEntity.class)
                 .setParameter("brand", brand)
                 .list();
     }
 
-    public List<ItemsEntity> findItemsLimitOffsetViaHibernate(int limit, int offset, Session session) {
-        return session.createQuery("select i from items i", ItemsEntity.class)
-                .setMaxResults(limit)
-                .setFirstResult(offset * 3)
-                .list();
+    public List<ItemsEntity> findItemsLimitOffsetViaQuerydsl(int limit, int offset, Session session) {
+        return new JPAQuery<ItemsEntity>(session).select(itemsEntity)
+                .from(itemsEntity)
+                .limit(limit)
+                .offset(offset*3)
+                .fetch();
+    }
+
+    public List<ItemsEntity> findAllViaQuerydsl(Session session) {
+        return new JPAQuery<ItemsEntity>(session).select(itemsEntity)
+                .from(itemsEntity)
+                .fetch();
+    }
+
+    public List<ItemsEntity> findItemsUsingAttributes(AttributesFilter filter, Session session) {
+        QPredicate.builder().add(filter.)
     }
 
     @Override

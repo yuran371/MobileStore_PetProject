@@ -31,6 +31,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static entity.Attributes.BrandEnum.*;
+import static entity.Attributes.InternalMemoryEnum.*;
+import static entity.Attributes.OperatingSystemEnum.ANDROID;
+import static entity.Attributes.OperatingSystemEnum.IOS;
+import static entity.Attributes.RamEnum.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -50,11 +55,37 @@ public class DaoTest {
             for (ItemsEntity item : list) {
                 session.persist(item);
             }
-            List<ItemsEntity> offsetLimitList = itemsDao.findItemsLimitOffsetViaHibernate(3, 0, session);
+            List<ItemsEntity> offsetLimitList = itemsDao.findItemsLimitOffsetViaQuerydsl(3, 0, session);
 
             session.getTransaction()
                     .commit();
             assertThat(offsetLimitList.size()).isEqualTo(3);
+            // Написать тест: смещение списка и сравнение полученных items
+        }
+
+        @ParameterizedTest
+        @MethodSource("unit.DaoTest#getListOfItemsOfArguments")
+        void offsetOnSecondPage_compareTwoEntities_True(List<ItemsEntity> list) {
+            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
+                    .openSession();
+            session.beginTransaction();
+            for (ItemsEntity item : list) {
+                session.persist(item);
+            }
+            List<ItemsEntity> offsetLimitList = itemsDao.findItemsLimitOffsetViaQuerydsl(3, 1, session);
+            ItemsEntity itemOnSecondPage = offsetLimitList.get(0);
+            System.out.println(itemOnSecondPage);
+            session.getTransaction()
+                    .commit();
+            ItemsEntity itemExpected = ItemsEntity.builder()
+                    .model("iPhone 14 Pro Max")
+                    .brand(Attributes.BrandEnum.Apple)
+                    .attributes("512gb spaceGrey")
+                    .price(36_999.99)
+                    .currency(CurrencyEnum.₽)
+                    .quantity(99)
+                    .build();
+            assertThat(itemOnSecondPage).isEqualTo(itemExpected);
             // Написать тест: смещение списка и сравнение полученных items
         }
 
@@ -295,8 +326,7 @@ public class DaoTest {
         return Stream.of(Arguments.of(ItemsEntity.builder()
 
                         .model("pixel a5")
-                        .brand(BrandEnum.Google)
-                        .attributes("128gb green")
+                        .brand(Attributes.BrandEnum.GOOGLE)
                         .price(999.99)
                         .currency(CurrencyEnum.$)
                         .quantity(57)
@@ -319,9 +349,12 @@ public class DaoTest {
 
     public static Stream<Arguments> getArgumentsForItemsTest() {
         return Stream.of(Arguments.of(ItemsEntity.builder()
+                .brand(Attributes.BrandEnum.GOOGLE)
                 .model("pixel a5")
-                .brand(BrandEnum.Google)
-                .attributes("128gb green")
+                .internalMemory(Attributes.InternalMemoryEnum.GB_16)
+                .ram(Attributes.RamEnum.gb_4)
+                .color("black")
+                .os(ANDROID)
                 .price(999.99)
                 .currency(CurrencyEnum.$)
                 .quantity(57)
@@ -330,73 +363,100 @@ public class DaoTest {
 
     public static Stream<Arguments> getListOfItemsOfArguments() {
         return Stream.of(Arguments.of(List.of(ItemsEntity.builder()
+                        .brand(APPLE)
                         .model("iPhone 14")
-                        .brand(BrandEnum.Apple)
-                        .attributes("128gb black")
-                        .price(89_990.00)
+                        .internalMemory(GB_512)
+                        .ram(gb_8)
+                        .color("space grey")
+                        .os(IOS)
+                        .price(119_990.00)
                         .currency(CurrencyEnum.₽)
                         .quantity(83)
                         .build(),
                 ItemsEntity.builder()
+                        .brand(APPLE)
                         .model("iPhone 11")
-                        .brand(BrandEnum.Apple)
-                        .attributes("64gb red")
+                        .internalMemory(GB_128)
+                        .ram(gb_16)
+                        .color("gold")
+                        .os(IOS)
                         .price(79_999.99)
                         .currency(CurrencyEnum.₽)
                         .quantity(55)
                         .build(),
                 ItemsEntity.builder()
+                        .brand(APPLE)
                         .model("iPhone 15 Pro Max")
-                        .brand(BrandEnum.Apple)
-                        .attributes("1024gb white")
+                        .internalMemory(GB_1024)
+                        .ram(gb_16)
+                        .color("black")
+                        .os(IOS)
                         .price(215_999.99)
                         .currency(CurrencyEnum.₽)
                         .quantity(14)
                         .build(),
                 ItemsEntity.builder()
+                        .brand(APPLE)
                         .model("iPhone 14 Pro Max")
-                        .brand(BrandEnum.Apple)
-                        .attributes("512gb spaceGrey")
-                        .price(36_999.99)
+                        .internalMemory(GB_256)
+                        .ram(gb_8)
+                        .color("green")
+                        .os(IOS)
+                        .price(96_999.99)
                         .currency(CurrencyEnum.₽)
                         .quantity(99)
                         .build(),
                 ItemsEntity.builder()
+                        .brand(XIAOMI)
                         .model("Redmi A2+")
-                        .brand(BrandEnum.Xiaomi)
-                        .attributes("128gb black")
+                        .internalMemory(GB_32)
+                        .ram(gb_4)
+                        .color("black")
+                        .os(ANDROID)
                         .price(30_999.99)
                         .currency(CurrencyEnum.₽)
                         .quantity(114)
                         .build(),
                 ItemsEntity.builder()
+                        .brand(XIAOMI)
                         .model("13T")
-                        .brand(BrandEnum.Xiaomi)
-                        .attributes("64gb black")
+                        .internalMemory(GB_64)
+                        .ram(gb_3)
+                        .color("black")
+                        .os(ANDROID)
                         .price(8_999.99)
                         .currency(CurrencyEnum.₽)
                         .quantity(223)
                         .build(),
                 ItemsEntity.builder()
+                        .brand(SAMSUNG)
                         .model("Galaxy S21 FE")
-                        .brand(BrandEnum.Samsung)
-                        .attributes("128gb grey")
+                        .internalMemory(GB_128)
+                        .ram(gb_12)
+                        .color("yellow")
+                        .os(ANDROID)
                         .price(28_999.99)
                         .currency(CurrencyEnum.₽)
                         .quantity(99)
                         .build(),
                 ItemsEntity.builder()
+                        .brand(SAMSUNG)
                         .model("Galaxy S23 Ultra")
-                        .brand(BrandEnum.Samsung)
-                        .attributes("256gb white")
+                        .internalMemory(GB_1024)
+                        .ram(gb_16)
+                        .color("white")
+                        .os(ANDROID)
                         .price(119_999.99)
                         .currency(CurrencyEnum.₽)
                         .quantity(8)
                         .build(),
                 ItemsEntity.builder()
+                        .brand(SAMSUNG)
                         .model("Galaxy A04")
-                        .brand(BrandEnum.Samsung)
-                        .attributes("8gb black")
+                        .internalMemory(GB_32)
+                        .ram(gb_2)
+                        .color("brown")
+                        .os(ANDROID)
                         .price(5_999.99)
                         .currency(CurrencyEnum.₽)
                         .quantity(99)
