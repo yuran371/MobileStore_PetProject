@@ -1,6 +1,6 @@
 package dto;
 
-import entity.Attributes;
+import entity.enums.Attributes;
 
 public class ItemsFilter {
     Attributes.BrandEnum brand;

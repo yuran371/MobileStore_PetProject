@@ -1,5 +1,8 @@
-package entity;
+package entity.enums;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Attributes {
     public enum BrandEnum {
         APPLE("Apple"),

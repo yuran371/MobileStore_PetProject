@@ -16,10 +16,10 @@ public class ItemFindByIdService {
 
 	static ItemsDao itemsDao = ItemsDao.getInstance();
 
-	public ItemsFindByIdDto findById(Long itemId) {
-		ItemsEntity itemsEntity = ItemsDao.getInstance().getById(itemId).get();
-		return new ItemsFindByIdDto(itemsEntity.getId(), itemsEntity.getModel(), itemsEntity.getBrand().name(),
-				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency().name(),
-				itemsEntity.getQuantity());
-	}
+//	public ItemsFindByIdDto findById(Long itemId) {
+//		ItemsEntity itemsEntity = ItemsDao.getInstance().getById(itemId).get();
+//		return new ItemsFindByIdDto(itemsEntity.getId(), itemsEntity.getModel(), itemsEntity.getBrand().name(),
+//				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency().name(),
+//				itemsEntity.getQuantity());
+//	}
 }

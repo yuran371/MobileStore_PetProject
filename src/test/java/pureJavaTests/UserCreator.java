@@ -17,9 +17,9 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 
-import entity.Country;
-import entity.Gender;
-import entity.RegistrationParams;
+import entity.enums.CountryEnum;
+import entity.enums.GenderEnum;
+import entity.enums.RegistrationParams;
 import lombok.SneakyThrows;
 
 /**
@@ -105,13 +105,13 @@ public class UserCreator extends Thread {
 	}
 
 	private static String getCountryRandom() {
-		Country[] countries = Country.values();
+		CountryEnum[] countries = CountryEnum.values();
 		return countries[RANDOM.nextInt(countries.length)].name();
 	}
 
 	private static String getGenderRandom() {
-		Gender[] gender = Gender.values();
-		return gender[RANDOM.nextInt(gender.length)].name();
+		GenderEnum[] genderEnum = GenderEnum.values();
+		return genderEnum[RANDOM.nextInt(genderEnum.length)].name();
 	}
 
 	private static String getDateRandom() {

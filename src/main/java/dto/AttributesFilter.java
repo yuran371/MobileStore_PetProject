@@ -1,11 +1,14 @@
 package dto;
 
+import entity.enums.Attributes;
+import lombok.Builder;
 import lombok.Value;
 
 @Value
+@Builder
 public class AttributesFilter {
-    int internalMemory;
-    int ram;
-    String brand;
-    String os;
+    Attributes.BrandEnum brand;
+    Attributes.OperatingSystemEnum os;
+    Attributes.InternalMemoryEnum internalMemory;
+    Attributes.RamEnum ram;
 }

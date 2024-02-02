@@ -1,7 +1,7 @@
 package dao;
 
 import dto.CreateAccountDto;
-import entity.Discount;
+import entity.enums.DiscountEnum;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import lombok.NonNull;
@@ -97,8 +97,8 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
                 .uniqueResultOptional();
     }
 
-    public Optional<Discount> checkDiscount(Long id, Session session) {
-        return session.createQuery("select p.discount from PremiumUserEntity p where p.id = :id", Discount.class)
+    public Optional<DiscountEnum> checkDiscount(Long id, Session session) {
+        return session.createQuery("select p.discount from PremiumUserEntity p where p.id = :id", DiscountEnum.class)
                 .setParameter("id", id).uniqueResultOptional();
     }
 

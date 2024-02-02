@@ -56,8 +56,8 @@
 			Phone number: <input type="text" name="phoneNumber" id="phoneNumberId">
 		</label>
 		<br>
-		<c:forEach var="gender" items="${requestScope.genders}">
-			<input type="radio" name="gender" value="${gender}"> ${gender}
+		<c:forEach var="genderEnum" items="${requestScope.genders}">
+			<input type="radio" name="genderEnum" value="${genderEnum}"> ${genderEnum}
 		</c:forEach>
 		<br>
 		<button type="submit">Create account</button>

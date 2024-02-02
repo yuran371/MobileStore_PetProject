@@ -1,5 +1,7 @@
 package entity;
 
+import entity.enums.Attributes;
+import entity.enums.CurrencyEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
@@ -19,7 +21,7 @@ public class ItemsEntity implements BaseEntity<Long> {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
-    private Long Id;
+    private Long id;
     @Column(name = "brand")
     @Enumerated(EnumType.STRING)
     private Attributes.BrandEnum brand;
