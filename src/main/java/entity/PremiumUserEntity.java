@@ -1,5 +1,8 @@
 package entity;
 
+import entity.enums.CountryEnum;
+import entity.enums.DiscountEnum;
+import entity.enums.GenderEnum;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,20 +20,20 @@ import java.util.List;
 public class PremiumUserEntity extends PersonalAccountEntity {
 
     @Enumerated(EnumType.STRING)
-    private Discount discount;
+    private DiscountEnum discountEnum;
 
     @Builder(builderMethodName = "premiumBuilder")
     public PremiumUserEntity(Long id, String email, String password, String name, String surname, String image,
-                             LocalDate birthday, Country country, String city, String address, String phoneNumber,
-                             Gender gender, List<SellHistoryEntity> phonePurchases, ProfileInfoEntity profileInfo,
+                             LocalDate birthday, CountryEnum countryEnum, String city, String address, String phoneNumber,
+                             GenderEnum gender, List<SellHistoryEntity> phonePurchases, ProfileInfoEntity profileInfo,
                              List<SellHistoryEntity> orders, List<UserPaymentOptions> paymentOptions,
-                             Discount discount) {
-        super(id, email, password, name, surname, image, birthday, country, city, address, phoneNumber, gender,
+                             DiscountEnum discountEnum) {
+        super(id, email, password, name, surname, image, birthday, countryEnum, city, address, phoneNumber, gender,
               phonePurchases, profileInfo, orders, paymentOptions);
-        this.discount = discount;
+        this.discountEnum = discountEnum;
     }
 
-    public PremiumUserEntity(@NonNull PersonalAccountEntity defaultAccount, Discount discount) {
+    public PremiumUserEntity(@NonNull PersonalAccountEntity defaultAccount, DiscountEnum discountEnum) {
         super(defaultAccount.getId(),
               defaultAccount.getEmail(),
               defaultAccount.getPassword(),
@@ -38,7 +41,7 @@ public class PremiumUserEntity extends PersonalAccountEntity {
               defaultAccount.getSurname(),
               defaultAccount.getImage(),
               defaultAccount.getBirthday(),
-              defaultAccount.getCountry(),
+              defaultAccount.getCountryEnum(),
               defaultAccount.getCity(),
               defaultAccount.getAddress(),
               defaultAccount.getPhoneNumber(),
@@ -47,10 +50,10 @@ public class PremiumUserEntity extends PersonalAccountEntity {
               defaultAccount.getProfileInfo(),
               defaultAccount.getOrders(),
               defaultAccount.getPaymentOptions());
-        this.discount = discount;
+        this.discountEnum = discountEnum;
     }
 
-    public static PremiumUserEntity of(@NonNull PersonalAccountEntity defaultAccount, Discount discount) {
-        return new PremiumUserEntity(defaultAccount, discount);
+    public static PremiumUserEntity of(@NonNull PersonalAccountEntity defaultAccount, DiscountEnum discountEnum) {
+        return new PremiumUserEntity(defaultAccount, discountEnum);
     }
 }

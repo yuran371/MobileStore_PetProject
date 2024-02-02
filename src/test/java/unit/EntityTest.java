@@ -1,6 +1,7 @@
 package unit;
 
 import entity.*;
+import entity.enums.DiscountEnum;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -88,7 +89,7 @@ public class EntityTest {
             Optional<Object> argument = DaoTest.argumentsPersonalAccount()
                     .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
             PersonalAccountEntity personalAccount = (PersonalAccountEntity) argument.get();
-            PremiumUserEntity premiumUserEntity = PremiumUserEntity.of(personalAccount, Discount.FIVE_PERCENT);
+            PremiumUserEntity premiumUserEntity = PremiumUserEntity.of(personalAccount, DiscountEnum.FIVE_PERCENT);
             @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
             @Cleanup Session session = sessionFactory.openSession();
             session.beginTransaction();

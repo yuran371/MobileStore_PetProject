@@ -5,8 +5,8 @@ import java.time.Period;
 import java.util.List;
 
 import dto.CreateAccountDto;
-import entity.Country;
-import entity.Gender;
+import entity.enums.CountryEnum;
+import entity.enums.GenderEnum;
 import utlis.DateFormatter;
 
 public class CreateAccountValidator {
@@ -33,11 +33,11 @@ public class CreateAccountValidator {
 			createAccountErrors.add(new Error("Date is invalid",
 					"Date of birth is invalid. Please, check your birthday date is correct. "));
 		}
-		if (!Country.isValid(account.getCountry())) {
+		if (!CountryEnum.isValid(account.getCountry())) {
 			createAccountErrors.add(new Error("Country is invalid",
 					"Country is invalid. Please, check country is choosen and correct."));
 		}
-		if (!Gender.isValid(account.getGender())) {
+		if (!GenderEnum.isValid(account.getGender())) {
 			createAccountErrors.add(new Error("Gender is invalid",
 					"Choosen gender is invalid. Please, check that choosen gender is correct"));
 		}

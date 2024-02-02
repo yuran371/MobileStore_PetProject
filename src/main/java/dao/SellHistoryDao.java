@@ -1,25 +1,13 @@
 package dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import dto.DtoSellHistoryFilter;
 import entity.SellHistoryEntity;
-import exceptions.IncorrectQuantityException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
-import utlis.ConnectionPoolManager;
 import utlis.HibernateSessionFactory;
 @Slf4j
 public class SellHistoryDao implements Dao<Long, SellHistoryEntity> {
@@ -47,7 +35,7 @@ public class SellHistoryDao implements Dao<Long, SellHistoryEntity> {
 			session.persist(sellHistoryEntity);
 			transaction.commit();
 			log.info("User {} successfully added", sellHistoryEntity);
-			return Optional.ofNullable(sellHistoryEntity.getSellId());
+			return Optional.ofNullable(sellHistoryEntity.getId());
 		}
 	}
 

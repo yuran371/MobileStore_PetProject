@@ -1,8 +1,8 @@
 package integration;
 
 import dao.PersonalAccountDao;
-import entity.Country;
-import entity.Gender;
+import entity.enums.CountryEnum;
+import entity.enums.GenderEnum;
 import entity.PersonalAccountEntity;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +32,7 @@ public class IntegrationTestBase {
             scriptRunner.runScript(Files.newBufferedReader(path));
         }
         return PersonalAccountEntity.builder().address("no address").birthday(LocalDate.of(1990, 1, 1)).city("no city")
-                .country(Country.KAZAKHSTAN).email("noemail@email.ru").gender(Gender.MALE).image("").name("Sasha")
+                .countryEnum(CountryEnum.KAZAKHSTAN).email("noemail@email.ru").gender(GenderEnum.MALE).image("").name("Sasha")
                 .password("123").phoneNumber("+79214050505").surname("nonamich").build();
 
     }

@@ -1,5 +1,7 @@
 package entity;
 
+import entity.enums.CountryEnum;
+import entity.enums.GenderEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
@@ -41,12 +43,12 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     private String image;
     private LocalDate birthday;
     @Enumerated(EnumType.STRING)
-    private Country country;
+    private CountryEnum countryEnum;
     private String city;
     private String address;
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private GenderEnum gender;
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SellHistoryEntity> phonePurchases = new ArrayList<>();

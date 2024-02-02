@@ -1,8 +1,8 @@
 package mapper;
 
 import dto.CreateAccountDto;
-import entity.Country;
-import entity.Gender;
+import entity.enums.CountryEnum;
+import entity.enums.GenderEnum;
 import entity.PersonalAccountEntity;
 import jakarta.servlet.http.Part;
 import utlis.DateFormatter;
@@ -26,9 +26,9 @@ public class CreateAccountMapper {
 		PersonalAccountEntity personalAccountEntity = PersonalAccountEntity.builder().email(account.getEmail())
 				.password(account.getPassword()).name(account.getName()).surname(account.getSurname())
 				.image(USER_FOLDER + image == null ? "" : image.getSubmittedFileName())
-				.birthday(DateFormatter.getDate(account.getBirthday())).country(Country.getValue(account.getCountry()))
+				.birthday(DateFormatter.getDate(account.getBirthday())).countryEnum(CountryEnum.getValue(account.getCountry()))
 				.city(account.getCity()).address(account.getAddress()).phoneNumber(account.getPhoneNumber())
-				.gender(Gender.valueOf(account.getGender())).build();
+				.gender(GenderEnum.valueOf(account.getGender())).build();
 		if (account.getImage().getSubmittedFileName().isBlank()) {
 			personalAccountEntity.setImage(DEFAULT_AVATAR);
 		}

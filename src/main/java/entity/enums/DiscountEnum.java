@@ -1,13 +1,13 @@
-package entity;
+package entity.enums;
 
-public enum Discount {
+public enum DiscountEnum {
     FIVE_PERCENT(5),
     TEN_PERCENT(10),
     TWENTY_PERCENT(20);
 
     private final Integer value;
 
-    Discount(final int value) {
+    DiscountEnum(final int value) {
         this.value = value;
     }
 

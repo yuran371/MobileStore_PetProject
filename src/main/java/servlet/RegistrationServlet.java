@@ -7,8 +7,8 @@ import java.util.Enumeration;
 import java.util.Optional;
 
 import dto.CreateAccountDto;
-import entity.Country;
-import entity.Gender;
+import entity.enums.CountryEnum;
+import entity.enums.GenderEnum;
 import io.vavr.control.Either;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -41,8 +41,8 @@ public class RegistrationServlet extends HttpServlet {
 			return;
 		}
 
-		req.setAttribute("countries", Country.values());
-		req.setAttribute("genders", Gender.values());
+		req.setAttribute("countries", CountryEnum.values());
+		req.setAttribute("genders", GenderEnum.values());
 		req.getRequestDispatcher(JspHelper.getUrl("registration")).forward(req, resp);
 	}
 

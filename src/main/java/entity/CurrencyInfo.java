@@ -1,5 +1,6 @@
 package entity;
 
+import entity.enums.CurrencyEnum;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

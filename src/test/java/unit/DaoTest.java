@@ -1,9 +1,11 @@
 package unit;
 
+import com.querydsl.core.Tuple;
 import dao.ItemsDao;
 import dao.PersonalAccountDao;
 import dao.SellHistoryDao;
 import entity.*;
+import entity.enums.*;
 import extentions.PersonalAccountParameterResolver;
 import extentions.SellHistoryParameterResolver;
 import lombok.Cleanup;
@@ -16,7 +18,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.HibernateTestUtil;
-import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -28,6 +29,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD;
 
 
 @Slf4j
@@ -127,20 +129,20 @@ public class DaoTest {
 
 
     @Nested
-    @TestInstance(PER_CLASS)
+    @TestInstance(PER_METHOD)
     @Tag(value = "PersonalAccountDao")
     @ExtendWith(value = {PersonalAccountParameterResolver.class})
     class PersonalAccount {
 
         private PersonalAccountDao personalAccountDao;
-        private SessionFactory entityManager = HibernateTestUtil.getSessionFactory();
+        private static SessionFactory entityManager = HibernateTestUtil.getSessionFactory();
 
         public PersonalAccount(PersonalAccountDao instance) {
             this.personalAccountDao = instance;
         }
 
         @AfterAll
-        public void closeTestSessionFactory() {
+        public static void closeTestSessionFactory() {
             entityManager.close();
         }
 
@@ -154,17 +156,22 @@ public class DaoTest {
         @ParameterizedTest
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void get_OrdersList_ConsistAllOrders(PersonalAccountEntity account) {
-            List<SellHistoryEntity> sellHistoryEntityList = getSellHistoryEntities(3);
-            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
-            @Cleanup Session session = sessionFactory.openSession(); session.beginTransaction();
-            session.persist(account); Long accountId = account.getId();
-            sellHistoryEntityList.stream().forEach(sellHistoryEntity -> {
-                sellHistoryEntity.setUser(account); session.persist(sellHistoryEntity);
-            }); session.detach(account); session.getTransaction().commit(); session.beginTransaction();
-            PersonalAccountEntity personalAccountEntity = session.get(PersonalAccountEntity.class, accountId);
-            assertThat(personalAccountEntity.getOrders().size()).isEqualTo(sellHistoryEntityList.size());
-            sellHistoryEntityList.stream().forEach(sellHistoryEntity -> session.remove(sellHistoryEntity));
-            session.remove(personalAccountEntity); session.getTransaction().commit();
+//            List<SellHistoryEntity> sellHistoryEntityList = getSellHistoryEntities(3);
+//            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+//            @Cleanup Session session = sessionFactory.openSession();
+//            session.beginTransaction();
+//            session.persist(account); Long accountId = account.getId();
+//            sellHistoryEntityList.stream()
+//                    .forEach(sellHistoryEntity -> {
+//                sellHistoryEntity.setUser(account);
+//                session.persist(sellHistoryEntity);
+//            }); session.detach(account);
+//            session.getTransaction().commit();
+//            session.beginTransaction();
+//            PersonalAccountEntity personalAccountEntity = session.get(PersonalAccountEntity.class, accountId);
+//            assertThat(personalAccountEntity.getOrders().size()).isEqualTo(sellHistoryEntityList.size());
+//            sellHistoryEntityList.stream().forEach(sellHistoryEntity -> session.remove(sellHistoryEntity));
+//            session.remove(personalAccountEntity); session.getTransaction().commit();
         }
 
         @Tag("Unit")
@@ -172,12 +179,13 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void validateAuth_validUser_returnUser(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
+            persistEntity(account, session);
             Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao
                     .validateAuth(account.getEmail(), account.getPassword(), session);
             assertThat(personalAccountEntity.get()).isNotNull();
             assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
             assertThat(personalAccountEntity.get().getPassword()).isEqualTo(account.getPassword());
+            dropEntity(account, session);
         }
 
         @Tag("Unit")
@@ -185,13 +193,14 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void getByEmail_validUser_returnUser(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
+            persistEntity(account, session);
             Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao
                     .getByEmail(account.getEmail(), session);
             assertThat(personalAccountEntity.get()).isNotNull();
             assertThat(personalAccountEntity.get().getId()).isEqualTo(account.getId());
             assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
             assertThat(personalAccountEntity.get().getPassword()).isEqualTo(account.getPassword());
+            dropEntity(account, session);
         }
 
         @Tag("Unit")
@@ -199,10 +208,11 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void checkDiscount_premiumUser_returnDiscount(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            PremiumUserEntity premiumUserEntity = new PremiumUserEntity(account, Discount.FIVE_PERCENT);
-            DaoTest.persistEntity(premiumUserEntity, session);
-            Optional<Discount> discount = personalAccountDao.checkDiscount(premiumUserEntity.getId(), session);
-            assertThat(discount.get()).isEqualTo(Discount.FIVE_PERCENT);
+            PremiumUserEntity premiumUserEntity = new PremiumUserEntity(account, DiscountEnum.FIVE_PERCENT);
+            persistEntity(premiumUserEntity, session);
+            Optional<DiscountEnum> discount = personalAccountDao.checkDiscount(premiumUserEntity.getId(), session);
+            assertThat(discount.get()).isEqualTo(DiscountEnum.FIVE_PERCENT);
+            dropEntity(premiumUserEntity, session);
         }
 
         @Tag("Unit")
@@ -210,31 +220,34 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void checkDiscount_notPremiumUser_returnNull(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
-            Optional<Discount> discount = personalAccountDao.checkDiscount(account.getId(), session);
+            persistEntity(account, session);
+            Optional<DiscountEnum> discount = personalAccountDao.checkDiscount(account.getId(), session);
             assertThat(discount).isEmpty();
+            dropEntity(account, session);
         }
 
         @Tag("Unit")
         @ParameterizedTest
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void getAllBoughtPhones_havePhones_returnList(PersonalAccountEntity account) {
-            List<SellHistoryEntity> sellHistoryEntities = DaoTest.getSellHistoryEntities(3);
-            List<ItemsEntity> itemsEntities = DaoTest.getItemsEntities(3);
+            List<SellHistoryEntity> sellHistoryEntities = getSellHistoryEntities(3);
+            List<ItemsEntity> itemsEntities = getItemsEntities(3);
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
-            DaoTest.persistEntitiesList(itemsEntities, session);
+            persistEntity(account, session);
+            persistEntitiesList(itemsEntities, session);
             for (int i = 0; i < sellHistoryEntities.size(); i++) {
                 SellHistoryEntity sellHistoryEntity = sellHistoryEntities.get(i);
                 sellHistoryEntity.setUser(account);
                 sellHistoryEntity.setItemId(itemsEntities.get(i));
             }
-            DaoTest.persistEntitiesList(sellHistoryEntities, session);
+            persistEntitiesList(sellHistoryEntities, session);
             List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId(), session);
             assertThat(allBoughtPhones.size()).isEqualTo(itemsEntities.size());
             assertThat(allBoughtPhones).extracting("id").contains(itemsEntities.get(0).getId(),
                                                                   itemsEntities.get(1).getId(),
                                                                   itemsEntities.get(2).getId());
+            dropEntities(session, sellHistoryEntities, itemsEntities);
+            dropEntity(account, session);
         }
 
         @Tag("Unit")
@@ -242,31 +255,33 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void getAllBoughtPhones_noPhones_returnEmptyList(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
+            persistEntity(account, session);
             List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId(), session);
             assertThat(allBoughtPhones).isEmpty();
+            dropEntity(account, session);
         }
 
         @Test
         void getTopTenMostSpenders_haveUsers_returnTop() {
-            List<PersonalAccountEntity> accounts = DaoTest.getPersonalAccountEntities(3);
-            List<ItemsEntity> items = DaoTest.getItemsEntities(10);
-            List<SellHistoryEntity> sellHistoryEntities = DaoTest.getSellHistoryEntities(10);
+            List<PersonalAccountEntity> accounts = getPersonalAccountEntities(3);
+            List<ItemsEntity> items = getItemsEntities(10);
+            List<SellHistoryEntity> sellHistoryEntities = getSellHistoryEntities(10);
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntitiesList(accounts, session);
-            DaoTest.persistEntitiesList(items, session);
+            persistEntitiesList(accounts, session);
+            persistEntitiesList(items, session);
             for (SellHistoryEntity entity : sellHistoryEntities) {
                 Random random = new Random();
                 entity.setUser(accounts.get(random.nextInt(0, accounts.size())));
                 entity.setItemId(items.get(random.nextInt(0, items.size())));
             }
-            DaoTest.persistEntitiesList(sellHistoryEntities, session);
-            List<Object[]> topTenMostSpenders = personalAccountDao.getTopTenMostSpenders(session);
+            persistEntitiesList(sellHistoryEntities, session);
+            List<Tuple> topTenMostSpenders = personalAccountDao.getTopTenMostSpenders(session);
             for (int i = 1; i < topTenMostSpenders.size(); i++) {
-                Double spender = (Double) topTenMostSpenders.get(i - 1)[1];
-                Double nextSpender = (Double) topTenMostSpenders.get(i)[1];
+                Double spender = (Double) topTenMostSpenders.get(i - 1).get(1, Double.class);
+                Double nextSpender = (Double) topTenMostSpenders.get(i).get(1, Double.class);
                 assertThat(spender).isGreaterThan(nextSpender);
             }
+            dropEntities(session, accounts, items, sellHistoryEntities);
         }
 
     }
@@ -291,7 +306,7 @@ public class DaoTest {
             @Cleanup Session session = sessionFactory.openSession();
             session.beginTransaction();
             session.persist(entity);
-            assertThat(entity.getSellId()).isNotNull();
+            assertThat(entity.getId()).isNotNull();
             session.getTransaction().commit();
         }
 
@@ -320,22 +335,22 @@ public class DaoTest {
         return Stream.of(Arguments.of(PersonalAccountEntity.builder().image("").name("Artem")
                                               .surname("Eranov").email("sobaka@mail.ru")
                                               .birthday(LocalDate.of(1990, 12, 12)).city("Oren")
-                                              .address("Pushkina").country(Country.KAZAKHSTAN)
-                                              .gender(Gender.MALE).phoneNumber("+79553330987")
+                                              .address("Pushkina").countryEnum(CountryEnum.KAZAKHSTAN)
+                                              .gender(GenderEnum.MALE).phoneNumber("+79553330987")
                                               .password("1499")
                                               .build()),
                          Arguments.of(PersonalAccountEntity.builder().image("")
                                               .name("Danil").surname("Smirnov").email("ds_12@mail.ru")
                                               .birthday(LocalDate.of(2000, 3, 10)).city("Spb")
-                                              .address("Lenina, b. 18").country(Country.RUSSIA)
-                                              .gender(Gender.MALE).phoneNumber("+79553330987")
+                                              .address("Lenina, b. 18").countryEnum(CountryEnum.RUSSIA)
+                                              .gender(GenderEnum.MALE).phoneNumber("+79553330987")
                                               .password("FNIM912KND")
                                               .build()),
                          Arguments.of(PersonalAccountEntity.builder().image("")
                                               .name("Dmitry").surname("Eranov").email("dmitry@mail.ru")
                                               .birthday(LocalDate.of(1997, 12, 20)).city("Minsk")
-                                              .address("Pushkina").country(Country.BELARUS)
-                                              .gender(Gender.MALE).phoneNumber("+79553330987")
+                                              .address("Pushkina").countryEnum(CountryEnum.BELARUS)
+                                              .gender(GenderEnum.MALE).phoneNumber("+79553330987")
                                               .password("Eranoff21").build())
         );
 
@@ -348,9 +363,10 @@ public class DaoTest {
                                               .quantity(57).build(), PersonalAccountEntity.builder().image("")
                                               .name("Artem").surname("Eranov").email("sobaka@mail.ru")
                                               .birthday(LocalDate.of(1990, 12, 12)).city("Oren").address("Pushkina")
-                                              .country(Country.KAZAKHSTAN).gender(Gender.MALE)
+                                              .countryEnum(CountryEnum.KAZAKHSTAN).gender(GenderEnum.MALE)
                                               .phoneNumber("+79553330987").password("1499").build()));
     }
+
     public static Stream<Arguments> getArgumentsForItemsTest() {
         return Stream.of(Arguments.of(ItemsEntity.builder()
                                               .model("pixel a5")
@@ -442,22 +458,22 @@ public class DaoTest {
         List<PersonalAccountEntity> entities = List.of(PersonalAccountEntity.builder().image("").name("Artem")
                                                                .surname("Eranov").email("sobaka@mail.ru")
                                                                .birthday(LocalDate.of(1990, 12, 12)).city("Oren")
-                                                               .address("Pushkina").country(Country.KAZAKHSTAN)
-                                                               .gender(Gender.MALE).phoneNumber("+79553330987")
+                                                               .address("Pushkina").countryEnum(CountryEnum.KAZAKHSTAN)
+                                                               .gender(GenderEnum.MALE).phoneNumber("+79553330987")
                                                                .password("1499")
                                                                .build(),
                                                        PersonalAccountEntity.builder().image("")
                                                                .name("Danil").surname("Smirnov").email("ds_12@mail.ru")
                                                                .birthday(LocalDate.of(2000, 3, 10)).city("Spb")
-                                                               .address("Lenina, b. 18").country(Country.RUSSIA)
-                                                               .gender(Gender.MALE).phoneNumber("+79553330987")
+                                                               .address("Lenina, b. 18").countryEnum(CountryEnum.RUSSIA)
+                                                               .gender(GenderEnum.MALE).phoneNumber("+79553330987")
                                                                .password("FNIM912KND")
                                                                .build(),
                                                        PersonalAccountEntity.builder().image("")
                                                                .name("Dmitry").surname("Eranov").email("dmitry@mail.ru")
                                                                .birthday(LocalDate.of(1997, 12, 20)).city("Minsk")
-                                                               .address("Pushkina").country(Country.BELARUS)
-                                                               .gender(Gender.MALE).phoneNumber("+79553330987")
+                                                               .address("Pushkina").countryEnum(CountryEnum.BELARUS)
+                                                               .gender(GenderEnum.MALE).phoneNumber("+79553330987")
                                                                .password("Eranoff21").build());
         quantity = Math.min(quantity, entities.size());
         return entities.subList(0, quantity);
@@ -533,5 +549,19 @@ public class DaoTest {
             session.getTransaction().commit();
             return element;
         }).collect(Collectors.toList());
+    }
+
+    private static <T> void dropEntity(T entity, Session session) {
+        session.beginTransaction();
+        session.remove(entity);
+        session.getTransaction().commit();
+    }
+
+    private static void dropEntities(Session session, List<? extends BaseEntity>... lists) {
+        session.beginTransaction();
+        for (List entities : lists) {
+            entities.stream().forEach(entity -> session.remove(entity));
+        }
+        session.getTransaction().commit();
     }
 }

@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.Random;
 import java.util.Scanner;
 
+import entity.enums.CountryEnum;
+import entity.enums.GenderEnum;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -17,8 +19,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 
-import entity.Country;
-import entity.Gender;
 import entity.RegistrationParams;
 import lombok.SneakyThrows;
 
@@ -105,12 +105,12 @@ public class UserCreator extends Thread {
 	}
 
 	private static String getCountryRandom() {
-		Country[] countries = Country.values();
+		CountryEnum[] countries = CountryEnum.values();
 		return countries[RANDOM.nextInt(countries.length)].name();
 	}
 
 	private static String getGenderRandom() {
-		Gender[] gender = Gender.values();
+		GenderEnum[] gender = GenderEnum.values();
 		return gender[RANDOM.nextInt(gender.length)].name();
 	}
 

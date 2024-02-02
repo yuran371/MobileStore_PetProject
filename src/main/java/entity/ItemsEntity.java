@@ -1,5 +1,7 @@
 package entity;
 
+import entity.enums.BrandEnum;
+import entity.enums.CurrencyEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
