@@ -15,11 +15,11 @@ import java.util.List;
 @ToString(exclude = "phoneOrders")
 @Entity(name = "items")
 @Table(schema = "market")
-public class ItemsEntity {
+public class ItemsEntity implements BaseEntity<Long> {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
-    private Long itemId;
+    private Long id;
     @Column(name = "model")
     private String model;
     @Column(name = "brand")

@@ -2,6 +2,7 @@ package utlis;
 
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
+import entity.PremiumUserEntity;
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
@@ -19,6 +20,7 @@ public class HibernateSessionFactory {
         configuration.addAnnotatedClass(ItemsEntity.class);
         configuration.addAnnotatedClass(PersonalAccountEntity.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
+        configuration.addAnnotatedClass(PremiumUserEntity.class);
         return configuration;
     }
 }

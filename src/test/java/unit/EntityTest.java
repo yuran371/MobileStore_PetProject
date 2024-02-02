@@ -1,8 +1,6 @@
 package unit;
 
-import entity.PersonalAccountEntity;
-import entity.ProfileInfoEntity;
-import entity.UserPaymentOptions;
+import entity.*;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -31,7 +29,7 @@ public class EntityTest {
         @ParameterizedTest
         @MethodSource("unit.EntityTest#getArgumentsForProfileInfo")
         void setPersonalAccount_setNewAccount_AddAccountInDb(ProfileInfoEntity infoEntity) {
-            Optional<Object> argument = DaoTest.getArgumentForPersonalAccountTest()
+            Optional<Object> argument = DaoTest.argumentsPersonalAccount()
                     .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
             PersonalAccountEntity personalAccountEntity = (PersonalAccountEntity) argument.get();
             @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
@@ -61,14 +59,14 @@ public class EntityTest {
 
         @Test
         void add_newUserPaymentOptions_returnUserPaymentOptionFromDb() {
-            Optional<Object> argument = DaoTest.getArgumentForPersonalAccountTest()
+            Optional<Object> argument = DaoTest.argumentsPersonalAccount()
                     .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
             PersonalAccountEntity personalAccountEntity = (PersonalAccountEntity) argument.get();
             @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
             @Cleanup Session session = sessionFactory.openSession();
             session.beginTransaction();
             session.persist(personalAccountEntity);
-            Long accountId = personalAccountEntity.getAccountId();
+            Long accountId = personalAccountEntity.getId();
             personalAccountEntity.getPaymentOptions().add(UserPaymentOptions.of("credit card"));
             personalAccountEntity.getPaymentOptions().add(UserPaymentOptions.of("cash"));
             session.flush();
@@ -76,7 +74,29 @@ public class EntityTest {
             session.beginTransaction();
             PersonalAccountEntity accountFromDb = session.get(PersonalAccountEntity.class, accountId);
             assertThat(accountFromDb.getPaymentOptions().size()).isEqualTo(2);
-            session.remove(accountFromDb);
+            session.getTransaction().commit();
+        }
+    }
+
+    @Nested
+    @TestInstance(value = Lifecycle.PER_CLASS)
+    @Tag(value = "PersonalAccountEntity")
+    class PremiumUser {
+
+        @Test
+        void premiumUserBuilder() {
+            Optional<Object> argument = DaoTest.argumentsPersonalAccount()
+                    .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
+            PersonalAccountEntity personalAccount = (PersonalAccountEntity) argument.get();
+            PremiumUserEntity premiumUserEntity = PremiumUserEntity.of(personalAccount, Discount.FIVE_PERCENT);
+            @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+            @Cleanup Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.persist(premiumUserEntity);
+            Long id = premiumUserEntity.getId();
+            session.clear();
+            PremiumUserEntity premiumUserEntityFromDb = session.get(PremiumUserEntity.class, id);
+            System.out.println();
             session.getTransaction().commit();
         }
     }

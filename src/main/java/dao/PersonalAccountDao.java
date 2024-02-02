@@ -1,10 +1,10 @@
 package dao;
 
 import dto.CreateAccountDto;
-import entity.Country;
+import entity.Discount;
+import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,18 +16,17 @@ import utlis.SqlExceptionLogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 @Slf4j
 public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 
-    private static PersonalAccountDao INSTANCE = new PersonalAccountDao();
+    private static final PersonalAccountDao INSTANCE = new PersonalAccountDao();
 
-    private static SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
+    private static final SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
 
     private PersonalAccountDao() {
     }
@@ -35,29 +34,6 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
     public static PersonalAccountDao getInstance() {
         return INSTANCE;
     }
-
-    private final static String SQL_GET_BY_LOGIN_STATEMENT = """
-            SELECT account_id, email, name, surname, country, city, address, phone_number
-            FROM personal_account
-            WHERE email LIKE ?;
-            """;
-
-    private final static String SQL_GET_BY_ID_STATEMENT = """
-            SELECT account_id, email, password, name, surname, birthday, country, city, address, phone_number, gender
-            FROM personal_account
-            WHERE account_id = ?;
-            """;
-
-    private final static String SQL_GET_BY_EMAIL_AND_PASSWORD = """
-            SELECT account_id, email, name, surname, birthday, country, city, address, phone_number, gender, image
-            FROM personal_account
-            WHERE email = ? AND password = crypt(?, password);
-            """;
-
-    private final static String SQL_SELECT_STATEMENT = """
-            	SELECT account_id, email, name, surname, country, city, address, phone_number
-            	FROM personal_account
-            """;
 
     private final static String SQL_DELETE_BY_ID = """
             DELETE FROM personal_account
@@ -72,9 +48,8 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
             session.persist(accountEntity);
             transaction.commit();
             log.info("User {} successfully added", accountEntity);
-            return Optional.ofNullable(accountEntity.getAccountId());
-        }
-        catch (ConstraintViolationException constraintViolationException) {
+            return Optional.ofNullable(accountEntity.getId());
+        } catch (ConstraintViolationException constraintViolationException) {
             log.info("New user not added. User with {} email already exist in database", accountEntity.getEmail());
             return Optional.empty();
         }
@@ -82,18 +57,11 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
 
     @Override
     public Optional<PersonalAccountEntity> getById(Long id) {
-        try (var connection = ConnectionPoolManager.get();
-             var prepareStatement = connection.prepareStatement(SQL_GET_BY_ID_STATEMENT)) {
-            prepareStatement.setLong(1, id);
-            var executeQuery = prepareStatement.executeQuery();
-            PersonalAccountEntity resultEntity = null;
-            while (executeQuery.next()) {
-                resultEntity = createEntityByResultSet(executeQuery);
-            }
-            return Optional.ofNullable(resultEntity);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return Optional.empty();
+    }
+
+    public Optional<PersonalAccountEntity> getById(Long id, Session session) {
+    return  Optional.ofNullable(session.get(PersonalAccountEntity.class, id));
     }
 
     @Override
@@ -113,75 +81,46 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
         return false;
     }
 
-    @SneakyThrows
-    public Optional<PersonalAccountEntity> getByPasswordAndLogin(String login, String password) {
-        try (Connection connection = ConnectionPoolManager.get();
-             PreparedStatement prepareStatement = connection.prepareStatement(SQL_GET_BY_EMAIL_AND_PASSWORD)) {
-            prepareStatement.setString(1, login);
-            prepareStatement.setString(2, password);
-            ResultSet resultSet = prepareStatement.executeQuery();
-            PersonalAccountEntity result = null;
-            if (resultSet.next()) {
-                result = readUser(resultSet);
-            }
-            return Optional.ofNullable(result);
-        }
+    public Optional<PersonalAccountEntity> validateAuth(String email, String password, Session session) {
+        return session.createQuery("select p from PersonalAccountEntity p " +
+                                           "where p.email = :email and p.password = :password",
+                                   PersonalAccountEntity.class)
+                .setParameter("email", email)
+                .setParameter("password", password)
+                .uniqueResultOptional();
     }
 
-    public Optional<PersonalAccountEntity> getByLogin(String login) {
-        try (var connection = ConnectionPoolManager.get();
-             var prepareStatement = connection.prepareStatement(SQL_GET_BY_LOGIN_STATEMENT)) {
-            prepareStatement.setString(1, login);
-            var executeQuery = prepareStatement.executeQuery();
-            PersonalAccountEntity resultEntity = null;
-            while (executeQuery.next()) {
-                resultEntity = createEntityByResultSet(executeQuery);
-            }
-            return Optional.ofNullable(resultEntity);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public Optional<PersonalAccountEntity> getByEmail(String email, Session session) {
+        return session.createQuery("select p from PersonalAccountEntity p where p.email = :email",
+                                   PersonalAccountEntity.class)
+                .setParameter("email", email)
+                .uniqueResultOptional();
     }
 
+    public Optional<Discount> checkDiscount(Long id, Session session) {
+        return session.createQuery("select p.discount from PremiumUserEntity p where p.id = :id", Discount.class)
+                .setParameter("id", id).uniqueResultOptional();
+    }
+
+    public List<ItemsEntity> getAllBoughtPhones(Long id, Session session) {
+        return session.createQuery("select i from SellHistoryEntity s " +
+                                           "join s.itemId i " +
+                                           "where s.user.id = :id", ItemsEntity.class)
+                .setParameter("id", id)
+                .list();
+    }
+
+    public List<Object[]> getTopTenMostSpenders(Session session) {
+        return session.createQuery("select p, sum(i.price) from PersonalAccountEntity p " +
+                                           "join p.orders s " +
+                                           "join s.itemId i " +
+                                           "group by p.id " +
+                                           "order by sum(i.price) DESC", Object[].class)
+                .setMaxResults(10)
+                .list();
+    }
     public List<PersonalAccountEntity> sortByParams(CreateAccountDto filter) {
-        List<String> sqlWhereStatement = new ArrayList<String>();
-        List<String> parameters = new ArrayList<>();
-        if (filter.getCity() != null) {
-            sqlWhereStatement.add("city = ?");
-            parameters.add(filter.getCity());
-        }
-        if (filter.getCountry() != null) {
-            sqlWhereStatement.add("country = ?");
-            parameters.add(filter.getCountry());
-        }
-
-        var whereSql = sqlWhereStatement.stream().collect(Collectors.joining(" AND ", "\nWHERE ", ";"));
-        try (var connection = ConnectionPoolManager.get();
-             var prepareStatement = connection.prepareStatement(SQL_SELECT_STATEMENT + whereSql)) {
-            for (int i = 0; i < parameters.size(); i++) {
-                prepareStatement.setObject(i + 1, parameters.get(i));
-            }
-            var executeQuery = prepareStatement.executeQuery();
-            List<PersonalAccountEntity> resultList = new ArrayList<>();
-            while (executeQuery.next()) {
-                resultList.add(createEntityByResultSet(executeQuery));
-            }
-            return resultList;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return new ArrayList<>();
     }
 
-    private static PersonalAccountEntity createEntityByResultSet(ResultSet executeQuery) throws SQLException {
-        return PersonalAccountEntity.builder().accountId(executeQuery.getLong("account_id"))
-                .email(executeQuery.getString("email")).build();
-    }
-
-    private PersonalAccountEntity readUser(ResultSet resultSet) throws SQLException {
-        return PersonalAccountEntity.builder().email(resultSet.getObject("email", String.class))
-                .name(resultSet.getObject("name", String.class)).surname(resultSet.getObject("surname", String.class))
-                .image(resultSet.getObject("image", String.class)).birthday(resultSet.getDate("birthday").toLocalDate())
-                .country(Country.getValue(resultSet.getObject("country", String.class)))
-                .city(resultSet.getObject("city", String.class)).build();
-    }
 }

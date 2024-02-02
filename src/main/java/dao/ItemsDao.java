@@ -38,8 +38,8 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     }
 
     public Optional<Long> insertViaHibernate(ItemsEntity items, Session session) {
-        session.persist(items);
-        return Optional.ofNullable(items.getItemId());
+            session.persist(items);
+            return Optional.ofNullable(items.getId());
     }
 
     public List<ItemsEntity> findByBrandViaHibernate(String brand, Session session) {
@@ -82,7 +82,6 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
         }
         return resultList;
     }
-
 
     //    public Long Insert(List<ItemsEntity> arrayList) {
 //        String innerSql = "(?, ?, ?, ?, ?, ?)";
