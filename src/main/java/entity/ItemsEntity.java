@@ -19,14 +19,23 @@ public class ItemsEntity implements BaseEntity<Long> {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
-    private Long id;
-    @Column(name = "model")
-    private String model;
+    private Long Id;
     @Column(name = "brand")
     @Enumerated(EnumType.STRING)
-    private BrandEnum brand;
-    @Column(name = "attributes")
-    private String attributes;
+    private Attributes.BrandEnum brand;
+    @Column(name = "model")
+    private String model;
+    @Column(name = "internal_memory")
+    @Enumerated(EnumType.STRING)
+    private Attributes.InternalMemoryEnum internalMemory;
+    @Column(name = "ram")
+    @Enumerated(EnumType.STRING)
+    private Attributes.RamEnum ram;
+    @Column(name = "color")
+    private String color;
+    @Column(name = "os")
+    @Enumerated(EnumType.STRING)
+    private Attributes.OperatingSystemEnum os;
     @Column(name = "price")
     private Double price;
     @Column(name = "currency")

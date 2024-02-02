@@ -4,20 +4,23 @@ CREATE SCHEMA market;
 SHOW search_path;
 
 SET search_path TO market;
-ALTER ROLE dmitry SET search_path = market;
-
-
-CREATE TABLE Items
+CREATE TABLE items
 (
-    item_id    BIGSERIAl PRIMARY KEY,
-    model      VARCHAR(32)               NOT NULL,
-    brand      VARCHAR(32)               NOT NULL,
-    attributes VARCHAR(128)              NOT NULL,
-    price      NUMERIC(12, 2) CHECK (price > 0),
-    currency   VARCHAR(1)                NOT NULL,
-    quantity   INT CHECK (quantity >= 0) NOT NULL,
-    UNIQUE (model, attributes)
+    item_id         BIGSERIAl PRIMARY KEY,
+    brand           VARCHAR(32)               NOT NULL,
+    model           VARCHAR(32)               NOT NULL,
+    internal_memory INT                       NOT NULL,
+    RAM             INT                       NOT NULL,
+    color           VARCHAR(32)               NOT NULL,
+    OS              VARCHAR(32)               NOT NULL,
+    price           NUMERIC(12, 2) CHECK (price > 0),
+    currency        VARCHAR(1)                NOT NULL,
+    quantity        INT CHECK (quantity >= 0) NOT NULL,
+    UNIQUE (model, internal_memory, RAM, color)
 );
+
+
+ALTER ROLE dmitry SET search_path = market;
 
 CREATE EXTENSION pgcrypto;
 
