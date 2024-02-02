@@ -28,7 +28,7 @@ public class CreateAccountMapper {
 				.image(USER_FOLDER + image == null ? "" : image.getSubmittedFileName())
 				.birthday(DateFormatter.getDate(account.getBirthday())).countryEnum(CountryEnum.getValue(account.getCountry()))
 				.city(account.getCity()).address(account.getAddress()).phoneNumber(account.getPhoneNumber())
-				.gender(GenderEnum.valueOf(account.getGender())).build();
+				.genderEnum(GenderEnum.valueOf(account.getGender())).build();
 		if (account.getImage().getSubmittedFileName().isBlank()) {
 			personalAccountEntity.setImage(DEFAULT_AVATAR);
 		}

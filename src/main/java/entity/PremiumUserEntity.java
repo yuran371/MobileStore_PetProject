@@ -45,7 +45,7 @@ public class PremiumUserEntity extends PersonalAccountEntity {
               defaultAccount.getCity(),
               defaultAccount.getAddress(),
               defaultAccount.getPhoneNumber(),
-              defaultAccount.getGender(),
+              defaultAccount.getGenderEnum(),
               defaultAccount.getPhonePurchases(),
               defaultAccount.getProfileInfo(),
               defaultAccount.getOrders(),

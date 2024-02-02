@@ -12,23 +12,23 @@ import java.util.function.Function;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QPredicate {
 
-    private List<Predicate> list = new ArrayList<>();
+    private final List<Predicate> predicates = new ArrayList<>();
+
     public static QPredicate builder() {
         return new QPredicate();
     }
 
-    public <T> QPredicate add(T object, Function<T, Predicate> function) {
+    public <T> QPredicate add (T object, Function<T, Predicate> function) {
         if (object != null) {
-            list.add(function.apply(object));
+            predicates.add(function.apply(object));
         }
         return this;
     }
 
     public Predicate buildAnd() {
-        return ExpressionUtils.allOf(list);
+        return ExpressionUtils.allOf(predicates);
     }
-
     public Predicate buildOr() {
-        return ExpressionUtils.anyOf(list);
+        return ExpressionUtils.anyOf(predicates);
     }
 }

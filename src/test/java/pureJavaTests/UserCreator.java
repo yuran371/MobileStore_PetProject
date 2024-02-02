@@ -1,4 +1,17 @@
 package pureJavaTests;
+
+import entity.enums.CountryEnum;
+import entity.enums.GenderEnum;
+import entity.enums.RegistrationParams;
+import lombok.SneakyThrows;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -8,19 +21,6 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.Random;
 import java.util.Scanner;
-
-import entity.enums.CountryEnum;
-import entity.enums.GenderEnum;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-
-import entity.RegistrationParams;
-import lombok.SneakyThrows;
 
 /**
  * 

@@ -48,7 +48,7 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     private String address;
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
-    private GenderEnum gender;
+    private GenderEnum genderEnum;
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SellHistoryEntity> phonePurchases = new ArrayList<>();

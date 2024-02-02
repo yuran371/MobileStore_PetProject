@@ -1,9 +1,7 @@
 package service;
 
 import dao.ItemsDao;
-import dto.ItemsDto;
 import dto.ItemsFilterDto;
-import entity.ItemsEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,11 +29,11 @@ public class ItemsService {
 				.collect(Collectors.toList());
 	}
 
-	public ItemsDto findById(Long itemId) {
-		ItemsEntity itemsEntity = InstanceDao.getById(itemId).get();
-		return new ItemsDto(itemsEntity.getId(), itemsEntity.getModel(), itemsEntity.getBrand().name(),
-				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency().name(),
-				itemsEntity.getQuantity());
-	}
+//	public ItemsDto findById(Long itemId) {
+//		ItemsEntity itemsEntity = InstanceDao.getById(itemId).get();
+//		return new ItemsDto(itemsEntity.getId(), itemsEntity.getModel(), itemsEntity.getBrand().name(),
+//				itemsEntity.getAttributes(), itemsEntity.getPrice(), itemsEntity.getCurrency().name(),
+//				itemsEntity.getQuantity());
+//	}
 
 }

@@ -23,23 +23,23 @@ public class ItemsParametersServlet extends HttpServlet {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		Long itemIdd = Long.valueOf(req.getParameter("itemId"));
 
-		try (PrintWriter writer = resp.getWriter()) {
-			writer.write("<h1>Параметры и количество телефонов</h1>");
-			writer.write("<ul>");
-			ItemsFindByIdDto findByIdDto = instanceService.findById(itemIdd);
-			writer.write("""
-					<li>
-						%s %s %s %,.2f %s %d шт.
-					</li>
-					""".formatted(findByIdDto.model(), findByIdDto.brand(), findByIdDto.attributes(),
-					findByIdDto.price(), findByIdDto.currency(), findByIdDto.quantity()));
-			writer.write("</ul>");
-			writer.write("""
-					<form action="items-add-to-cart?itemId=%d" method="post">
-					Quantity:<input type="number" min="1" max="%d" name="quantityInCart" required/><br /><br />
-					<input type="submit" value="Add to cart" />
-					</form>
-					""".formatted(itemIdd, findByIdDto.quantity()));
-		}
+//		try (PrintWriter writer = resp.getWriter()) {
+//			writer.write("<h1>Параметры и количество телефонов</h1>");
+//			writer.write("<ul>");
+//			ItemsFindByIdDto findByIdDto = instanceService.findById(itemIdd);
+//			writer.write("""
+//					<li>
+//						%s %s %s %,.2f %s %d шт.
+//					</li>
+//					""".formatted(findByIdDto.model(), findByIdDto.brand(), findByIdDto.attributes(),
+//					findByIdDto.price(), findByIdDto.currency(), findByIdDto.quantity()));
+//			writer.write("</ul>");
+//			writer.write("""
+//					<form action="items-add-to-cart?itemId=%d" method="post">
+//					Quantity:<input type="number" min="1" max="%d" name="quantityInCart" required/><br /><br />
+//					<input type="submit" value="Add to cart" />
+//					</form>
+//					""".formatted(itemIdd, findByIdDto.quantity()));
+//		}
 	}
 }

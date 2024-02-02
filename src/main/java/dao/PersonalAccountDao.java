@@ -158,7 +158,6 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
     }
 
     public List<PersonalAccountEntity> sortByParams(CreateAccountDto filter) {
-
         return new ArrayList<>();
     }
 

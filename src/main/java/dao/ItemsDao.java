@@ -1,5 +1,8 @@
 package dao;
 
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQuery;
+import dto.AttributesFilter;
 import entity.ItemsEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -15,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static entity.QItemsEntity.itemsEntity;
+
 @Slf4j
 public class ItemsDao implements Dao<Long, ItemsEntity> {
     private static ItemsDao INSTANCE;
@@ -26,8 +31,6 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
             synchronized (ItemsDao.class) {
                 if (INSTANCE == null) {
                     INSTANCE = new ItemsDao();
-                    log.info("Info: Jump in synchronized block to take ItemsDao instance");
-                    log.trace("Trace: Jump in synchronized block to take ItemsDao instance");
                 }
             }
         }
@@ -38,22 +41,42 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     }
 
     public Optional<Long> insertViaHibernate(ItemsEntity items, Session session) {
-            session.persist(items);
-            return Optional.ofNullable(items.getId());
+        session.persist(items);
+        return Optional.ofNullable(items.getId());
     }
 
-    public List<ItemsEntity> findByBrandViaHibernate(String brand, Session session) {
-        return session.createQuery("select i from items i " +
-                        "where i.brand = :brand", ItemsEntity.class)
+    public List<ItemsEntity> findByBrandViaHQL(String brand, Session session) {
+        return session.createQuery("select i from items i " + "where i.brand = :brand", ItemsEntity.class)
                 .setParameter("brand", brand)
                 .list();
     }
 
-    public List<ItemsEntity> findItemsLimitOffsetViaHibernate(int limit, int offset, Session session) {
-        return session.createQuery("select i from items i", ItemsEntity.class)
-                .setMaxResults(limit)
-                .setFirstResult(offset * 3)
-                .list();
+    public List<ItemsEntity> findItemsOnSpecificPage(long page, Session session) {
+        long limit = 3;
+        return new JPAQuery<ItemsEntity>(session).select(itemsEntity)
+                .from(itemsEntity)
+                .limit(limit)
+                .offset(Math.abs(limit * page - limit))
+                .fetch();
+    }
+
+    public List<ItemsEntity> findAllViaQuerydsl(Session session) {
+        return new JPAQuery<ItemsEntity>(session).select(itemsEntity)
+                .from(itemsEntity)
+                .fetch();
+    }
+
+    public List<ItemsEntity> findItemsWithParameters(AttributesFilter filter, Session session) {
+        Predicate predicate = QPredicate.builder()
+                .add(filter.getBrand(), itemsEntity.brand::eq)
+                .add(filter.getOs(), itemsEntity.os::eq)
+                .add(filter.getInternalMemory(), itemsEntity.internalMemory::eq)
+                .add(filter.getRam(), itemsEntity.ram::eq)
+                .buildAnd();
+        return new JPAQuery<ItemsEntity>(session).select(itemsEntity)
+                .from(itemsEntity)
+                .where(predicate)
+                .fetch();
     }
 
     @Override
@@ -134,12 +157,11 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
 
     @Override
     public Optional<ItemsEntity> getById(Long itemId) {
-        try (var connection = ConnectionPoolManager.get();
-             var prepareStatement = connection.prepareStatement("""
-                     SELECT *
-                     FROM items
-                     WHERE item_id = ?
-                     """)) {
+        try (var connection = ConnectionPoolManager.get(); var prepareStatement = connection.prepareStatement("""
+                SELECT *
+                FROM items
+                WHERE item_id = ?
+                """)) {
             prepareStatement.setLong(1, itemId);
             var resultSet = prepareStatement.executeQuery();
             ItemsEntity entityResult = null;
@@ -176,11 +198,11 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
 
     @Override
     public boolean delete(Long params) {
-        try (Connection connection = ConnectionPoolManager.get();
-             PreparedStatement statement = connection.prepareStatement("""
-                     DELETE FROM items
-                     WHERE item_id = ?
-                     """)) {
+        try (Connection connection = ConnectionPoolManager.get(); PreparedStatement statement =
+                connection.prepareStatement("""
+                        DELETE FROM items
+                        WHERE item_id = ?
+                        """)) {
             statement.setLong(1, params);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -191,13 +213,12 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     }
 
     public Integer changeQuantity(int quantity, long itemId) {
-        try (Connection connection = ConnectionPoolManager.get();
-             PreparedStatement prepareStatement = connection.prepareStatement("""
-                             		UPDATE items
-                             		SET quantity=quantity-?
-                             WHERE item_id=?
-                             		""",
-                     Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = ConnectionPoolManager.get(); PreparedStatement prepareStatement =
+                connection.prepareStatement("""
+                        		UPDATE items
+                        		SET quantity=quantity-?
+                        WHERE item_id=?
+                        		""", Statement.RETURN_GENERATED_KEYS)) {
             prepareStatement.setInt(1, quantity);
             prepareStatement.setLong(2, itemId);
             prepareStatement.executeUpdate();
@@ -213,12 +234,11 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
     }
 
     public List<ItemsEntity> findByBrand(String brand) {
-        try (var connection = ConnectionPoolManager.get();
-             var prepareStatement = connection.prepareStatement("""
-                     SELECT *
-                     FROM items
-                     WHERE brand = ?
-                     """)) {
+        try (var connection = ConnectionPoolManager.get(); var prepareStatement = connection.prepareStatement("""
+                SELECT *
+                FROM items
+                WHERE brand = ?
+                """)) {
             prepareStatement.setString(1, brand);
             var resultSet = prepareStatement.executeQuery();
             List<ItemsEntity> itemsList = new ArrayList<>();
