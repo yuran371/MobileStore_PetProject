@@ -36,10 +36,10 @@
 			Date of birth: <input type="date" name="dateOfBirth" id="dateId" required>
 		</label>
 		<br>
-		<label>Your country:</label>
-		<select name="country" id=country required>
-			<c:forEach var="country" items="${requestScope.countries}">
-				<option value="${country}">${country}</option>
+		<label>Your countryEnum:</label>
+		<select name="countryEnum" id=countryEnum required>
+			<c:forEach var="countryEnum" items="${requestScope.countries}">
+				<option value="${countryEnum}">${countryEnum}</option>
 			</c:forEach>
 		</select>
 		<br>

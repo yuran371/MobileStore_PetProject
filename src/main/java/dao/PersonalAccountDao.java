@@ -1,9 +1,10 @@
 package dao;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQuery;
 import dto.CreateAccountDto;
+import entity.*;
 import entity.enums.DiscountEnum;
-import entity.ItemsEntity;
-import entity.PersonalAccountEntity;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -20,6 +21,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static entity.QItemsEntity.*;
+import static entity.QPersonalAccountEntity.personalAccountEntity;
+import static entity.QPremiumUserEntity.premiumUserEntity;
+import static entity.QSellHistoryEntity.*;
 
 @Slf4j
 public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
@@ -61,7 +67,7 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
     }
 
     public Optional<PersonalAccountEntity> getById(Long id, Session session) {
-    return  Optional.ofNullable(session.get(PersonalAccountEntity.class, id));
+        return Optional.ofNullable(session.get(PersonalAccountEntity.class, id));
     }
 
     @Override
@@ -82,43 +88,75 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
     }
 
     public Optional<PersonalAccountEntity> validateAuth(String email, String password, Session session) {
-        return session.createQuery("select p from PersonalAccountEntity p " +
-                                           "where p.email = :email and p.password = :password",
-                                   PersonalAccountEntity.class)
-                .setParameter("email", email)
-                .setParameter("password", password)
-                .uniqueResultOptional();
+//        return session.createQuery("select p from PersonalAccountEntity p " +
+//                                           "where p.email = :email and p.password = :password",
+//                                   PersonalAccountEntity.class)
+//                .setParameter("email", email)
+//                .setParameter("password", password)
+//                .uniqueResultOptional();
+        return Optional.ofNullable(new JPAQuery<PersonalAccountEntity>(session)
+                                           .select(personalAccountEntity)
+                                           .from(personalAccountEntity)
+                                           .where(personalAccountEntity.email.eq(email)
+                                                          .and(personalAccountEntity.password.eq(password)))
+                                           .fetchOne());
     }
 
     public Optional<PersonalAccountEntity> getByEmail(String email, Session session) {
-        return session.createQuery("select p from PersonalAccountEntity p where p.email = :email",
-                                   PersonalAccountEntity.class)
-                .setParameter("email", email)
-                .uniqueResultOptional();
+//        return session.createQuery("select p from PersonalAccountEntity p where p.email = :email",
+//                                   PersonalAccountEntity.class)
+//                .setParameter("email", email)
+//                .uniqueResultOptional();
+        return Optional.ofNullable(new JPAQuery<PersonalAccountEntity>(session)
+                                           .select(personalAccountEntity)
+                                           .from(personalAccountEntity)
+                                           .where(personalAccountEntity.email.eq(email))
+                                           .fetchOne());
     }
 
     public Optional<DiscountEnum> checkDiscount(Long id, Session session) {
-        return session.createQuery("select p.discount from PremiumUserEntity p where p.id = :id", DiscountEnum.class)
-                .setParameter("id", id).uniqueResultOptional();
+//        return session.createQuery("select p.discount from PremiumUserEntity p where p.id = :id", Discount.class)
+//                .setParameter("id", id).uniqueResultOptional();
+        return Optional.ofNullable(new JPAQuery<DiscountEnum>(session)
+                                           .select(premiumUserEntity.discountEnum)
+                                           .from(premiumUserEntity)
+                                           .where(premiumUserEntity.id.eq(id))
+                                           .fetchOne());
     }
 
     public List<ItemsEntity> getAllBoughtPhones(Long id, Session session) {
-        return session.createQuery("select i from SellHistoryEntity s " +
-                                           "join s.itemId i " +
-                                           "where s.user.id = :id", ItemsEntity.class)
-                .setParameter("id", id)
-                .list();
+//        return session.createQuery("select i from SellHistoryEntity s " +
+//                                           "join s.itemId i " +
+//                                           "where s.user.id = :id", ItemsEntity.class)
+//                .setParameter("id", id)
+//                .list();
+        return new JPAQuery<ItemsEntity>(session)
+                .select(itemsEntity)
+                .from(sellHistoryEntity)
+                .join(sellHistoryEntity.itemId, itemsEntity)
+                .join(sellHistoryEntity.user, personalAccountEntity)
+                .where(personalAccountEntity.id.eq(id))
+                .fetch();
     }
 
-    public List<Object[]> getTopTenMostSpenders(Session session) {
-        return session.createQuery("select p, sum(i.price) from PersonalAccountEntity p " +
-                                           "join p.orders s " +
-                                           "join s.itemId i " +
-                                           "group by p.id " +
-                                           "order by sum(i.price) DESC", Object[].class)
-                .setMaxResults(10)
-                .list();
+    public List<Tuple> getTopTenMostSpenders(Session session) {
+//        return session.createQuery("select p, sum(i.price) from PersonalAccountEntity p " +
+//                                           "join p.orders s " +
+//                                           "join s.itemId i " +
+//                                           "group by p.id " +
+//                                           "order by sum(i.price) DESC", Object[].class)
+//                .setMaxResults(10)
+//                .list();
+        return new JPAQuery<Object[]>(session)
+                .select(personalAccountEntity, itemsEntity.price.sum())
+                .from(personalAccountEntity)
+                .join(personalAccountEntity.orders, sellHistoryEntity)
+                .join(sellHistoryEntity.itemId, itemsEntity)
+                .groupBy(personalAccountEntity.id)
+                .orderBy(itemsEntity.price.sum().desc())
+                .fetch();
     }
+
     public List<PersonalAccountEntity> sortByParams(CreateAccountDto filter) {
         return new ArrayList<>();
     }

@@ -20,17 +20,17 @@ import java.util.List;
 public class PremiumUserEntity extends PersonalAccountEntity {
 
     @Enumerated(EnumType.STRING)
-    private DiscountEnum discount;
+    private DiscountEnum discountEnum;
 
     @Builder(builderMethodName = "premiumBuilder")
     public PremiumUserEntity(Long id, String email, String password, String name, String surname, String image,
-                             LocalDate birthday, CountryEnum country, String city, String address, String phoneNumber,
-                             GenderEnum genderEnum, List<SellHistoryEntity> phonePurchases, ProfileInfoEntity profileInfo,
+                             LocalDate birthday, CountryEnum countryEnum, String city, String address, String phoneNumber,
+                             GenderEnum gender, List<SellHistoryEntity> phonePurchases, ProfileInfoEntity profileInfo,
                              List<SellHistoryEntity> orders, List<UserPaymentOptions> paymentOptions,
                              DiscountEnum discountEnum) {
-        super(id, email, password, name, surname, image, birthday, country, city, address, phoneNumber, genderEnum,
+        super(id, email, password, name, surname, image, birthday, countryEnum, city, address, phoneNumber, gender,
               phonePurchases, profileInfo, orders, paymentOptions);
-        this.discount = discountEnum;
+        this.discountEnum = discountEnum;
     }
 
     public PremiumUserEntity(@NonNull PersonalAccountEntity defaultAccount, DiscountEnum discountEnum) {
@@ -41,7 +41,7 @@ public class PremiumUserEntity extends PersonalAccountEntity {
               defaultAccount.getSurname(),
               defaultAccount.getImage(),
               defaultAccount.getBirthday(),
-              defaultAccount.getCountry(),
+              defaultAccount.getCountryEnum(),
               defaultAccount.getCity(),
               defaultAccount.getAddress(),
               defaultAccount.getPhoneNumber(),
@@ -50,7 +50,7 @@ public class PremiumUserEntity extends PersonalAccountEntity {
               defaultAccount.getProfileInfo(),
               defaultAccount.getOrders(),
               defaultAccount.getPaymentOptions());
-        this.discount = discountEnum;
+        this.discountEnum = discountEnum;
     }
 
     public static PremiumUserEntity of(@NonNull PersonalAccountEntity defaultAccount, DiscountEnum discountEnum) {

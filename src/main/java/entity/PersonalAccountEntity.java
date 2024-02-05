@@ -43,7 +43,7 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     private String image;
     private LocalDate birthday;
     @Enumerated(EnumType.STRING)
-    private CountryEnum country;
+    private CountryEnum countryEnum;
     private String city;
     private String address;
     private String phoneNumber;

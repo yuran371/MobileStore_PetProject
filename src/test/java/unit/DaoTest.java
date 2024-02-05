@@ -1,5 +1,6 @@
 package unit;
 
+import com.querydsl.core.Tuple;
 import dao.ItemsDao;
 import dao.PersonalAccountDao;
 import dao.SellHistoryDao;
@@ -18,7 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.HibernateTestUtil;
-import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -35,6 +35,7 @@ import static entity.enums.Attributes.OperatingSystemEnum.IOS;
 import static entity.enums.Attributes.RamEnum.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD;
 
 
 @Slf4j
@@ -59,6 +60,7 @@ public class DaoTest {
             session.getTransaction()
                     .commit();
             assertThat(offsetLimitList.size()).isEqualTo(3);
+            // Написать тест: смещение списка и сравнение полученных items
         }
 
         @ParameterizedTest
@@ -119,74 +121,74 @@ public class DaoTest {
                     .commit();
         }
 
-        @ParameterizedTest
-        @DisplayName("если orphanRemoval=true, то при удалении комментария из топика он удаляется из базы")
-        @MethodSource("unit.DaoTest#argumentsForItemsTestAndPersonalAccount")
-        void givenOrphanRemovalTrue_whenRemoveSellHistoryEntityFromPhoneOrders_thenItRemovedFromDatabase(ItemsEntity itemsEntity, PersonalAccountEntity personalAccountEntity) {
-            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
-                    .openSession();
-            session.beginTransaction();
-            itemsDao.insertViaHibernate(itemsEntity, session);
-            session.persist(personalAccountEntity);
-            Long itemId = itemsEntity.getId();
-//            List<SellHistoryEntity> collectOfSellHistoryEntity =
-//                //    getArgumentForSellHistory().map(arguments -> (SellHistoryEntity) arguments.get()[0])
-//                //            .collect(Collectors.toList());
-//            collectOfSellHistoryEntity.stream()
-//                    .forEach(sellHistoryEntity -> {
-//                        itemsEntity.addPhoneOrder(sellHistoryEntity);
-//                        personalAccountEntity.addPurchase(sellHistoryEntity);
-//                        session.persist(sellHistoryEntity);
-//                    });
-            /*
-             * 64-68стр Нужны были для "обновления" данных (актуализации List). После добавления 57стр deprecated
-             * */
-//            session.getTransaction()
-//                    .commit();
-//            session.detach(itemsEntity);
+//        @ParameterizedTest
+//        @DisplayName("если orphanRemoval=true, то при удалении комментария из топика он удаляется из базы")
+//        @MethodSource("unit.DaoTest#argumentsForItemsTestAndPersonalAccount")
+//        void givenOrphanRemovalTrue_whenRemoveSellHistoryEntityFromPhoneOrders_thenItRemovedFromDatabase(ItemsEntity itemsEntity, PersonalAccountEntity personalAccountEntity) {
+//            @Cleanup Session session = HibernateTestUtil.getSessionFactory()
+//                    .openSession();
 //            session.beginTransaction();
-//            ItemsEntity itemsEntity1 = session.get(itemsEntity.getClass(), itemId);
-//            itemsEntity.getPhoneOrders()
-//                    .remove(0);
-//            itemsEntity.removePhoneOrder(itemsEntity.getPhoneOrders()
-//                    .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
-//            personalAccountEntity.removePurchase(personalAccountEntity.getPhonePurchases()
-//                    .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
+//            itemsDao.insertViaHibernate(itemsEntity, session);
+//            session.persist(personalAccountEntity);
+//            Long itemId = itemsEntity.getId();
+////            List<SellHistoryEntity> collectOfSellHistoryEntity =
+////                //    getArgumentForSellHistory().map(arguments -> (SellHistoryEntity) arguments.get()[0])
+////                //            .collect(Collectors.toList());
+////            collectOfSellHistoryEntity.stream()
+////                    .forEach(sellHistoryEntity -> {
+////                        itemsEntity.addPhoneOrder(sellHistoryEntity);
+////                        personalAccountEntity.addPurchase(sellHistoryEntity);
+////                        session.persist(sellHistoryEntity);
+////                    });
+//            /*
+//             * 64-68стр Нужны были для "обновления" данных (актуализации List). После добавления 57стр deprecated
+//             * */
+////            session.getTransaction()
+////                    .commit();
+////            session.detach(itemsEntity);
+////            session.beginTransaction();
+////            ItemsEntity itemsEntity1 = session.get(itemsEntity.getClass(), itemId);
+////            itemsEntity.getPhoneOrders()
+////                    .remove(0);
+////            itemsEntity.removePhoneOrder(itemsEntity.getPhoneOrders()
+////                    .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
+////            personalAccountEntity.removePurchase(personalAccountEntity.getPhonePurchases()
+////                    .get(0));   //  Тестируем удаление sellHistoryEntity с orphanRemoval = true
+////
+////            SellHistoryEntity sellHistoryEntity = collectOfSellHistoryEntity.get(0);
+////            Long sellId = sellHistoryEntity
+////                    .getSellId();
+////            session.remove(sellHistoryEntity);
+////            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);  //
+////            // sellHistoryEntity должен быть null после session.remove(sellHistoryEntity);
+////            session.remove(itemsEntity);
+////            session.remove(personalAccountEntity);
+////            session.flush();
+////            session.getTransaction()
+////                    .commit();
+////            assertThat(sellHistoryEntityIsNull).isNull();   //  Проверка, удалился ли SellHistory из таблицы
 //
-//            SellHistoryEntity sellHistoryEntity = collectOfSellHistoryEntity.get(0);
-//            Long sellId = sellHistoryEntity
-//                    .getSellId();
-//            session.remove(sellHistoryEntity);
-//            SellHistoryEntity sellHistoryEntityIsNull = session.get(sellHistoryEntity.getClass(), sellId);  //
-//            // sellHistoryEntity должен быть null после session.remove(sellHistoryEntity);
-//            session.remove(itemsEntity);
-//            session.remove(personalAccountEntity);
-//            session.flush();
-//            session.getTransaction()
-//                    .commit();
-//            assertThat(sellHistoryEntityIsNull).isNull();   //  Проверка, удалился ли SellHistory из таблицы
-
-            log.info("Just added: {} {} {} {} qt: {}", itemsEntity.getBrand(), itemsEntity.getModel(),
-                    itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
-        }
+//            log.info("Just added: {} {} {} {} qt: {}", itemsEntity.getBrand(), itemsEntity.getModel(),
+//                    itemsEntity.getPrice(), itemsEntity.getCurrency(), itemsEntity.getQuantity());
+//        }
     }
 
 
     @Nested
-    @TestInstance(PER_CLASS)
+    @TestInstance(PER_METHOD)
     @Tag(value = "PersonalAccountDao")
     @ExtendWith(value = {PersonalAccountParameterResolver.class})
     class PersonalAccount {
 
         private PersonalAccountDao personalAccountDao;
-        private SessionFactory entityManager = HibernateTestUtil.getSessionFactory();
+        private static SessionFactory entityManager = HibernateTestUtil.getSessionFactory();
 
         public PersonalAccount(PersonalAccountDao instance) {
             this.personalAccountDao = instance;
         }
 
         @AfterAll
-        public void closeTestSessionFactory() {
+        public static void closeTestSessionFactory() {
             entityManager.close();
         }
 
@@ -200,29 +202,22 @@ public class DaoTest {
         @ParameterizedTest
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void get_OrdersList_ConsistAllOrders(PersonalAccountEntity account) {
-            List<SellHistoryEntity> sellHistoryEntityList = getSellHistoryEntities(3);
-            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
-            @Cleanup Session session = sessionFactory.openSession();
-            session.beginTransaction();
-            session.persist(account);
-            Long accountId = account.getId();
-            sellHistoryEntityList.stream()
-                    .forEach(sellHistoryEntity -> {
-                        sellHistoryEntity.setUser(account);
-                        session.persist(sellHistoryEntity);
-                    });
-            session.detach(account);
-            session.getTransaction()
-                    .commit();
-            session.beginTransaction();
-            PersonalAccountEntity personalAccountEntity = session.get(PersonalAccountEntity.class, accountId);
-            assertThat(personalAccountEntity.getOrders()
-                    .size()).isEqualTo(sellHistoryEntityList.size());
-            sellHistoryEntityList.stream()
-                    .forEach(sellHistoryEntity -> session.remove(sellHistoryEntity));
-            session.remove(personalAccountEntity);
-            session.getTransaction()
-                    .commit();
+//            List<SellHistoryEntity> sellHistoryEntityList = getSellHistoryEntities(3);
+//            @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+//            @Cleanup Session session = sessionFactory.openSession();
+//            session.beginTransaction();
+//            session.persist(account); Long accountId = account.getId();
+//            sellHistoryEntityList.stream()
+//                    .forEach(sellHistoryEntity -> {
+//                sellHistoryEntity.setUser(account);
+//                session.persist(sellHistoryEntity);
+//            }); session.detach(account);
+//            session.getTransaction().commit();
+//            session.beginTransaction();
+//            PersonalAccountEntity personalAccountEntity = session.get(PersonalAccountEntity.class, accountId);
+//            assertThat(personalAccountEntity.getOrders().size()).isEqualTo(sellHistoryEntityList.size());
+//            sellHistoryEntityList.stream().forEach(sellHistoryEntity -> session.remove(sellHistoryEntity));
+//            session.remove(personalAccountEntity); session.getTransaction().commit();
         }
 
         @Tag("Unit")
@@ -230,14 +225,13 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void validateAuth_validUser_returnUser(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
+            persistEntity(account, session);
             Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao
                     .validateAuth(account.getEmail(), account.getPassword(), session);
             assertThat(personalAccountEntity.get()).isNotNull();
-            assertThat(personalAccountEntity.get()
-                    .getEmail()).isEqualTo(account.getEmail());
-            assertThat(personalAccountEntity.get()
-                    .getPassword()).isEqualTo(account.getPassword());
+            assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
+            assertThat(personalAccountEntity.get().getPassword()).isEqualTo(account.getPassword());
+            dropEntity(account, session);
         }
 
         @Tag("Unit")
@@ -245,16 +239,14 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void getByEmail_validUser_returnUser(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
+            persistEntity(account, session);
             Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao
                     .getByEmail(account.getEmail(), session);
             assertThat(personalAccountEntity.get()).isNotNull();
-            assertThat(personalAccountEntity.get()
-                    .getId()).isEqualTo(account.getId());
-            assertThat(personalAccountEntity.get()
-                    .getEmail()).isEqualTo(account.getEmail());
-            assertThat(personalAccountEntity.get()
-                    .getPassword()).isEqualTo(account.getPassword());
+            assertThat(personalAccountEntity.get().getId()).isEqualTo(account.getId());
+            assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
+            assertThat(personalAccountEntity.get().getPassword()).isEqualTo(account.getPassword());
+            dropEntity(account, session);
         }
 
         @Tag("Unit")
@@ -263,9 +255,10 @@ public class DaoTest {
         void checkDiscount_premiumUser_returnDiscount(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
             PremiumUserEntity premiumUserEntity = new PremiumUserEntity(account, DiscountEnum.FIVE_PERCENT);
-            DaoTest.persistEntity(premiumUserEntity, session);
+            persistEntity(premiumUserEntity, session);
             Optional<DiscountEnum> discount = personalAccountDao.checkDiscount(premiumUserEntity.getId(), session);
             assertThat(discount.get()).isEqualTo(DiscountEnum.FIVE_PERCENT);
+            dropEntity(premiumUserEntity, session);
         }
 
         @Tag("Unit")
@@ -273,35 +266,34 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void checkDiscount_notPremiumUser_returnNull(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
+            persistEntity(account, session);
             Optional<DiscountEnum> discount = personalAccountDao.checkDiscount(account.getId(), session);
             assertThat(discount).isEmpty();
+            dropEntity(account, session);
         }
 
         @Tag("Unit")
         @ParameterizedTest
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void getAllBoughtPhones_havePhones_returnList(PersonalAccountEntity account) {
-            List<SellHistoryEntity> sellHistoryEntities = DaoTest.getSellHistoryEntities(3);
-            List<ItemsEntity> itemsEntities = DaoTest.getItemsEntities(3);
+            List<SellHistoryEntity> sellHistoryEntities = getSellHistoryEntities(3);
+            List<ItemsEntity> itemsEntities = getItemsEntities(3);
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
-            DaoTest.persistEntitiesList(itemsEntities, session);
+            persistEntity(account, session);
+            persistEntitiesList(itemsEntities, session);
             for (int i = 0; i < sellHistoryEntities.size(); i++) {
                 SellHistoryEntity sellHistoryEntity = sellHistoryEntities.get(i);
                 sellHistoryEntity.setUser(account);
                 sellHistoryEntity.setItemId(itemsEntities.get(i));
             }
-            DaoTest.persistEntitiesList(sellHistoryEntities, session);
+            persistEntitiesList(sellHistoryEntities, session);
             List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId(), session);
             assertThat(allBoughtPhones.size()).isEqualTo(itemsEntities.size());
-            assertThat(allBoughtPhones).extracting("id")
-                    .contains(itemsEntities.get(0)
-                                    .getId(),
-                            itemsEntities.get(1)
-                                    .getId(),
-                            itemsEntities.get(2)
-                                    .getId());
+            assertThat(allBoughtPhones).extracting("id").contains(itemsEntities.get(0).getId(),
+                                                                  itemsEntities.get(1).getId(),
+                                                                  itemsEntities.get(2).getId());
+            dropEntities(session, sellHistoryEntities, itemsEntities);
+            dropEntity(account, session);
         }
 
         @Tag("Unit")
@@ -309,31 +301,33 @@ public class DaoTest {
         @MethodSource("unit.DaoTest#argumentsPersonalAccount")
         void getAllBoughtPhones_noPhones_returnEmptyList(PersonalAccountEntity account) {
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntity(account, session);
+            persistEntity(account, session);
             List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId(), session);
             assertThat(allBoughtPhones).isEmpty();
+            dropEntity(account, session);
         }
 
         @Test
         void getTopTenMostSpenders_haveUsers_returnTop() {
-            List<PersonalAccountEntity> accounts = DaoTest.getPersonalAccountEntities(3);
-            List<ItemsEntity> items = DaoTest.getItemsEntities(10);
-            List<SellHistoryEntity> sellHistoryEntities = DaoTest.getSellHistoryEntities(10);
+            List<PersonalAccountEntity> accounts = getPersonalAccountEntities(3);
+            List<ItemsEntity> items = getItemsEntities(10);
+            List<SellHistoryEntity> sellHistoryEntities = getSellHistoryEntities(10);
             @Cleanup Session session = entityManager.openSession();
-            DaoTest.persistEntitiesList(accounts, session);
-            DaoTest.persistEntitiesList(items, session);
+            persistEntitiesList(accounts, session);
+            persistEntitiesList(items, session);
             for (SellHistoryEntity entity : sellHistoryEntities) {
                 Random random = new Random();
                 entity.setUser(accounts.get(random.nextInt(0, accounts.size())));
                 entity.setItemId(items.get(random.nextInt(0, items.size())));
             }
-            DaoTest.persistEntitiesList(sellHistoryEntities, session);
-            List<Object[]> topTenMostSpenders = personalAccountDao.getTopTenMostSpenders(session);
+            persistEntitiesList(sellHistoryEntities, session);
+            List<Tuple> topTenMostSpenders = personalAccountDao.getTopTenMostSpenders(session);
             for (int i = 1; i < topTenMostSpenders.size(); i++) {
-                Double spender = (Double) topTenMostSpenders.get(i - 1)[1];
-                Double nextSpender = (Double) topTenMostSpenders.get(i)[1];
+                Double spender = (Double) topTenMostSpenders.get(i - 1).get(1, Double.class);
+                Double nextSpender = (Double) topTenMostSpenders.get(i).get(1, Double.class);
                 assertThat(spender).isGreaterThan(nextSpender);
             }
+            dropEntities(session, accounts, items, sellHistoryEntities);
         }
 
     }
@@ -358,38 +352,29 @@ public class DaoTest {
             @Cleanup Session session = sessionFactory.openSession();
             session.beginTransaction();
             session.persist(entity);
-            assertThat(entity.getSellId()).isNotNull();
-            session.getTransaction()
-                    .commit();
+            assertThat(entity.getId()).isNotNull();
+            session.getTransaction().commit();
         }
 
     }
 
     public static Stream<Arguments> argumentsSellHistory() {
-        return Stream.of(Arguments.of(SellHistoryEntity.builder()
-                        .sellDate(OffsetDateTime.now())
-                        .user(PersonalAccountEntity.builder()
-                                .build())
-                        .itemId(ItemsEntity.builder()
-                                .build())
-                        .quantity(2)
-                        .build()),
-                Arguments.of(SellHistoryEntity.builder()
-                        .sellDate(OffsetDateTime.now())
-                        .user(PersonalAccountEntity.builder()
-                                .build())
-                        .itemId(ItemsEntity.builder()
-                                .build())
-                        .quantity(3)
-                        .build()),
-                Arguments.of(SellHistoryEntity.builder()
-                        .sellDate(OffsetDateTime.now())
-                        .user(PersonalAccountEntity.builder()
-                                .build())
-                        .itemId(ItemsEntity.builder()
-                                .build())
-                        .quantity(10)
-                        .build()));
+        return Stream.of(Arguments.of(SellHistoryEntity.builder().sellDate(OffsetDateTime.now())
+                                              .user(PersonalAccountEntity.builder().build())
+                                              .itemId(ItemsEntity.builder().build()).quantity(2)
+                                              .build()),
+                         Arguments.of(SellHistoryEntity.builder()
+                                              .sellDate(OffsetDateTime.now())
+                                              .user(PersonalAccountEntity.builder().build())
+                                              .itemId(ItemsEntity.builder().build())
+                                              .quantity(3)
+                                              .build()),
+                         Arguments.of(SellHistoryEntity.builder()
+                                              .sellDate(OffsetDateTime.now())
+                                              .user(PersonalAccountEntity.builder().build())
+                                              .itemId(ItemsEntity.builder().build())
+                                              .quantity(10)
+                                              .build()));
     }
 
     public static Stream<Arguments> argumentsPersonalAccount() {
@@ -401,7 +386,7 @@ public class DaoTest {
                         .birthday(LocalDate.of(1990, 12, 12))
                         .city("Oren")
                         .address("Pushkina")
-                        .country(CountryEnum.KAZAKHSTAN)
+                        .countryEnum(CountryEnum.KAZAKHSTAN)
                         .genderEnum(GenderEnum.MALE)
                         .phoneNumber("+79553330987")
                         .password("1499")
@@ -414,7 +399,7 @@ public class DaoTest {
                         .birthday(LocalDate.of(2000, 3, 10))
                         .city("Spb")
                         .address("Lenina, b. 18")
-                        .country(CountryEnum.RUSSIA)
+                        .countryEnum(CountryEnum.RUSSIA)
                         .genderEnum(GenderEnum.MALE)
                         .phoneNumber("+79553330987")
                         .password("FNIM912KND")
@@ -427,47 +412,25 @@ public class DaoTest {
                         .birthday(LocalDate.of(1997, 12, 20))
                         .city("Minsk")
                         .address("Pushkina")
-                        .country(CountryEnum.BELARUS)
+                        .countryEnum(CountryEnum.BELARUS)
                         .genderEnum(GenderEnum.MALE)
                         .phoneNumber("+79553330987")
                         .password("Eranoff21")
                         .build())
         );
+
     }
 
-    public static Stream<Arguments> argumentsForItemsTestAndPersonalAccount() {
-        return Stream.of(Arguments.of(ItemsEntity.builder()
-                        .brand(GOOGLE)
-                        .model("pixel a5")
-                        .internalMemory(Attributes.InternalMemoryEnum.GB_64)
-                        .ram(Attributes.RamEnum.gb_4)
-                        .color("white")
-                        .os(ANDROID)
-                        .price(999.99)
-                        .currency(CurrencyEnum.$)
-                        .quantity(57)
-                        .build(),
-                PersonalAccountEntity.builder()
-                        .image("")
-                        .name("Artem")
-                        .surname("Eranov")
-                        .email("sobaka@mail.ru")
-                        .birthday(LocalDate.of(1990, 12, 12))
-                        .city("Oren")
-                        .address("Pushkina")
-                        .country(CountryEnum.KAZAKHSTAN)
-                        .genderEnum(GenderEnum.MALE)
-                        .phoneNumber("+79553330987")
-                        .password("1499")
-                        .build()));
-    }
+
+
+
 
     public static Stream<Arguments> argumentsForItemsTest() {
         return Stream.of(Arguments.of(ItemsEntity.builder()
                 .brand(GOOGLE)
                 .model("pixel a5")
                 .internalMemory(Attributes.InternalMemoryEnum.GB_16)
-                .ram(Attributes.RamEnum.gb_4)
+                .ram(gb_4)
                 .color("black")
                 .os(ANDROID)
                 .price(999.99)
@@ -588,7 +551,7 @@ public class DaoTest {
                         .birthday(LocalDate.of(1990, 12, 12))
                         .city("Oren")
                         .address("Pushkina")
-                        .country(CountryEnum.KAZAKHSTAN)
+                        .countryEnum(CountryEnum.KAZAKHSTAN)
                         .genderEnum(GenderEnum.MALE)
                         .phoneNumber("+79553330987")
                         .password("1499")
@@ -601,7 +564,7 @@ public class DaoTest {
                         .birthday(LocalDate.of(2000, 3, 10))
                         .city("Spb")
                         .address("Lenina, b. 18")
-                        .country(CountryEnum.RUSSIA)
+                        .countryEnum(CountryEnum.RUSSIA)
                         .genderEnum(GenderEnum.MALE)
                         .phoneNumber("+79553330987")
                         .password("FNIM912KND")
@@ -614,7 +577,7 @@ public class DaoTest {
                         .birthday(LocalDate.of(1997, 12, 20))
                         .city("Minsk")
                         .address("Pushkina")
-                        .country(CountryEnum.BELARUS)
+                        .countryEnum(CountryEnum.BELARUS)
                         .genderEnum(GenderEnum.MALE)
                         .phoneNumber("+79553330987")
                         .password("Eranoff21")
@@ -759,8 +722,7 @@ public class DaoTest {
     private static <T> void persistEntity(T entity, Session session) {
         session.beginTransaction();
         session.persist(entity);
-        session.getTransaction()
-                .commit();
+        session.getTransaction().commit();
     }
 
     private static <T> void persistEntitiesList(List<T> list, Session session) {
@@ -773,5 +735,19 @@ public class DaoTest {
                     return element;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private static <T> void dropEntity(T entity, Session session) {
+        session.beginTransaction();
+        session.remove(entity);
+        session.getTransaction().commit();
+    }
+
+    private static void dropEntities(Session session, List<? extends BaseEntity>... lists) {
+        session.beginTransaction();
+        for (List entities : lists) {
+            entities.stream().forEach(entity -> session.remove(entity));
+        }
+        session.getTransaction().commit();
     }
 }

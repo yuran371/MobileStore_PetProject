@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS personal_account
     surname      VARCHAR(32)  NOT NULL,
     image        VARCHAR(124) NOT NULL,
     birthday     DATE         NOT NULL,
-    country      VARCHAR(64)  NOT NULL,
+    countryEnum      VARCHAR(64)  NOT NULL,
     city         VARCHAR(256) NOT NULL,
     address      VARCHAR(256) NOT NULL,
     phone_number TEXT
@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS personal_account
     genderEnum       VARCHAR(12)  NOT NULL,
     CONSTRAINT birthday_constraint CHECK (DATE_PART('year', current_date) - DATE_PART('year', birthday) > 18),
     CONSTRAINT phone_number_constraint CHECK (((phone_number ~ '\+7[0-9]{10}$') AND
-                                               (country = 'russia' OR country = 'россия'))
-        OR (country != 'russia' AND country != 'россия'))
+                                               (countryEnum = 'russia' OR countryEnum = 'россия'))
+        OR (countryEnum != 'russia' AND countryEnum != 'россия'))
 );
 
 

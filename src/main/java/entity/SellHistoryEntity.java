@@ -2,7 +2,6 @@ package entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 
 import java.time.OffsetDateTime;
 
@@ -13,11 +12,11 @@ import java.time.OffsetDateTime;
 @Builder
 @EqualsAndHashCode(of = {"itemId", "sellDate"})
 @Table(name = "sell_history", schema = "market", catalog = "market_repository")
-public class SellHistoryEntity {
+public class SellHistoryEntity implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "sell_id")
-    private Long sellId;
+    private Long id;
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")     // 1st - in this table; 2nd - in parent table
     private ItemsEntity itemId;
