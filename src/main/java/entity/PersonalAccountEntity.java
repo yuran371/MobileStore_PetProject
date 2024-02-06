@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "email")
-@ToString(exclude = {"phonePurchases", "profileInfo"})
+@ToString(exclude = {"phonePurchases"})
 @Builder
 @Entity
 @Table(name = "personal_account", schema = "market", indexes = {
@@ -52,6 +52,11 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SellHistoryEntity> phonePurchases = new ArrayList<>();
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "user_payment_options", joinColumns = @JoinColumn(name = "account_id"))
+    private List<UserPaymentOptions> paymentOptions = new ArrayList<>();
+
     public void addPurchase(SellHistoryEntity phonePurchase) {
         phonePurchases.add(phonePurchase);
         phonePurchase.setUser(this);
@@ -60,15 +65,5 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
         phonePurchases.remove(phonePurchase);
         phonePurchase.setUser(null);
     }
-    @OneToOne(mappedBy = "personalAccount")
-    private ProfileInfoEntity profileInfo;
-    @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SellHistoryEntity> orders = new ArrayList<>();
-
-    @Builder.Default
-    @ElementCollection
-    @CollectionTable(name = "user_payment_options", joinColumns = @JoinColumn(name = "account_id"))
-    private List<UserPaymentOptions> paymentOptions = new ArrayList<>();
 
 }
