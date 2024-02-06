@@ -1,9 +1,12 @@
 package dao;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
-import dto.CreateAccountDto;
-import entity.*;
+import dto.PersonalAccountFilter;
+import entity.ItemsEntity;
+import entity.PersonalAccountEntity;
+import entity.SellHistoryEntity;
 import entity.enums.DiscountEnum;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.graph.GraphSemantic;
 import utlis.ConnectionPoolManager;
 import utlis.HibernateSessionFactory;
 import utlis.SqlExceptionLogger;
@@ -18,14 +22,13 @@ import utlis.SqlExceptionLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static entity.QItemsEntity.*;
+import static entity.QItemsEntity.itemsEntity;
 import static entity.QPersonalAccountEntity.personalAccountEntity;
 import static entity.QPremiumUserEntity.premiumUserEntity;
-import static entity.QSellHistoryEntity.*;
+import static entity.QSellHistoryEntity.sellHistoryEntity;
 
 @Slf4j
 public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
@@ -73,6 +76,25 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
     @Override
     public List<PersonalAccountEntity> findAll() {
         return null;
+    }
+
+    public List<PersonalAccountEntity> getAll(Session session) {
+        return new JPAQuery<PersonalAccountEntity>(session)
+                .select(personalAccountEntity)
+                .from(personalAccountEntity)
+                .leftJoin(personalAccountEntity.phonePurchases, sellHistoryEntity)
+                .fetch();
+    }
+
+    public List<PersonalAccountEntity> getAllWithPhonePurchases(Session session) {
+        var graph = session.createEntityGraph(PersonalAccountEntity.class);
+        graph.addAttributeNodes("phonePurchases");
+        var subGraph = graph.addSubgraph("phonePurchases", SellHistoryEntity.class);
+        subGraph.addAttributeNodes("itemId");
+        return session.createQuery("select p from PersonalAccountEntity p", PersonalAccountEntity.class)
+                .setHint(GraphSemantic.LOAD.getJakartaHintName(), graph)
+                .list();
+
     }
 
     @Override
@@ -150,15 +172,23 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
         return new JPAQuery<Object[]>(session)
                 .select(personalAccountEntity, itemsEntity.price.sum())
                 .from(personalAccountEntity)
-                .join(personalAccountEntity.orders, sellHistoryEntity)
+                .join(personalAccountEntity.phonePurchases, sellHistoryEntity)
                 .join(sellHistoryEntity.itemId, itemsEntity)
                 .groupBy(personalAccountEntity.id)
                 .orderBy(itemsEntity.price.sum().desc())
                 .fetch();
     }
 
-    public List<PersonalAccountEntity> sortByParams(CreateAccountDto filter) {
-        return new ArrayList<>();
+        public List<PersonalAccountEntity> sortByGenderAndCountry(PersonalAccountFilter filter, Session session) {
+        Predicate predicate = QPredicate.builder()
+                .add(filter.getGender(), personalAccountEntity.genderEnum::eq)
+                .add(filter.getCountry(), personalAccountEntity.countryEnum::eq)
+                .buildAnd();
+        return new JPAQuery<PersonalAccountEntity>(session)
+                .select(personalAccountEntity)
+                .from(personalAccountEntity)
+                .where(predicate)
+                .fetch();
     }
 
 }

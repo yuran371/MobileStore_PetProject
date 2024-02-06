@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 public class LoginServiceExtension implements BeforeAllCallback, ParameterResolver {
 
-	private String personalAccountEntity = "Entity";
+	private final String personalAccountEntity = "Entity";
 	private Namespace storeName = Namespace.create(personalAccountEntity);
 
 	@Override

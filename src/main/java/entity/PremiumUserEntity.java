@@ -24,12 +24,13 @@ public class PremiumUserEntity extends PersonalAccountEntity {
 
     @Builder(builderMethodName = "premiumBuilder")
     public PremiumUserEntity(Long id, String email, String password, String name, String surname, String image,
-                             LocalDate birthday, CountryEnum countryEnum, String city, String address, String phoneNumber,
-                             GenderEnum gender, List<SellHistoryEntity> phonePurchases, ProfileInfoEntity profileInfo,
-                             List<SellHistoryEntity> orders, List<UserPaymentOptions> paymentOptions,
+                             LocalDate birthday, CountryEnum countryEnum, String city, String address,
+                             String phoneNumber,
+                             GenderEnum gender, List<SellHistoryEntity> phonePurchases,
+                             List<UserPaymentOptions> paymentOptions,
                              DiscountEnum discountEnum) {
         super(id, email, password, name, surname, image, birthday, countryEnum, city, address, phoneNumber, gender,
-              phonePurchases, profileInfo, orders, paymentOptions);
+              phonePurchases, paymentOptions);
         this.discountEnum = discountEnum;
     }
 
@@ -47,8 +48,6 @@ public class PremiumUserEntity extends PersonalAccountEntity {
               defaultAccount.getPhoneNumber(),
               defaultAccount.getGenderEnum(),
               defaultAccount.getPhonePurchases(),
-              defaultAccount.getProfileInfo(),
-              defaultAccount.getOrders(),
               defaultAccount.getPaymentOptions());
         this.discountEnum = discountEnum;
     }

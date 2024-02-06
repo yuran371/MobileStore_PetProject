@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "profile_info", schema = "market", catalog = "market_repository")
-public class ProfileInfoEntity {
+public class ProfileInfoEntity implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private Long id;
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
     private PersonalAccountEntity personalAccount;
     @Basic
     @Column(name = "language")
@@ -27,8 +27,4 @@ public class ProfileInfoEntity {
     @Column(name = "special_info")
     private String specialInfo;
 
-    public void setPersonalAccount(PersonalAccountEntity account) {
-        this.personalAccount = account;
-        account.setProfileInfo(this);
-    }
 }

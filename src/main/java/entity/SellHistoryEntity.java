@@ -17,10 +17,10 @@ public class SellHistoryEntity implements BaseEntity<Long> {
     @Id
     @Column(name = "sell_id")
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")     // 1st - in this table; 2nd - in parent table
     private ItemsEntity itemId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private PersonalAccountEntity user;
     @Basic
