@@ -8,9 +8,7 @@ import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
 import entity.enums.Attributes;
-import entity.enums.CountryEnum;
 import entity.enums.CurrencyEnum;
-import entity.enums.GenderEnum;
 import extentions.SellHistoryParameterResolver;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +24,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import util.EntityHandler;
 import util.HibernateTestUtil;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Stream;
@@ -204,38 +201,6 @@ public class DaoTest {
                                  .itemId(ItemsEntity.builder().build())
                                  .quantity(10)
                                  .build());
-    }
-
-    public static Stream<PersonalAccountEntity> argumentsPersonalAccount() {
-        return Stream.of(PersonalAccountEntity.builder().image("").name("Artem").surname("Eranov")
-                                 .email("sobaka@mail.ru").birthday(LocalDate.of(1990, 12, 12)).city("Oren")
-                                 .address("Pushkina").countryEnum(CountryEnum.KAZAKHSTAN)
-                                 .genderEnum(GenderEnum.MALE).phoneNumber("+79553330987").password("1499")
-                                 .build(),
-                         PersonalAccountEntity.builder().image("")
-                                 .name("Danil").surname("Smirnov")
-                                 .email("ds_12@mail.ru")
-                                 .birthday(LocalDate.of(2000, 3, 10))
-                                 .city("Spb").address("Lenina, b. 18")
-                                 .countryEnum(CountryEnum.RUSSIA)
-                                 .genderEnum(GenderEnum.MALE)
-                                 .phoneNumber("+79553330987")
-                                 .password("FNIM912KND")
-                                 .build(),
-                         PersonalAccountEntity.builder()
-                                 .image("")
-                                 .name("Dmitry")
-                                 .surname("Eranov")
-                                 .email("dmitry@mail.ru")
-                                 .birthday(LocalDate.of(1997, 12, 20))
-                                 .city("Minsk")
-                                 .address("Pushkina")
-                                 .countryEnum(CountryEnum.BELARUS)
-                                 .genderEnum(GenderEnum.MALE)
-                                 .phoneNumber("+79553330987")
-                                 .password("Eranoff21")
-                                 .build());
-
     }
 
 
