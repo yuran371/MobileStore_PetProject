@@ -7,7 +7,6 @@ import dto.PersonalAccountFilter;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
-import entity.enums.DiscountEnum;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -19,7 +18,6 @@ import java.util.Optional;
 
 import static entity.QItemsEntity.itemsEntity;
 import static entity.QPersonalAccountEntity.personalAccountEntity;
-import static entity.QPremiumUserEntity.premiumUserEntity;
 import static entity.QSellHistoryEntity.sellHistoryEntity;
 
 @Slf4j
@@ -95,13 +93,6 @@ public class PersonalAccountDao  {
                                            .fetchOne());
     }
 
-    public Optional<DiscountEnum> checkDiscount(Long id, Session session) {
-        return Optional.ofNullable(new JPAQuery<DiscountEnum>(session)
-                                           .select(premiumUserEntity.discountEnum)
-                                           .from(premiumUserEntity)
-                                           .where(premiumUserEntity.id.eq(id))
-                                           .fetchOne());
-    }
 
     public List<ItemsEntity> getAllBoughtPhones(Long id, Session session) {
         return new JPAQuery<ItemsEntity>(session)

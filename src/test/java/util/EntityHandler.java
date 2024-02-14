@@ -172,10 +172,10 @@ public class EntityHandler {
             }
             var personalAccountEntity = accounts.get(accountIndex);
             var itemsEntity = items.get(itemIndex);
-            var sellHistoryEntity = sells.get(sellIndex);
-            sellHistoryEntity.setUser(personalAccountEntity);
-            sellHistoryEntity.setItemId(itemsEntity);
-            result.add(sellHistoryEntity);
+            var cloneSellHistory = sells.get(sellIndex).clone();
+            cloneSellHistory.setUser(personalAccountEntity);
+            cloneSellHistory.setItemId(itemsEntity);
+            result.add(cloneSellHistory);
         }
         return result;
     }

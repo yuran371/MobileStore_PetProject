@@ -1,6 +1,7 @@
 package entity;
 
 import entity.enums.CountryEnum;
+import entity.enums.DiscountEnum;
 import entity.enums.GenderEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -56,6 +57,9 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     @ElementCollection
     @CollectionTable(name = "user_payment_options", joinColumns = @JoinColumn(name = "account_id"))
     private List<UserPaymentOptions> paymentOptions = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private DiscountEnum discountEnum = null;
 
     public void addPurchase(SellHistoryEntity phonePurchase) {
         phonePurchases.add(phonePurchase);

@@ -24,6 +24,8 @@ public class HibernateTestUtil {
         configuration.setProperty("hibernate.hbm2ddl.import_files", "addPgcrypto.sql");
         configuration.setProperty("hibernate.generate_statistics", Boolean.TRUE.toString());
         configuration.configure();
-        return configuration.buildSessionFactory();
+        var sessionFactory = configuration.buildSessionFactory();
+        HibernateSessionFactory.listenerRegistration(sessionFactory);
+        return sessionFactory;
     }
 }

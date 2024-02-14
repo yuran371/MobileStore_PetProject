@@ -3,10 +3,8 @@ package dao;
 import com.querydsl.core.Tuple;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
-import entity.PremiumUserEntity;
 import entity.SellHistoryEntity;
 import entity.enums.CountryEnum;
-import entity.enums.DiscountEnum;
 import entity.enums.GenderEnum;
 import extentions.PersonalAccountParameterResolver;
 import jakarta.persistence.EntityExistsException;
@@ -151,29 +149,6 @@ public class PersonalAccountDaoTest {
         assertThat(personalAccountEntity.get().getId()).isEqualTo(account.getId());
         assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
         assertThat(personalAccountEntity.get().getPassword()).isEqualTo(account.getPassword());
-        EntityHandler.dropEntity(account, session);
-    }
-
-    @Tag("Unit")
-    @ParameterizedTest
-    @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
-    void checkDiscount_premiumUser_returnDiscount(PersonalAccountEntity account) {
-        @Cleanup Session session = entityManager.openSession();
-        PremiumUserEntity premiumUserEntity = new PremiumUserEntity(account, DiscountEnum.FIVE_PERCENT);
-        EntityHandler.persistEntity(premiumUserEntity, session);
-        Optional<DiscountEnum> discount = personalAccountDao.checkDiscount(premiumUserEntity.getId(), session);
-        assertThat(discount.get()).isEqualTo(DiscountEnum.FIVE_PERCENT);
-        EntityHandler.dropEntity(premiumUserEntity, session);
-    }
-
-    @Tag("Unit")
-    @ParameterizedTest
-    @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
-    void checkDiscount_notPremiumUser_returnNull(PersonalAccountEntity account) {
-        @Cleanup Session session = entityManager.openSession();
-        EntityHandler.persistEntity(account, session);
-        Optional<DiscountEnum> discount = personalAccountDao.checkDiscount(account.getId(), session);
-        assertThat(discount).isEmpty();
         EntityHandler.dropEntity(account, session);
     }
 

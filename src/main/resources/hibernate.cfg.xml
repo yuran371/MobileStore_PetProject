@@ -16,6 +16,7 @@
         <mapping class="entity.ItemsEntity"/>
         <mapping class="entity.ProfileInfoEntity"/>
         <mapping class="entity.PremiumUserEntity"/>
+        <mapping class="entity.ImportantStatisticEntity"/>
 
 
         <!-- DB schema will be updated if needed -->

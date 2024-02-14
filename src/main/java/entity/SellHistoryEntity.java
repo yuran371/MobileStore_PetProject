@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 @Builder
 @EqualsAndHashCode(of = {"itemId", "sellDate"})
 @Table(name = "sell_history", schema = "market", catalog = "market_repository")
-public class SellHistoryEntity implements BaseEntity<Long> {
+public class SellHistoryEntity implements BaseEntity<Long>, Cloneable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "sell_id")
@@ -29,4 +29,13 @@ public class SellHistoryEntity implements BaseEntity<Long> {
     @Basic
     @Column(name = "sell_date")
     private OffsetDateTime sellDate;
+
+    @Override
+    public SellHistoryEntity clone()  {
+        try {
+            return (SellHistoryEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
