@@ -50,7 +50,8 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private GenderEnum genderEnum;
     @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<SellHistoryEntity> phonePurchases = new ArrayList<>();
     @Builder.Default
     @ElementCollection

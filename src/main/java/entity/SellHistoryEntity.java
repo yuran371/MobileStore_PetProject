@@ -2,9 +2,22 @@ package entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.FetchProfile;
 
 import java.time.OffsetDateTime;
 
+@NamedEntityGraph(
+        name = "withPersonalAccountGraph",
+        attributeNodes = {
+                @NamedAttributeNode("user")
+        }
+)
+@FetchProfile(name = "withPersonalAccount", fetchOverrides = {
+        @FetchProfile.FetchOverride(
+                entity = SellHistoryEntity.class, association = "user", mode = FetchMode.JOIN
+        )
+})
 @Entity
 @Data
 @NoArgsConstructor

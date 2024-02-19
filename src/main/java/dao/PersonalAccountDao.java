@@ -1,13 +1,10 @@
 package dao;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
-import dto.PersonalAccountFilter;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
-import entity.enums.DiscountEnum;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -27,7 +24,6 @@ import java.util.Optional;
 
 import static entity.QItemsEntity.itemsEntity;
 import static entity.QPersonalAccountEntity.personalAccountEntity;
-import static entity.QPremiumUserEntity.premiumUserEntity;
 import static entity.QSellHistoryEntity.sellHistoryEntity;
 
 @Slf4j
@@ -136,15 +132,15 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
                                            .fetchOne());
     }
 
-    public Optional<DiscountEnum> checkDiscount(Long id, Session session) {
-//        return session.createQuery("select p.discount from PremiumUserEntity p where p.id = :id", Discount.class)
-//                .setParameter("id", id).uniqueResultOptional();
-        return Optional.ofNullable(new JPAQuery<DiscountEnum>(session)
-                                           .select(premiumUserEntity.discountEnum)
-                                           .from(premiumUserEntity)
-                                           .where(premiumUserEntity.id.eq(id))
-                                           .fetchOne());
-    }
+//    public Optional<DiscountEnum> checkDiscount(Long id, Session session) {
+////        return session.createQuery("select p.discount from PremiumUserEntity p where p.id = :id", Discount.class)
+////                .setParameter("id", id).uniqueResultOptional();
+//        return Optional.ofNullable(new JPAQuery<DiscountEnum>(session)
+//                                           .select(premiumUserEntity.discountEnum)
+//                                           .from(premiumUserEntity)
+//                                           .where(premiumUserEntity.id.eq(id))
+//                                           .fetchOne());
+//    }
 
     public List<ItemsEntity> getAllBoughtPhones(Long id, Session session) {
 //        return session.createQuery("select i from SellHistoryEntity s " +
@@ -179,16 +175,16 @@ public class PersonalAccountDao implements Dao<Long, PersonalAccountEntity> {
                 .fetch();
     }
 
-        public List<PersonalAccountEntity> sortByGenderAndCountry(PersonalAccountFilter filter, Session session) {
-        Predicate predicate = QPredicate.builder()
-                .add(filter.getGender(), personalAccountEntity.genderEnum::eq)
-                .add(filter.getCountry(), personalAccountEntity.countryEnum::eq)
-                .buildAnd();
-        return new JPAQuery<PersonalAccountEntity>(session)
-                .select(personalAccountEntity)
-                .from(personalAccountEntity)
-                .where(predicate)
-                .fetch();
-    }
+//        public List<PersonalAccountEntity> sortByGenderAndCountry(PersonalAccountFilter filter, Session session) {
+//        Predicate predicate = QPredicate.builder()
+//                .add(filter.getGender(), personalAccountEntity.genderEnum::eq)
+//                .add(filter.getCountry(), personalAccountEntity.countryEnum::eq)
+//                .buildAnd();
+//        return new JPAQuery<PersonalAccountEntity>(session)
+//                .select(personalAccountEntity)
+//                .from(personalAccountEntity)
+//                .where(predicate)
+//                .fetch();
+//    }
 
 }

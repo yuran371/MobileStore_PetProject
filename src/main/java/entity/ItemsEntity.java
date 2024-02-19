@@ -3,12 +3,33 @@ package entity;
 import entity.enums.Attributes;
 import entity.enums.CurrencyEnum;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NamedEntityGraph(
+        name = "withSellHistoryGraph",
+        attributeNodes = {
+                @NamedAttributeNode(value = "phoneOrders", subgraph = "phoneOrders-subgraph"),
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "phoneOrders-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("user")
+                        }
+                )
+        }
+)
+
+@FetchProfile(name = "withSellHistory", fetchOverrides = {
+        @FetchProfile.FetchOverride(
+                entity = ItemsEntity.class, association = "phoneOrders", mode = FetchMode.JOIN
+        )
+})
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,6 +38,8 @@ import java.util.List;
 @ToString(exclude = "phoneOrders")
 @Entity(name = "items")
 @Table(schema = "market")
+//@OptimisticLocking(type = OptimisticLockType.ALL)
+@DynamicUpdate
 public class ItemsEntity implements BaseEntity<Long> {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -45,13 +68,15 @@ public class ItemsEntity implements BaseEntity<Long> {
     private CurrencyEnum currency;
     @Column(name = "quantity")
     private Integer quantity;
+    @Version
+    private Long version;
     @Builder.Default
     @ElementCollection
     @CollectionTable(name = "item_currency", joinColumns = @JoinColumn(name = "item_id"))
     private List<CurrencyInfo> currencyInfos = new ArrayList<>();
     @Builder.Default
-    @OneToMany(mappedBy = "itemId", orphanRemoval = true)
-    @Cascade(org.hibernate.annotations.CascadeType.PERSIST)     // При вызове session.persist(ItemEntity) также сохранятся все связанные sellHistoryEntity
+    @OneToMany(mappedBy = "itemId", fetch = FetchType.LAZY)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)     // При вызове session.persist(ItemEntity) также сохранятся все связанные sellHistoryEntity
     private List<SellHistoryEntity> phoneOrders = new ArrayList<>();
 
     public void addPhoneOrder(SellHistoryEntity phoneOrder) {

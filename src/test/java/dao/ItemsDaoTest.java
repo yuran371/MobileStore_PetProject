@@ -24,15 +24,13 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static entity.enums.Attributes.BrandEnum.*;
-import static entity.enums.Attributes.BrandEnum.SAMSUNG;
 import static entity.enums.Attributes.InternalMemoryEnum.*;
-import static entity.enums.Attributes.InternalMemoryEnum.GB_32;
 import static entity.enums.Attributes.OperatingSystemEnum.ANDROID;
 import static entity.enums.Attributes.OperatingSystemEnum.IOS;
 import static entity.enums.Attributes.RamEnum.*;
-import static entity.enums.Attributes.RamEnum.gb_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD;
+import static util.EntityHandler.persistEntitiesList;
 
 @TestInstance(PER_METHOD)
 @Tag(value = "ItemsDaoTest")
@@ -82,17 +80,26 @@ public class ItemsDaoTest {
         AttributesFilter filter = AttributesFilter.builder()
                 .brand(APPLE)
                 .os(IOS)
-                .internalMemory(GB_1024)
-                .ram(gb_16)
+                .internalMemory(GB_512)
+                .ram(gb_8)
+                .build();
+        ItemsEntity expected = ItemsEntity.builder()
+                .brand(APPLE)
+                .model("iPhone 14")
+                .internalMemory(GB_512)
+                .ram(gb_8)
+                .color("space grey")
+                .os(IOS)
+                .price(119_990.00)
+                .currency(CurrencyEnum.₽)
+                .quantity(83)
                 .build();
         persistEntitiesList(list, session);
         session.beginTransaction();
         List<ItemsEntity> items = itemsDao.findItemsWithParameters(filter, session);
         session.getTransaction()
                 .commit();
-        for (ItemsEntity item : items) {
-            System.out.println(item);
-        }
+        assertThat(items.get(0)).isEqualTo(expected);
     }
 
     @ParameterizedTest
@@ -114,21 +121,79 @@ public class ItemsDaoTest {
                 .commit();
     }
 
+//    @Test
+//    void testGraphs() {
+//        List<ItemsEntity> items = EntityHandler.getItemsEntities();     // ItemsEntity has one-to-many mapping
+//        List<PersonalAccountEntity> accounts = EntityHandler.getPersonalAccountEntities();  // has one-to-many mapping
+//        List<SellHistoryEntity> sellHistory = EntityHandler.getSellHistoryEntities();       // has many-to-one mapping
+//        @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+//        @Cleanup Session session = sessionFactory.openSession();
+//        persistEntitiesList(accounts, session);     // fills the db with entities of items
+//        persistEntitiesList(items, session);        // fills the db with entities of accounts
+//        for (int i = 0; i < 3; i++) {
+//            items.get(i)
+//                    .addPhoneOrder(sellHistory.get(i));
+//            accounts.get(i)
+//                    .addPurchase(sellHistory.get(i));
+//        }
+//        persistEntitiesList(sellHistory, session);  // fills the db with entities of sellHistory
+//        session.beginTransaction();
+//        session.clear();    // need to clean of 1st lvl cache
+////        Map<String, Object> properties = Map.of(
+////                GraphSemantic.LOAD.getJakartaHintName(), session.getEntityGraph("withSellHistoryGraph")
+////
+////        );
+//        Statistics statistics = sessionFactory.getStatistics();
+//        statistics.setStatisticsEnabled(true);
+//        ItemsEntity item = new JPAQuery<ItemsEntity>(session).select(itemsEntity)
+//                .from(itemsEntity)
+//                .where(itemsEntity.id.eq(1l))
+//                .setHint(GraphSemantic.LOAD.getJakartaHintName(), session.getEntityGraph("withSellHistoryGraph"))
+//                .fetchOne();
+////        ItemsEntity itemsEntity = session.find(ItemsEntity.class, 1l, properties);
+//        item.getPhoneOrders()
+//                .get(0)
+//                .getUser()
+//                .getEmail();   // Here compiling required Sql query
+//        session.getTransaction()
+//                .commit();
+//        String[] queries = statistics.getQueries();
+//        System.out.println("1: " + Arrays.toString(queries));
+//        System.out.println("2: " + statistics.getCloseStatementCount());
+//        System.out.println("3: " + statistics.getEntityLoadCount());
+//        System.out.println("4: " + statistics.getConnectCount());
+////        System.out.println("5: " + statistics.getEntityStatistics("QItemsEntity"));
+//        System.out.println("6: " + statistics.getQueryStatistics("insert"));
+//        System.out.println("7: " + statistics.getSlowQueries());
+//        System.out.println("8: " + statistics.getTransactionCount());
+//        statistics.logSummary();
+//        boolean checkForJoin = Arrays.stream(queries)
+//                .anyMatch(s -> s.contains("join"));
+//    }
+
     public static Stream<Arguments> argumentsSellHistory() {
-        return Stream.of(Arguments.of(SellHistoryEntity.builder().sellDate(OffsetDateTime.now())
-                        .user(PersonalAccountEntity.builder().build())
-                        .itemId(ItemsEntity.builder().build()).quantity(2)
+        return Stream.of(Arguments.of(SellHistoryEntity.builder()
+                        .sellDate(OffsetDateTime.now())
+                        .user(PersonalAccountEntity.builder()
+                                .build())
+                        .itemId(ItemsEntity.builder()
+                                .build())
+                        .quantity(2)
                         .build()),
                 Arguments.of(SellHistoryEntity.builder()
                         .sellDate(OffsetDateTime.now())
-                        .user(PersonalAccountEntity.builder().build())
-                        .itemId(ItemsEntity.builder().build())
+                        .user(PersonalAccountEntity.builder()
+                                .build())
+                        .itemId(ItemsEntity.builder()
+                                .build())
                         .quantity(3)
                         .build()),
                 Arguments.of(SellHistoryEntity.builder()
                         .sellDate(OffsetDateTime.now())
-                        .user(PersonalAccountEntity.builder().build())
-                        .itemId(ItemsEntity.builder().build())
+                        .user(PersonalAccountEntity.builder()
+                                .build())
+                        .itemId(ItemsEntity.builder()
+                                .build())
                         .quantity(10)
                         .build()));
     }

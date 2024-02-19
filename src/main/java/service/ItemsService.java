@@ -4,7 +4,6 @@ import dao.ItemsDao;
 import dto.ItemsFilterDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ItemsService {
 	private static ItemsService INSTANCE = new ItemsService();
@@ -19,14 +18,16 @@ public class ItemsService {
 	}
 
 	public List<ItemsFilterDto> findAllItems() {
-		return InstanceDao.findAll().stream().map(entity -> new ItemsFilterDto(entity.getId(), entity.getModel(),
-				entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name())).collect(Collectors.toList());
+//		return InstanceDao.findAll().stream().map(entity -> new ItemsFilterDto(entity.getId(), entity.getModel(),
+//				entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name())).collect(Collectors.toList());
+		return null;
 	}
 
 	public List<ItemsFilterDto> findBrand(String brand) {
-		return InstanceDao.findByBrand(brand).stream().map(entity -> new ItemsFilterDto(entity.getId(),
-				entity.getModel(), entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name()))
-				.collect(Collectors.toList());
+//		return InstanceDao.findByBrand(brand).stream().map(entity -> new ItemsFilterDto(entity.getId(),
+//				entity.getModel(), entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name()))
+//				.collect(Collectors.toList());
+		return null;
 	}
 
 //	public ItemsDto findById(Long itemId) {

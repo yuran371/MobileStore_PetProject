@@ -72,4 +72,8 @@ public class ItemsDao {
                 .fetch();
     }
 
+    public Optional<ItemsEntity> findItemById(long id, Session session) {
+        return Optional.ofNullable(session.get(ItemsEntity.class, id));
+    }
+
 }
