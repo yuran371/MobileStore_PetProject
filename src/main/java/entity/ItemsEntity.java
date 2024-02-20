@@ -3,9 +3,14 @@ package entity;
 import entity.enums.Attributes;
 import entity.enums.CurrencyEnum;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.FetchProfile;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +43,9 @@ import java.util.List;
 @ToString(exclude = "phoneOrders")
 @Entity(name = "items")
 @Table(schema = "market")
-//@OptimisticLocking(type = OptimisticLockType.ALL)
 @DynamicUpdate
+@Audited
+@AuditTable(value = "items_AUD", schema = "history", catalog = "market_repository")
 public class ItemsEntity implements BaseEntity<Long> {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -73,6 +79,7 @@ public class ItemsEntity implements BaseEntity<Long> {
     @Builder.Default
     @ElementCollection
     @CollectionTable(name = "item_currency", joinColumns = @JoinColumn(name = "item_id"))
+    @NotAudited
     private List<CurrencyInfo> currencyInfos = new ArrayList<>();
     @Builder.Default
     @OneToMany(mappedBy = "itemId", fetch = FetchType.LAZY)

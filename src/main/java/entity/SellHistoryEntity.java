@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.FetchProfile;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.time.OffsetDateTime;
 
@@ -25,6 +28,8 @@ import java.time.OffsetDateTime;
 @Builder
 @EqualsAndHashCode(of = {"itemId", "sellDate"})
 @Table(name = "sell_history", schema = "market", catalog = "market_repository")
+@Audited
+@AuditTable(value = "sell_history_AUD", schema = "history", catalog = "market_repository")
 public class SellHistoryEntity implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -35,6 +40,7 @@ public class SellHistoryEntity implements BaseEntity<Long> {
     private ItemsEntity itemId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotAudited
     private PersonalAccountEntity user;
     @Basic
     @Column(name = "quantity")

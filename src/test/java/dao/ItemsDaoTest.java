@@ -17,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.HibernateTestUtil;
+import utlis.HibernateSessionFactory;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -75,7 +76,7 @@ public class ItemsDaoTest {
     @ParameterizedTest
     @MethodSource("unit.DaoTest#argumentsListOfItems")
     void isEntityGetsByUsingQuerydslFiltering_isEqualExpectedEntity_True(List<ItemsEntity> list) {
-        @Cleanup Session session = HibernateTestUtil.getSessionFactory()
+        @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
                 .openSession();
         AttributesFilter filter = AttributesFilter.builder()
                 .brand(APPLE)
@@ -96,6 +97,7 @@ public class ItemsDaoTest {
                 .build();
         persistEntitiesList(list, session);
         session.beginTransaction();
+        session.clear();
         List<ItemsEntity> items = itemsDao.findItemsWithParameters(filter, session);
         session.getTransaction()
                 .commit();
