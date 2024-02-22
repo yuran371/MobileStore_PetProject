@@ -23,7 +23,6 @@ import java.util.List;
         @Index(name = "emailIndex", columnList = "email", unique = true)
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type")
 public class PersonalAccountEntity implements BaseEntity<Long> {
 
     @Id

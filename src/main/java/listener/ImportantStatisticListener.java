@@ -22,6 +22,13 @@ public class ImportantStatisticListener implements PostInsertEventListener, Post
     private static final Class<SellHistoryEntity> sellHistoryEntityClass = SellHistoryEntity.class;
     private static final Class<ItemsEntity> itemsEntityClass = ItemsEntity.class;
     private static final ImportantStatisticEntity statistic = ImportantStatisticEntity.builder().build();
+    private static final Map<Class<?>, Consumer<ImportantStatisticEntity>> applyChange =
+            Map.of(personalAccountEntityClass,
+                   (statisticEntity) -> statisticEntity.setAllUsersCounter(statisticEntity.getAllUsersCounter() + 1),
+                   sellHistoryEntityClass,
+                   (statisticEntity) -> statisticEntity.setSalesCounter(statisticEntity.getSalesCounter() + 1),
+                   itemsEntityClass,
+                   (statisticEntity) -> statisticEntity.setItemsCounter(statisticEntity.getItemsCounter() + 1));
 
     @Override
     public void onPostInsert(PostInsertEvent event) {
@@ -37,13 +44,6 @@ public class ImportantStatisticListener implements PostInsertEventListener, Post
     }
 
     private static void addPersonalStatistic(Session session, Class<?> clazz) {
-        final Map<Class<?>, Consumer<ImportantStatisticEntity>> applyChange =
-                Map.of(personalAccountEntityClass,
-                       (statisticEntity) -> statisticEntity.setAllUsersCounter(statisticEntity.getAllUsersCounter() + 1),
-                       sellHistoryEntityClass,
-                       (statisticEntity) -> statisticEntity.setSalesCounter(statisticEntity.getSalesCounter() + 1),
-                       itemsEntityClass,
-                       (statisticEntity) -> statisticEntity.setItemsCounter(statisticEntity.getItemsCounter() + 1));
         var importantStatisticEntity = session.get(ImportantStatisticEntity.class, statistic.getId(),
                                                    new LockOptions(LockMode.PESSIMISTIC_WRITE, 1));
         applyChange.get(clazz).accept(importantStatisticEntity);

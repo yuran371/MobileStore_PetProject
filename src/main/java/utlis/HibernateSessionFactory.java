@@ -4,6 +4,7 @@ import entity.ImportantStatisticEntity;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import listener.ImportantStatisticListener;
+import listener.SendAuthEmailListener;
 import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
@@ -28,8 +29,9 @@ public class HibernateSessionFactory {
         var sessionFactoryImpl = sessionFactory.unwrap(SessionFactoryImpl.class);
         var service = sessionFactoryImpl.getServiceRegistry().getService(EventListenerRegistry.class);
         @Cleanup var session = sessionFactory.openSession();
-        service.appendListeners(EventType.POST_INSERT, new ImportantStatisticListener().createRowBeforeUseListener(session));
+        service.appendListeners(EventType.POST_INSERT, new ImportantStatisticListener().createRowBeforeUseListener(session), new SendAuthEmailListener());
         service.appendListeners(EventType.POST_UPDATE, new ImportantStatisticListener());
+
     }
 
     public static Configuration buildConfiguration() {
