@@ -1,6 +1,5 @@
 package service;
 
-import dao.ItemsDao;
 import dto.ItemsFilterDto;
 
 import java.util.List;
@@ -11,7 +10,7 @@ public class ItemsService {
 	private ItemsService() {
 	};
 
-	static ItemsDao InstanceDao = ItemsDao.getInstance();
+//	static ItemsRepository InstanceDao = ItemsRepository.getInstance();
 
 	public static ItemsService getInstance() {
 		return INSTANCE;

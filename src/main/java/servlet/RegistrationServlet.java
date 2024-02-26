@@ -1,15 +1,8 @@
 package servlet;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Optional;
-
 import dto.CreateAccountDto;
 import entity.enums.CountryEnum;
 import entity.enums.GenderEnum;
-import io.vavr.control.Either;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,7 +12,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.CreateAccountService;
 import utlis.JspHelper;
-import validator.ValidationErrors;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Enumeration;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024)
 @WebServlet("/registration")
@@ -65,12 +62,12 @@ public class RegistrationServlet extends HttpServlet {
 				.birthday(req.getParameter("dateOfBirth")).country(req.getParameter("country"))
 				.city(req.getParameter("city")).address(req.getParameter("address"))
 				.phoneNumber(req.getParameter("phoneNumber")).gender(req.getParameter("gender")).build();
-		Either<Optional<Long>, ValidationErrors> save = createAccountService.save(accountDto);
-		if (save.isRight()) {
-			req.setAttribute(AUTHORIZATION_ERRORS, save.get().getCreateAccountErrors());
-			doGet(req, resp);
-			return;
-		}
+//		Either<Optional<Long>, ValidationErrors> save = createAccountService.save(accountDto);
+//		if (save.isRight()) {
+//			req.setAttribute(AUTHORIZATION_ERRORS, save.get().getCreateAccountErrors());
+//			doGet(req, resp);
+//			return;
+//		}
 		resp.sendRedirect("/login");
 		return;
 	}

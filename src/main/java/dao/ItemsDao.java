@@ -6,7 +6,7 @@ import dto.AttributesFilter;
 import entity.ItemsEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import utlis.SqlExceptionLogger;
+import org.hibernate.SessionFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,23 +14,10 @@ import java.util.Optional;
 import static entity.QItemsEntity.itemsEntity;
 
 @Slf4j
-public class ItemsDao {
-    private static ItemsDao INSTANCE;
+public class ItemsDao extends DaoBase<Long, ItemsEntity> {
 
-    private static SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
-
-    public static ItemsDao getInstance() {
-        if (INSTANCE == null) {
-            synchronized (ItemsDao.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new ItemsDao();
-                }
-            }
-        }
-        return INSTANCE;
-    }
-
-    private ItemsDao() {
+    public ItemsDao(SessionFactory sessionFactory) {
+        super(itemsEntity, sessionFactory, ItemsEntity.class);
     }
 
     public Optional<Long> insertViaHibernate(ItemsEntity items, Session session) {
@@ -70,10 +57,6 @@ public class ItemsDao {
                 .from(itemsEntity)
                 .where(predicate)
                 .fetch();
-    }
-
-    public Optional<ItemsEntity> findItemById(long id, Session session) {
-        return Optional.ofNullable(session.get(ItemsEntity.class, id));
     }
 
 }

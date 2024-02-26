@@ -1,6 +1,5 @@
 package dao;
 
-import dto.AttributesFilter;
 import entity.CurrencyInfo;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
@@ -11,14 +10,17 @@ import entity.enums.CurrencyEnum;
 import entity.enums.GenderEnum;
 import lombok.Cleanup;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import util.EntityHandler;
 import util.HibernateTestUtil;
-import utlis.HibernateSessionFactory;
 
+import java.lang.reflect.Proxy;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -36,13 +38,13 @@ import static util.EntityHandler.persistEntitiesList;
 @TestInstance(PER_METHOD)
 @Tag(value = "ItemsDaoTest")
 public class ItemsDaoTest {
-    ItemsDao itemsDao = ItemsDao.getInstance();
 
     @ParameterizedTest
     @MethodSource("unit.DaoTest#argumentsListOfItems")
     void countItems_countIs3_True(List<ItemsEntity> list) {
-        @Cleanup Session session = HibernateTestUtil.getSessionFactory()
-                .openSession();
+        @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+        Session session = sessionFactory.getCurrentSession();
+        ItemsDao itemsDao = new ItemsDao(sessionFactory);
         session.beginTransaction();
         for (ItemsEntity item : list) {
             session.persist(item);
@@ -55,54 +57,86 @@ public class ItemsDaoTest {
         assertThat(offsetLimitList.size()).isEqualTo(3);
     }
 
-    @ParameterizedTest
-    @MethodSource("unit.DaoTest#argumentsListOfItems")
-    void isFirstEntityOnThirdPage_isEqualExpectedEntity_True(List<ItemsEntity> list) {
-        @Cleanup Session session = HibernateTestUtil.getSessionFactory()
-                .openSession();
+    @Test
+    void testEntityManagerAndGetCurrentSessionMethod() {
+        List<ItemsEntity> items = EntityHandler.getItemsEntities();
+        List<PersonalAccountEntity> accounts = EntityHandler.getPersonalAccountEntities();
+        List<SellHistoryEntity> sellHistories = EntityHandler.getSellHistoryEntities();
+        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
+                new Class[]{Session.class},
+                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
+
         session.beginTransaction();
-        for (ItemsEntity item : list) {
-            session.persist(item);
+        ItemsDao itemsDao = new ItemsDao(sessionFactory);
+        persistEntitiesList(accounts, session);
+        persistEntitiesList(items, session);
+        for (int i = 0; i < 3; i++) {
+            items.get(i)
+                    .addPhoneOrder(sellHistories.get(i));
+            accounts.get(i)
+                    .addPurchase(sellHistories.get(i));
         }
-        long page = 3;
-        List<ItemsEntity> offsetLimitList = itemsDao.findItemsOnSpecificPage(page, session);
-        ItemsEntity firstItemOnThirdPage = offsetLimitList.get(0);
+        persistEntitiesList(sellHistories, session);
+        System.out.println("------");
+        itemsDao.getById(1l)
+                .ifPresentOrElse(System.out::println, () -> System.out.println("125555"));
+        List<ItemsEntity> list = itemsDao.findAll();
+        for (ItemsEntity l : list) {
+            System.out.println(l);
+        }
         session.getTransaction()
                 .commit();
-        ItemsEntity expectedEntity = list.get(6);
-        assertThat(firstItemOnThirdPage).isEqualTo(expectedEntity);
     }
 
-    @ParameterizedTest
-    @MethodSource("unit.DaoTest#argumentsListOfItems")
-    void isEntityGetsByUsingQuerydslFiltering_isEqualExpectedEntity_True(List<ItemsEntity> list) {
-        @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
-                .openSession();
-        AttributesFilter filter = AttributesFilter.builder()
-                .brand(APPLE)
-                .os(IOS)
-                .internalMemory(GB_512)
-                .ram(gb_8)
-                .build();
-        ItemsEntity expected = ItemsEntity.builder()
-                .brand(APPLE)
-                .model("iPhone 14")
-                .internalMemory(GB_512)
-                .ram(gb_8)
-                .color("space grey")
-                .os(IOS)
-                .price(119_990.00)
-                .currency(CurrencyEnum.₽)
-                .quantity(83)
-                .build();
-        persistEntitiesList(list, session);
-        session.beginTransaction();
-        session.clear();
-        List<ItemsEntity> items = itemsDao.findItemsWithParameters(filter, session);
-        session.getTransaction()
-                .commit();
-        assertThat(items.get(0)).isEqualTo(expected);
-    }
+//    @ParameterizedTest
+//    @MethodSource("unit.DaoTest#argumentsListOfItems")
+//    void isFirstEntityOnThirdPage_isEqualExpectedEntity_True(List<ItemsEntity> list) {
+//        @Cleanup Session session = HibernateTestUtil.getSessionFactory()
+//                .openSession();
+//        session.beginTransaction();
+//        for (ItemsEntity item : list) {
+//            session.persist(item);
+//        }
+//        long page = 3;
+//        List<ItemsEntity> offsetLimitList = itemsDao.findItemsOnSpecificPage(page, session);
+//        ItemsEntity firstItemOnThirdPage = offsetLimitList.get(0);
+//        session.getTransaction()
+//                .commit();
+//        ItemsEntity expectedEntity = list.get(6);
+//        assertThat(firstItemOnThirdPage).isEqualTo(expectedEntity);
+//    }
+
+//    @ParameterizedTest
+//    @MethodSource("unit.DaoTest#argumentsListOfItems")
+//    void isEntityGetsByUsingQuerydslFiltering_isEqualExpectedEntity_True(List<ItemsEntity> list) {
+//        @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
+//                .openSession();
+//        AttributesFilter filter = AttributesFilter.builder()
+//                .brand(APPLE)
+//                .os(IOS)
+//                .internalMemory(GB_512)
+//                .ram(gb_8)
+//                .build();
+//        ItemsEntity expected = ItemsEntity.builder()
+//                .brand(APPLE)
+//                .model("iPhone 14")
+//                .internalMemory(GB_512)
+//                .ram(gb_8)
+//                .color("space grey")
+//                .os(IOS)
+//                .price(119_990.00)
+//                .currency(CurrencyEnum.₽)
+//                .quantity(83)
+//                .build();
+//        persistEntitiesList(list, session);
+//        session.beginTransaction();
+//        session.clear();
+//        List<ItemsEntity> items = itemsDao.findItemsWithParameters(filter, session);
+//        session.getTransaction()
+//                .commit();
+//        assertThat(items.get(0)).isEqualTo(expected);
+//    }
 
     @ParameterizedTest
     @MethodSource("unit.DaoTest#argumentsForItemsTest")

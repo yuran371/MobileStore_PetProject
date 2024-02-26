@@ -1,9 +1,5 @@
 package service;
 
-import dao.ItemsDao;
-import dto.ItemsFindByIdDto;
-import entity.ItemsEntity;
-
 public class ItemFindByIdService {
 	private static ItemFindByIdService INSTANCE = new ItemFindByIdService();
 
@@ -14,7 +10,7 @@ public class ItemFindByIdService {
 		return INSTANCE;
 	}
 
-	static ItemsDao itemsDao = ItemsDao.getInstance();
+//	static ItemsRepository itemsDao = ItemsRepository.getInstance();
 
 //	public ItemsFindByIdDto findById(Long itemId) {
 //		ItemsEntity itemsEntity = ItemsDao.getInstance().getById(itemId).get();

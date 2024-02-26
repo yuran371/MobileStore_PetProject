@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import util.EntityHandler;
 import util.HibernateTestUtil;
-import utlis.HibernateSessionFactory;
 
 import java.util.List;
 
@@ -51,34 +50,4 @@ public class ItemQuantityListenerTest {
         assertThat(quantityItem).isEqualTo(quantityBeforePurchase - quantitySellHistory);
     }
 
-    @Test
-    void isisis() {
-        List<ItemsEntity> items = EntityHandler.getItemsEntities();
-        List<PersonalAccountEntity> accounts = EntityHandler.getPersonalAccountEntities();
-        List<SellHistoryEntity> sellHistories = EntityHandler.getSellHistoryEntities();
-        @Cleanup SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
-        @Cleanup Session session1 = sessionFactory.openSession();
-        persistEntitiesList(accounts, session1);
-        persistEntitiesList(items, session1);
-
-        Integer quantityBeforePurchase = items.get(0)
-                .getQuantity();
-//        for (int i = 0; i < 3; i++) {
-//            items.get(i)
-//                    .addPhoneOrder(sellHistories.get(i));
-//            accounts.get(i)
-//                    .addPurchase(sellHistories.get(i));
-//        }
-        items.get(0)
-                .addPhoneOrder(sellHistories.get(0));
-        accounts.get(0)
-                .addPurchase(sellHistories.get(0));
-        session1.beginTransaction();
-        session1.persist(sellHistories.get(0));
-        session1.getTransaction()
-                .commit();
-        System.out.println(sellHistories.get(0));
-        System.out.println(items.get(0));
-
-    }
 }
