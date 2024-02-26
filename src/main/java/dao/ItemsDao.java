@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.query.Query;
 import utlis.ConnectionPoolManager;
 import utlis.HibernateSessionFactory;
@@ -21,6 +23,7 @@ import java.util.Optional;
 import static entity.QItemsEntity.itemsEntity;
 
 @Slf4j
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ItemsDao implements Dao<Long, ItemsEntity> {
     private static ItemsDao INSTANCE;
 
@@ -91,7 +94,7 @@ public class ItemsDao implements Dao<Long, ItemsEntity> {
      */
     @Override
     public List<ItemsEntity> findAll() {
-        SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+        SessionFactory sessionFactory = HibernateSessionFactory.sessionFactory;
         List<ItemsEntity> resultList;
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();

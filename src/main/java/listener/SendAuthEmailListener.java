@@ -1,13 +1,11 @@
 package listener;
 
 import entity.PersonalAccountEntity;
-import exceptions.EmailSendException;
 import org.hibernate.event.spi.PostInsertEvent;
 import org.hibernate.event.spi.PostInsertEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 import utlis.EmailSender;
 import validator.Error;
-import validator.ValidationErrors;
 
 import java.util.Properties;
 
@@ -21,15 +19,15 @@ public class SendAuthEmailListener implements PostInsertEventListener {
     @Override
     public void onPostInsert(PostInsertEvent event) {
 
-        if (event.getEntity().getClass() == personalAccountEntityClass) {
-            PersonalAccountEntity entity = (PersonalAccountEntity) event.getEntity();
-            try {
-                // todo Only my email
-                EmailSender.sendTLSEmail(properties, "Dimka0505@yandex.ru", "default/link");
-            } catch (EmailSendException e) {
-                ValidationErrors.getInstance().addCreateAccountError(cantSendConfirmationEmail);
-            }
-        }
+//        if (event.getEntity().getClass() == personalAccountEntityClass) {
+//            PersonalAccountEntity entity = (PersonalAccountEntity) event.getEntity();
+//            try {
+//                // todo Only my email
+//                EmailSender.sendTLSEmail(properties, "rosomaha.2009@mail.ru", "link");
+//            } catch (EmailSendException e) {
+//                ValidationErrors.getInstance().addCreateAccountError(cantSendConfirmationEmail);
+//            }
+//        }
     }
 
     @Override

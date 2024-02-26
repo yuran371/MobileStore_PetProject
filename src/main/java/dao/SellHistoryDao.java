@@ -29,8 +29,8 @@ public class SellHistoryDao implements Dao<Long, SellHistoryEntity> {
 
 	@Override
 	public Optional<Long> insert(SellHistoryEntity sellHistoryEntity) {
-		try (SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
-			 Session session = sessionFactory.openSession()) {
+		try (SessionFactory sessionFactory = HibernateSessionFactory.buildSessionFactory();
+             Session session = sessionFactory.openSession()) {
 			Transaction transaction = session.beginTransaction();
 			session.persist(sellHistoryEntity);
 			transaction.commit();

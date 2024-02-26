@@ -4,9 +4,9 @@ import entity.ImportantStatisticEntity;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import listener.ImportantStatisticListener;
-import listener.SendAuthEmailListener;
 import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.hibernate.cfg.Configuration;
@@ -17,7 +17,9 @@ import org.hibernate.internal.SessionFactoryImpl;
 @UtilityClass
 public class HibernateSessionFactory {
 
-    public SessionFactory getSessionFactory() {
+    public static SessionFactory sessionFactory = buildSessionFactory();
+
+    private static SessionFactory buildSessionFactory() {
         Configuration configuration = buildConfiguration();
         configuration.configure();
         var sessionFactory = configuration.buildSessionFactory();
@@ -29,7 +31,7 @@ public class HibernateSessionFactory {
         var sessionFactoryImpl = sessionFactory.unwrap(SessionFactoryImpl.class);
         var service = sessionFactoryImpl.getServiceRegistry().getService(EventListenerRegistry.class);
         @Cleanup var session = sessionFactory.openSession();
-        service.appendListeners(EventType.POST_INSERT, new ImportantStatisticListener().createRowBeforeUseListener(session), new SendAuthEmailListener());
+        service.appendListeners(EventType.POST_INSERT, new ImportantStatisticListener().createRowBeforeUseListener(session));
         service.appendListeners(EventType.POST_UPDATE, new ImportantStatisticListener());
 
     }
@@ -41,5 +43,14 @@ public class HibernateSessionFactory {
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.addAnnotatedClass(ImportantStatisticEntity.class);
         return configuration;
+    }
+
+    public static Boolean closeSessionFactory() {
+        try {
+            sessionFactory.close();
+            return Boolean.TRUE;
+        } catch (HibernateException e) {
+            return Boolean.FALSE;
+        }
     }
 }
