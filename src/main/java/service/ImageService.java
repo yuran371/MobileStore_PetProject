@@ -1,23 +1,23 @@
 package service;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import utlis.PropertiesUtil;
 
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
-import utlis.PropertiesUtil;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImageService {
 
 	private static final ImageService INSTANCE = new ImageService();
-	private static final String BASE_PATH = PropertiesUtil.getInstance().getProperty("image.base.path");
+	private static final String BASE_PATH = PropertiesUtil.getProperty("image.base.path");
 	private static final String DEFAULT_IMAGE = "default-avatar-icon-of-social-media-user-vector.jpg";
 
 	public static ImageService getInstance() {

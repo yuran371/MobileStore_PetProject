@@ -29,7 +29,7 @@ public class SellHistoryDao implements Dao<Long, SellHistoryEntity> {
 
 	@Override
 	public Optional<SellHistoryEntity> insert(SellHistoryEntity sellHistoryEntity) {
-		try (SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
+		try (SessionFactory sessionFactory = HibernateSessionFactory.buildSessionFactory();
 			 Session session = sessionFactory.openSession()) {
 			Transaction transaction = session.beginTransaction();
 			session.persist(sellHistoryEntity);
