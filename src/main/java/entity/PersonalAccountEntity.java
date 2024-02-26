@@ -1,13 +1,11 @@
 package entity;
 
 import entity.enums.CountryEnum;
+import entity.enums.DiscountEnum;
 import entity.enums.GenderEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
-import org.hibernate.envers.AuditTable;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,9 +23,6 @@ import java.util.List;
         @Index(name = "emailIndex", columnList = "email", unique = true)
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type")
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-@AuditTable(value = "personal_account_AUD", schema = "history", catalog = "market_repository")
 public class PersonalAccountEntity implements BaseEntity<Long> {
 
     @Id
@@ -55,13 +50,15 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private GenderEnum genderEnum;
     @Builder.Default
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SellHistoryEntity> phonePurchases = new ArrayList<>();
     @Builder.Default
     @ElementCollection
     @CollectionTable(name = "user_payment_options", joinColumns = @JoinColumn(name = "account_id"))
     private List<UserPaymentOptions> paymentOptions = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private DiscountEnum discountEnum = null;
 
     public void addPurchase(SellHistoryEntity phonePurchase) {
         phonePurchases.add(phonePurchase);

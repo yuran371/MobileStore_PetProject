@@ -1,5 +1,7 @@
 package utlis;
 
+import exceptions.DriverClassLoadException;
+
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,8 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-
-import exceptions.DriverClassLoadException;
 
 public final class ConnectionPoolManager {
 
@@ -29,7 +29,7 @@ public final class ConnectionPoolManager {
 	}
 
 	private static void createConnectionPool() {
-		String poolSize = PropertiesUtil.getInstance().getProperty(SQL_CONNECTION_POOL_SIZE);
+		String poolSize = PropertiesUtil.getProperty(SQL_CONNECTION_POOL_SIZE);
 		int size = poolSize == null ? 10 : Integer.parseInt(poolSize);
 		connectionPool = new ArrayBlockingQueue<>(size);
 		sourceConnections = new ArrayList<>(size);
@@ -54,9 +54,9 @@ public final class ConnectionPoolManager {
 
 	private static Connection open() {
 		try {
-			return DriverManager.getConnection(PropertiesUtil.getInstance().getProperty(SQL_URL_KEY),
-					PropertiesUtil.getInstance().getProperty(SQL_USER_KEY),
-					PropertiesUtil.getInstance().getProperty(SQL_PASSWORD_KEY));
+			return DriverManager.getConnection(PropertiesUtil.getProperty(SQL_URL_KEY),
+					PropertiesUtil.getProperty(SQL_USER_KEY),
+					PropertiesUtil.getProperty(SQL_PASSWORD_KEY));
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

@@ -1,21 +1,14 @@
 package utlis;
 
+import exceptions.NotFoundApplicationPropertiesFileException;
+import lombok.experimental.UtilityClass;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import exceptions.NotFoundApplicationPropertiesFileException;
-
+@UtilityClass
 public final class PropertiesUtil {
-
-	private final static PropertiesUtil INSTANCE = new PropertiesUtil();
-
-	private PropertiesUtil() {
-	}
-
-	public static PropertiesUtil getInstance() {
-		return INSTANCE;
-	}
 
 	public String getProperty(String property) {
 		Properties prop = new Properties();

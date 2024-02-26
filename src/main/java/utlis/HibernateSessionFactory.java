@@ -1,10 +1,13 @@
 package utlis;
 
+import entity.ImportantStatisticEntity;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
-import entity.PremiumUserEntity;
+import listener.ImportantStatisticListener;
 import listener.ItemQuantityListener;
+import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.hibernate.cfg.Configuration;
@@ -12,14 +15,29 @@ import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.internal.SessionFactoryImpl;
 
+import java.nio.file.Path;
+
 @UtilityClass
 public class HibernateSessionFactory {
-    public SessionFactory getSessionFactory() {
+
+    private static final Path PATH_TO_CFG = Path.of("src/main/resources/hibernate.cfg.xml");
+    private static final SessionFactory SESSION_FACTORY = buildSessionFactory();
+    public static SessionFactory buildSessionFactory() {
         Configuration configuration = buildConfiguration();
-        configuration.configure();
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
-        registerListeners(sessionFactory);
+        configuration.configure(PATH_TO_CFG.toFile());
+        var sessionFactory = configuration.buildSessionFactory();
+        listenerRegistration(sessionFactory);
         return sessionFactory;
+    }
+
+    public static void listenerRegistration(SessionFactory sessionFactory) {
+        var sessionFactoryImpl = sessionFactory.unwrap(SessionFactoryImpl.class);
+        var service = sessionFactoryImpl.getServiceRegistry().getService(EventListenerRegistry.class);
+        @Cleanup var session = sessionFactory.openSession();
+        service.appendListeners(EventType.POST_INSERT,
+                                new ImportantStatisticListener().createRowBeforeUseListener(session));
+        service.appendListeners(EventType.POST_UPDATE, new ImportantStatisticListener());
+        service.appendListeners(EventType.PRE_INSERT, new ItemQuantityListener());
     }
 
     public static Configuration buildConfiguration() {
@@ -27,14 +45,19 @@ public class HibernateSessionFactory {
         configuration.addAnnotatedClass(ItemsEntity.class);
         configuration.addAnnotatedClass(PersonalAccountEntity.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
-        configuration.addAnnotatedClass(PremiumUserEntity.class);
+        configuration.addAnnotatedClass(ImportantStatisticEntity.class);
         return configuration;
     }
-    private static void registerListeners(SessionFactory sessionFactory) {
-        SessionFactoryImpl unwrap = sessionFactory.unwrap(SessionFactoryImpl.class);
-        EventListenerRegistry service = unwrap.getServiceRegistry()
-                .getService(EventListenerRegistry.class);
-        ItemQuantityListener itemQuantityListener = new ItemQuantityListener();
-        service.appendListeners(EventType.PRE_INSERT, itemQuantityListener);
+
+    public static SessionFactory getSessionFactory() {
+        return SESSION_FACTORY;
+    }
+    public static Boolean closeSessionFactory() {
+        try {
+            SESSION_FACTORY.close();
+            return Boolean.TRUE;
+        } catch (HibernateException e) {
+            return Boolean.FALSE;
+        }
     }
 }

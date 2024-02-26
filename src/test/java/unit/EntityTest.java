@@ -1,13 +1,7 @@
 package unit;
 
-import entity.PersonalAccountEntity;
-import entity.PremiumUserEntity;
 import entity.ProfileInfoEntity;
-import entity.enums.DiscountEnum;
-import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,10 +9,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import util.HibernateTestUtil;
 
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -54,19 +45,19 @@ public class EntityTest {
 
         @Test
         void premiumUserBuilder() {
-            Optional<Object> argument = DaoTest.argumentsPersonalAccount()
-                    .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
-            PersonalAccountEntity personalAccount = (PersonalAccountEntity) argument.get();
-            PremiumUserEntity premiumUserEntity = PremiumUserEntity.of(personalAccount, DiscountEnum.FIVE_PERCENT);
-            @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-            @Cleanup Session session = sessionFactory.openSession();
-            session.beginTransaction();
-            session.persist(premiumUserEntity);
-            Long id = premiumUserEntity.getId();
-            session.clear();
-            PremiumUserEntity premiumUserEntityFromDb = session.get(PremiumUserEntity.class, id);
-            System.out.println();
-            session.getTransaction().commit();
+//            Optional<Object> argument = PersonalAccountDaoTest.argumentsPersonalAccount()
+//                    .flatMap(arguments -> Arrays.stream(arguments.get())).findFirst();
+//            PersonalAccountEntity personalAccount = (PersonalAccountEntity) argument.get();
+//            PremiumUserEntity premiumUserEntity = PremiumUserEntity.of(personalAccount, DiscountEnum.FIVE_PERCENT);
+//            @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+//            @Cleanup Session session = sessionFactory.openSession();
+//            session.beginTransaction();
+//            session.persist(premiumUserEntity);
+//            Long id = premiumUserEntity.getId();
+//            session.clear();
+//            PremiumUserEntity premiumUserEntityFromDb = session.get(PremiumUserEntity.class, id);
+//            System.out.println();
+//            session.getTransaction().commit();
         }
     }
 
