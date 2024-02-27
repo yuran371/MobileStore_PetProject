@@ -68,7 +68,7 @@ public class PersonalAccountDaoTest {
     @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
     void insert_NewUser_notNull(PersonalAccountEntity account) {
         @Cleanup var session = entityManager.openSession();
-        var insertResult = personalAccountDao.insert(account, session);
+        var insertResult = personalAccountDao.insert(account);
         assertThat(insertResult).isNotEmpty();
         EntityHandler.dropEntity(account, session);
     }
@@ -78,9 +78,9 @@ public class PersonalAccountDaoTest {
     @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
     void insert_ExistingUser_throwException(PersonalAccountEntity account) {
         try (var session = entityManager.openSession()) {
-            personalAccountDao.insert(account, session);
+            personalAccountDao.insert(account);
             session.evict(account);
-            assertThatThrownBy(() -> personalAccountDao.insert(account, session)).isInstanceOf(EntityExistsException.class);
+            assertThatThrownBy(() -> personalAccountDao.insert(account)).isInstanceOf(EntityExistsException.class);
         } finally {
             @Cleanup var session = entityManager.openSession();
             EntityHandler.dropEntity(account, session);
@@ -93,24 +93,15 @@ public class PersonalAccountDaoTest {
     void delete_ExistingUser_returnTrue(PersonalAccountEntity account) {
         @Cleanup var session = entityManager.openSession();
         EntityHandler.persistEntity(account, session);
-        var deleteResult = personalAccountDao.delete(account, session);
-        assertThat(deleteResult).isTrue();
-    }
-
-    @Tag("Unit")
-    @ParameterizedTest
-    @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
-    void delete_NotExistingUser_returnFalse(PersonalAccountEntity account) {
-        @Cleanup var session = entityManager.openSession();
-        personalAccountDao.delete(account, session);
-
+        personalAccountDao.delete(account.getId());
+        assertThat(session.get(PersonalAccountEntity.class, account.getId())).isNull();
     }
 
     @Tag("Unit")
     @Test
     void getAll_haveUsers_returnAll() {
         @Cleanup var session = entityManager.openSession();
-        var resultList = personalAccountDao.getAll(session);
+        var resultList = personalAccountDao.getAll();
         assertThat(resultList).hasSameElementsAs(personalAccountEntities);
     }
 
@@ -118,7 +109,7 @@ public class PersonalAccountDaoTest {
     @Test
     void getAllWithPhonePurchases_haveUsers_returnAll() {
         @Cleanup var session = entityManager.openSession();
-        var resultList = personalAccountDao.getAllWithPhonePurchases(session);
+        var resultList = personalAccountDao.getAllWithPhonePurchases();
         assertThat(resultList).hasSameElementsAs(personalAccountEntities);
     }
 
@@ -130,7 +121,7 @@ public class PersonalAccountDaoTest {
         @Cleanup Session session = entityManager.openSession();
         EntityHandler.persistEntity(account, session);
         Optional<PersonalAccountEntity> personalAccountEntity =
-                personalAccountDao.validateAuth(account.getEmail(), account.getPassword(), session);
+                personalAccountDao.validateAuth(account.getEmail(), account.getPassword());
         assertThat(personalAccountEntity.get()).isNotNull();
         assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
         assertThat(personalAccountEntity.get().getPassword()).isEqualTo(account.getPassword());
@@ -143,8 +134,7 @@ public class PersonalAccountDaoTest {
     void getByEmail_validUser_returnUser(PersonalAccountEntity account) {
         @Cleanup Session session = entityManager.openSession();
         EntityHandler.persistEntity(account, session);
-        Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao.getByEmail(account.getEmail(),
-                                                                                              session);
+        Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao.getByEmail(account.getEmail());
         assertThat(personalAccountEntity.get()).isNotNull();
         assertThat(personalAccountEntity.get().getId()).isEqualTo(account.getId());
         assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
@@ -168,7 +158,7 @@ public class PersonalAccountDaoTest {
             sellHistoryEntity.setItemId(items.get(i));
         }
         EntityHandler.persistEntitiesList(sells, session);
-        List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId(), session);
+        List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId());
         assertThat(allBoughtPhones.size()).isEqualTo(items.size());
         assertThat(allBoughtPhones).extracting("id")
                 .contains(items.get(0).getId(), items.get(1).getId(), items.get(2).getId());
@@ -182,7 +172,7 @@ public class PersonalAccountDaoTest {
     void getAllBoughtPhones_noPhones_returnEmptyList(PersonalAccountEntity account) {
         @Cleanup Session session = entityManager.openSession();
         EntityHandler.persistEntity(account, session);
-        List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId(), session);
+        List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId());
         assertThat(allBoughtPhones).isEmpty();
         EntityHandler.dropEntity(account, session);
     }
@@ -190,17 +180,12 @@ public class PersonalAccountDaoTest {
     @Test
     void getTopTenMostSpenders_haveUsers_returnTop() {
         @Cleanup Session session = entityManager.openSession();
-        List<Tuple> topTenMostSpenders = personalAccountDao.getTopTenMostSpenders(session);
+        List<Tuple> topTenMostSpenders = personalAccountDao.getTopTenMostSpenders();
         for (int i = 1; i < topTenMostSpenders.size(); i++) {
             Double spender = (Double) topTenMostSpenders.get(i - 1).get(1, Double.class);
             Double nextSpender = (Double) topTenMostSpenders.get(i).get(1, Double.class);
             assertThat(spender).isGreaterThan(nextSpender);
         }
-    }
-
-    @Test
-    void sortByGenderAndCountry_haveUsers_returnFilteredUsers() {
-        EntityHandler.getProfileInfoEntities();
     }
 
     public static Stream<PersonalAccountEntity> argumentsPersonalAccount() {

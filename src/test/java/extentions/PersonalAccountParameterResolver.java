@@ -21,6 +21,6 @@ public class PersonalAccountParameterResolver implements ParameterResolver {
 			throws ParameterResolutionException {
 		Store store = extensionContext
 				.getStore(ExtensionContext.Namespace.create(parameterContext.getParameter().getType().getSimpleName()));
-		return store.getOrComputeIfAbsent(PersonalAccountDao.class, t -> PersonalAccountDao.getInstance());
+		return store.getOrComputeIfAbsent(PersonalAccountDao.class);
 	}
 }

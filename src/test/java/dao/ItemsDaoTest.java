@@ -44,7 +44,7 @@ public class ItemsDaoTest {
     void countItems_countIs3_True(List<ItemsEntity> list) {
         @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
         Session session = sessionFactory.getCurrentSession();
-        ItemsDao itemsDao = new ItemsDao(sessionFactory);
+        ItemsDao itemsDao = new ItemsDao(session);
         session.beginTransaction();
         for (ItemsEntity item : list) {
             session.persist(item);
@@ -68,7 +68,7 @@ public class ItemsDaoTest {
                 (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
 
         session.beginTransaction();
-        ItemsDao itemsDao = new ItemsDao(sessionFactory);
+        ItemsDao itemsDao = new ItemsDao(session);
         persistEntitiesList(accounts, session);
         persistEntitiesList(items, session);
         for (int i = 0; i < 3; i++) {
@@ -81,7 +81,7 @@ public class ItemsDaoTest {
         System.out.println("------");
         itemsDao.getById(1l)
                 .ifPresentOrElse(System.out::println, () -> System.out.println("125555"));
-        List<ItemsEntity> list = itemsDao.findAll();
+        List<ItemsEntity> list = itemsDao.findAllViaQuerydsl();
         for (ItemsEntity l : list) {
             System.out.println(l);
         }
@@ -139,8 +139,8 @@ public class ItemsDaoTest {
 //    }
 
     @ParameterizedTest
-    @MethodSource("unit.DaoTest#argumentsForItemsTest")
-    void currencyInfo(ItemsEntity itemsEntity) {
+    @MethodSource("dao.ItemsDaoTest.argumentsListOfItems")
+    void currencyInfo(List<ItemsEntity> itemsEntity) {
         @Cleanup Session session = HibernateTestUtil.getSessionFactory()
                 .openSession();
         session.beginTransaction();
