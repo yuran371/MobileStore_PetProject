@@ -1,6 +1,5 @@
 package service;
 
-import dao.PersonalAccountDao;
 import dto.LoginUserDto;
 import dto.ReadUserDto;
 import lombok.AccessLevel;
@@ -12,7 +11,7 @@ import java.util.Optional;
 public class LoginService {
 
 	private static final LoginService INSTANCE = new LoginService();
-	private PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
+//	private PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
 
 	public static LoginService getInstance() {
 		return INSTANCE;

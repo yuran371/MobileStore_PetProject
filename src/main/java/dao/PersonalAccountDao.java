@@ -7,11 +7,9 @@ import dto.PersonalAccountFilter;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
-import lombok.NonNull;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
 import org.hibernate.graph.GraphSemantic;
-import utlis.SqlExceptionLogger;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,63 +19,33 @@ import static entity.QPersonalAccountEntity.personalAccountEntity;
 import static entity.QSellHistoryEntity.sellHistoryEntity;
 
 @Slf4j
-public class PersonalAccountDao  {
+public class PersonalAccountDao extends DaoBase<Long, PersonalAccountEntity> {
 
-    private static final PersonalAccountDao INSTANCE = new PersonalAccountDao();
-
-    private static final SqlExceptionLogger SQL_EXCEPTION_LOGGER = SqlExceptionLogger.getInstance();
-
-    private PersonalAccountDao() {
+    public PersonalAccountDao(EntityManager entityManager) {
+        super(entityManager, PersonalAccountEntity.class);
     }
 
-    public static PersonalAccountDao getInstance() {
-        return INSTANCE;
-    }
-
-    public Optional<Long> insert(@NonNull PersonalAccountEntity accountEntity, Session session) {
-        session.beginTransaction();
-        session.persist(accountEntity);
-        session.getTransaction().commit();
-        return Optional.ofNullable(accountEntity.getId());
-    }
-
-    public Optional<PersonalAccountEntity> getById(Long id, Session session) {
-        return Optional.ofNullable(session.get(PersonalAccountEntity.class, id));
-    }
-
-
-    public List<PersonalAccountEntity> getAll(Session session) {
-        return new JPAQuery<PersonalAccountEntity>(session)
+    public List<PersonalAccountEntity> getAll() {
+        return new JPAQuery<PersonalAccountEntity>(getEntityManager())
                 .select(personalAccountEntity)
                 .from(personalAccountEntity)
                 .leftJoin(personalAccountEntity.phonePurchases, sellHistoryEntity)
                 .fetch();
     }
 
-    public List<PersonalAccountEntity> getAllWithPhonePurchases(Session session) {
-        var graph = session.createEntityGraph(PersonalAccountEntity.class);
+    public List<PersonalAccountEntity> getAllWithPhonePurchases() {
+        var graph = getEntityManager().createEntityGraph(PersonalAccountEntity.class);
         graph.addAttributeNodes("phonePurchases");
         var subGraph = graph.addSubgraph("phonePurchases", SellHistoryEntity.class);
         subGraph.addAttributeNodes("itemId");
-        return session.createQuery("select p from PersonalAccountEntity p", PersonalAccountEntity.class)
+        return getEntityManager().createQuery("select p from PersonalAccountEntity p", PersonalAccountEntity.class)
                 .setHint(GraphSemantic.LOAD.getJakartaHintName(), graph)
-                .list();
+                .getResultList();
 
     }
 
-    public boolean delete(PersonalAccountEntity account, Session session) {
-        if (account.getId() == null) {
-            return false;
-        }
-        session.beginTransaction();
-        session.remove(account);
-        var deleteResult = session.get(PersonalAccountEntity.class, account.getId());
-        session.getTransaction().commit();
-        return deleteResult == null;
-    }
-
-    public Optional<PersonalAccountEntity> validateAuth(String email, String password, Session session) {
-        return Optional.ofNullable(new JPAQuery<PersonalAccountEntity>(session)
+    public Optional<PersonalAccountEntity> validateAuth(String email, String password) {
+        return Optional.ofNullable(new JPAQuery<PersonalAccountEntity>(getEntityManager())
                                            .select(personalAccountEntity)
                                            .from(personalAccountEntity)
                                            .where(personalAccountEntity.email.eq(email)
@@ -85,8 +53,8 @@ public class PersonalAccountDao  {
                                            .fetchOne());
     }
 
-    public Optional<PersonalAccountEntity> getByEmail(String email, Session session) {
-        return Optional.ofNullable(new JPAQuery<PersonalAccountEntity>(session)
+    public Optional<PersonalAccountEntity> getByEmail(String email) {
+        return Optional.ofNullable(new JPAQuery<PersonalAccountEntity>(getEntityManager())
                                            .select(personalAccountEntity)
                                            .from(personalAccountEntity)
                                            .where(personalAccountEntity.email.eq(email))
@@ -94,8 +62,8 @@ public class PersonalAccountDao  {
     }
 
 
-    public List<ItemsEntity> getAllBoughtPhones(Long id, Session session) {
-        return new JPAQuery<ItemsEntity>(session)
+    public List<ItemsEntity> getAllBoughtPhones(Long id) {
+        return new JPAQuery<ItemsEntity>(getEntityManager())
                 .select(itemsEntity)
                 .from(sellHistoryEntity)
                 .join(sellHistoryEntity.itemId, itemsEntity)
@@ -104,8 +72,8 @@ public class PersonalAccountDao  {
                 .fetch();
     }
 
-    public List<Tuple> getTopTenMostSpenders(Session session) {
-        return new JPAQuery<Object[]>(session)
+    public List<Tuple> getTopTenMostSpenders() {
+        return new JPAQuery<Object[]>(getEntityManager())
                 .select(personalAccountEntity, itemsEntity.price.sum())
                 .from(personalAccountEntity)
                 .join(personalAccountEntity.phonePurchases, sellHistoryEntity)
@@ -115,12 +83,12 @@ public class PersonalAccountDao  {
                 .fetch();
     }
 
-        public List<PersonalAccountEntity> sortByGenderAndCountry(PersonalAccountFilter filter, Session session) {
+    public List<PersonalAccountEntity> sortByGenderAndCountry(PersonalAccountFilter filter) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getGender(), personalAccountEntity.genderEnum::eq)
                 .add(filter.getCountry(), personalAccountEntity.countryEnum::eq)
                 .buildAnd();
-        return new JPAQuery<PersonalAccountEntity>(session)
+        return new JPAQuery<PersonalAccountEntity>(getEntityManager())
                 .select(personalAccountEntity)
                 .from(personalAccountEntity)
                 .where(predicate)

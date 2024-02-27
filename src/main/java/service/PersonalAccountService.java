@@ -1,11 +1,9 @@
 package service;
 
-import dao.PersonalAccountDao;
-
 public class PersonalAccountService {
 
 	private final static PersonalAccountService INCTANCE = new PersonalAccountService();
-	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
+//	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
 
 	private PersonalAccountService() {
 	}

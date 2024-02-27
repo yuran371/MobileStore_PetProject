@@ -4,9 +4,9 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import dto.AttributesFilter;
 import entity.ItemsEntity;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +16,8 @@ import static entity.QItemsEntity.itemsEntity;
 @Slf4j
 public class ItemsDao extends DaoBase<Long, ItemsEntity> {
 
-    public ItemsDao(SessionFactory sessionFactory) {
-        super(itemsEntity, sessionFactory, ItemsEntity.class);
+    public ItemsDao(EntityManager entityManager) {
+        super(entityManager, ItemsEntity.class);
     }
 
     public Optional<Long> insertViaHibernate(ItemsEntity items, Session session) {
@@ -40,8 +40,8 @@ public class ItemsDao extends DaoBase<Long, ItemsEntity> {
                 .fetch();
     }
 
-    public List<ItemsEntity> findAllViaQuerydsl(Session session) {
-        return new JPAQuery<ItemsEntity>(session).select(itemsEntity)
+    public List<ItemsEntity> findAllViaQuerydsl() {
+        return new JPAQuery<ItemsEntity>(getEntityManager()).select(itemsEntity)
                 .from(itemsEntity)
                 .fetch();
     }
