@@ -7,7 +7,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import utlis.HibernateSessionFactory;
 
-import java.util.List;
 import java.util.Optional;
 @Slf4j
 public class SellHistoryDao implements Dao<Long, SellHistoryEntity> {
@@ -29,7 +28,7 @@ public class SellHistoryDao implements Dao<Long, SellHistoryEntity> {
 
 	@Override
 	public Optional<SellHistoryEntity> insert(SellHistoryEntity sellHistoryEntity) {
-		try (SessionFactory sessionFactory = HibernateSessionFactory.buildSessionFactory();
+		try (SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
 			 Session session = sessionFactory.openSession()) {
 			Transaction transaction = session.beginTransaction();
 			session.persist(sellHistoryEntity);
@@ -40,17 +39,12 @@ public class SellHistoryDao implements Dao<Long, SellHistoryEntity> {
 	}
 
 	@Override
-	public List<SellHistoryEntity> findAll() {
-		return null;
-	}
-
-	@Override
 	public Optional<SellHistoryEntity> getById(Long id) {
 		return Optional.empty();
 	}
 
 	@Override
-	public void delete(Long id) {
+	public void delete(SellHistoryEntity sellHistoryEntity) {
 	}
 
 	@Override

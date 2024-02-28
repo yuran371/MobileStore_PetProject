@@ -3,11 +3,9 @@ package entity;
 import entity.enums.Attributes;
 import entity.enums.CurrencyEnum;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.FetchProfile;
+import org.hibernate.annotations.*;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -39,7 +37,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"model", "attributes"})
+@EqualsAndHashCode(of = {"model"})
 @ToString(exclude = "phoneOrders")
 @Entity(name = "items")
 @Table(schema = "market")

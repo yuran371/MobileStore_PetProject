@@ -1,6 +1,6 @@
 package dao;
 
-import entity.CurrencyInfo;
+import dto.AttributesFilter;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
@@ -8,7 +8,6 @@ import entity.enums.Attributes;
 import entity.enums.CountryEnum;
 import entity.enums.CurrencyEnum;
 import entity.enums.GenderEnum;
-import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Tag;
@@ -38,19 +37,95 @@ import static util.EntityHandler.persistEntitiesList;
 @TestInstance(PER_METHOD)
 @Tag(value = "ItemsDaoTest")
 public class ItemsDaoTest {
+    @ParameterizedTest
+    @MethodSource("argumentsWithOneItem")
+    void insert_true(ItemsEntity itemEntity) {
+        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
+                new Class[]{Session.class},
+                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
+
+        ItemsDao itemsDao = new ItemsDao(session);
+        session.beginTransaction();
+        ItemsEntity insertedItem = itemsDao.insert(itemEntity)
+                .get();
+        ItemsEntity actual = session.get(ItemsEntity.class, insertedItem.getId());
+        session.getTransaction()
+                .commit();
+        assertThat(actual).isEqualTo(insertedItem);
+    }
 
     @ParameterizedTest
-    @MethodSource("unit.DaoTest#argumentsListOfItems")
-    void countItems_countIs3_True(List<ItemsEntity> list) {
-        @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = sessionFactory.getCurrentSession();
-        ItemsDao itemsDao = new ItemsDao(sessionFactory);
+    @MethodSource("argumentsWithOneItem")
+    void update_true(ItemsEntity itemEntity) {
+        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
+                new Class[]{Session.class},
+                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
+
+        ItemsDao itemsDao = new ItemsDao(session);
         session.beginTransaction();
-        for (ItemsEntity item : list) {
-            session.persist(item);
-        }
+        ItemsEntity updated = itemsDao.insert(itemEntity)
+                .get();
+        System.out.println(updated);
+        updated.setOs(IOS);
+        itemsDao.update(updated);
+        System.out.println(updated);
+        ItemsEntity actual = session.get(ItemsEntity.class, updated.getId());
+        session.getTransaction()
+                .commit();
+        assertThat(actual).isEqualTo(updated);
+    }
+
+    @ParameterizedTest
+    @MethodSource("argumentsWithOneItem")
+    void remove_true(ItemsEntity itemEntity) {
+        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
+                new Class[]{Session.class},
+                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
+        ItemsDao itemsDao = new ItemsDao(session);
+        session.beginTransaction();
+        ItemsEntity inserted = itemsDao.insert(itemEntity)
+                .get();
+        itemsDao.delete(inserted);
+        ItemsEntity itemsEntityAfterDelete = session.get(ItemsEntity.class, inserted.getId());
+        session.getTransaction()
+                .commit();
+        assertThat(itemsEntityAfterDelete).isNull();
+    }
+
+    @ParameterizedTest
+    @MethodSource("argumentsWithOneItem")
+    void getById_true(ItemsEntity itemEntity) {
+        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
+                new Class[]{Session.class},
+                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
+        ItemsDao itemsDao = new ItemsDao(session);
+        session.beginTransaction();
+        ItemsEntity inserted = itemsDao.insert(itemEntity)
+                .get();
+        ItemsEntity itemById = itemsDao.getById(1l)
+                .get();
+        session.getTransaction()
+                .commit();
+        assertThat(itemById).isEqualTo(itemEntity);
+    }
+
+    @Test
+    void countItems_countIs3_True() {
+        List<ItemsEntity> items = EntityHandler.getItemsEntities();
+        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
+                new Class[]{Session.class},
+                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
+        ItemsDao itemsDao = new ItemsDao(session);
+        persistEntitiesList(items, session);
+        session.beginTransaction();
         long page = 2;
-        List<ItemsEntity> offsetLimitList = itemsDao.findItemsOnSpecificPage(page, session);
+        long limit = 3;
+        List<ItemsEntity> offsetLimitList = itemsDao.findItemsOnSpecificPage(page, limit);
 
         session.getTransaction()
                 .commit();
@@ -58,154 +133,59 @@ public class ItemsDaoTest {
     }
 
     @Test
-    void testEntityManagerAndGetCurrentSessionMethod() {
+    void isFirstEntityOnThirdPage_isEqualExpectedEntity_True() {
         List<ItemsEntity> items = EntityHandler.getItemsEntities();
-        List<PersonalAccountEntity> accounts = EntityHandler.getPersonalAccountEntities();
-        List<SellHistoryEntity> sellHistories = EntityHandler.getSellHistoryEntities();
         SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
         Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
                 new Class[]{Session.class},
                 (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-
-        session.beginTransaction();
-        ItemsDao itemsDao = new ItemsDao(sessionFactory);
-        persistEntitiesList(accounts, session);
+        ItemsDao itemsDao = new ItemsDao(session);
         persistEntitiesList(items, session);
-        for (int i = 0; i < 3; i++) {
-            items.get(i)
-                    .addPhoneOrder(sellHistories.get(i));
-            accounts.get(i)
-                    .addPurchase(sellHistories.get(i));
-        }
-        persistEntitiesList(sellHistories, session);
-        System.out.println("------");
-        itemsDao.getById(1l)
-                .ifPresentOrElse(System.out::println, () -> System.out.println("125555"));
-        List<ItemsEntity> list = itemsDao.findAll();
-        for (ItemsEntity l : list) {
-            System.out.println(l);
-        }
-        session.getTransaction()
-                .commit();
-    }
-
-//    @ParameterizedTest
-//    @MethodSource("unit.DaoTest#argumentsListOfItems")
-//    void isFirstEntityOnThirdPage_isEqualExpectedEntity_True(List<ItemsEntity> list) {
-//        @Cleanup Session session = HibernateTestUtil.getSessionFactory()
-//                .openSession();
-//        session.beginTransaction();
-//        for (ItemsEntity item : list) {
-//            session.persist(item);
-//        }
-//        long page = 3;
-//        List<ItemsEntity> offsetLimitList = itemsDao.findItemsOnSpecificPage(page, session);
-//        ItemsEntity firstItemOnThirdPage = offsetLimitList.get(0);
-//        session.getTransaction()
-//                .commit();
-//        ItemsEntity expectedEntity = list.get(6);
-//        assertThat(firstItemOnThirdPage).isEqualTo(expectedEntity);
-//    }
-
-//    @ParameterizedTest
-//    @MethodSource("unit.DaoTest#argumentsListOfItems")
-//    void isEntityGetsByUsingQuerydslFiltering_isEqualExpectedEntity_True(List<ItemsEntity> list) {
-//        @Cleanup Session session = HibernateSessionFactory.getSessionFactory()
-//                .openSession();
-//        AttributesFilter filter = AttributesFilter.builder()
-//                .brand(APPLE)
-//                .os(IOS)
-//                .internalMemory(GB_512)
-//                .ram(gb_8)
-//                .build();
-//        ItemsEntity expected = ItemsEntity.builder()
-//                .brand(APPLE)
-//                .model("iPhone 14")
-//                .internalMemory(GB_512)
-//                .ram(gb_8)
-//                .color("space grey")
-//                .os(IOS)
-//                .price(119_990.00)
-//                .currency(CurrencyEnum.₽)
-//                .quantity(83)
-//                .build();
-//        persistEntitiesList(list, session);
-//        session.beginTransaction();
-//        session.clear();
-//        List<ItemsEntity> items = itemsDao.findItemsWithParameters(filter, session);
-//        session.getTransaction()
-//                .commit();
-//        assertThat(items.get(0)).isEqualTo(expected);
-//    }
-
-    @ParameterizedTest
-    @MethodSource("unit.DaoTest#argumentsForItemsTest")
-    void currencyInfo(ItemsEntity itemsEntity) {
-        @Cleanup Session session = HibernateTestUtil.getSessionFactory()
-                .openSession();
         session.beginTransaction();
-        session.persist(itemsEntity);
-        ItemsEntity item = session.get(ItemsEntity.class, 1l);
-        item.getCurrencyInfos()
-                .add(CurrencyInfo.of(1000.00, CurrencyEnum.$)
-                );
-        item.getCurrencyInfos()
-                .add(CurrencyInfo.of(89_000.00, CurrencyEnum.₽)
-                );
-        System.out.println(item.getCurrencyInfos());
+        long page = 3;
+        long limit = 3;
+        List<ItemsEntity> offsetLimitList = itemsDao.findItemsOnSpecificPage(page, limit);
+        ItemsEntity expectedItemEntity = session.get(ItemsEntity.class, 7l);
+        ItemsEntity actualItemEntity = offsetLimitList.get(0);
+        assertThat(actualItemEntity).isEqualTo(expectedItemEntity);
         session.getTransaction()
                 .commit();
     }
 
-//    @Test
-//    void testGraphs() {
-//        List<ItemsEntity> items = EntityHandler.getItemsEntities();     // ItemsEntity has one-to-many mapping
-//        List<PersonalAccountEntity> accounts = EntityHandler.getPersonalAccountEntities();  // has one-to-many mapping
-//        List<SellHistoryEntity> sellHistory = EntityHandler.getSellHistoryEntities();       // has many-to-one mapping
-//        @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-//        @Cleanup Session session = sessionFactory.openSession();
-//        persistEntitiesList(accounts, session);     // fills the db with entities of items
-//        persistEntitiesList(items, session);        // fills the db with entities of accounts
-//        for (int i = 0; i < 3; i++) {
-//            items.get(i)
-//                    .addPhoneOrder(sellHistory.get(i));
-//            accounts.get(i)
-//                    .addPurchase(sellHistory.get(i));
-//        }
-//        persistEntitiesList(sellHistory, session);  // fills the db with entities of sellHistory
-//        session.beginTransaction();
-//        session.clear();    // need to clean of 1st lvl cache
-////        Map<String, Object> properties = Map.of(
-////                GraphSemantic.LOAD.getJakartaHintName(), session.getEntityGraph("withSellHistoryGraph")
-////
-////        );
-//        Statistics statistics = sessionFactory.getStatistics();
-//        statistics.setStatisticsEnabled(true);
-//        ItemsEntity item = new JPAQuery<ItemsEntity>(session).select(itemsEntity)
-//                .from(itemsEntity)
-//                .where(itemsEntity.id.eq(1l))
-//                .setHint(GraphSemantic.LOAD.getJakartaHintName(), session.getEntityGraph("withSellHistoryGraph"))
-//                .fetchOne();
-////        ItemsEntity itemsEntity = session.find(ItemsEntity.class, 1l, properties);
-//        item.getPhoneOrders()
-//                .get(0)
-//                .getUser()
-//                .getEmail();   // Here compiling required Sql query
-//        session.getTransaction()
-//                .commit();
-//        String[] queries = statistics.getQueries();
-//        System.out.println("1: " + Arrays.toString(queries));
-//        System.out.println("2: " + statistics.getCloseStatementCount());
-//        System.out.println("3: " + statistics.getEntityLoadCount());
-//        System.out.println("4: " + statistics.getConnectCount());
-////        System.out.println("5: " + statistics.getEntityStatistics("QItemsEntity"));
-//        System.out.println("6: " + statistics.getQueryStatistics("insert"));
-//        System.out.println("7: " + statistics.getSlowQueries());
-//        System.out.println("8: " + statistics.getTransactionCount());
-//        statistics.logSummary();
-//        boolean checkForJoin = Arrays.stream(queries)
-//                .anyMatch(s -> s.contains("join"));
-//    }
+    @Test
+    void isEntityGetsByUsingQuerydslFiltering_isEqualExpectedEntity_True() {
+        List<ItemsEntity> items = EntityHandler.getItemsEntities();
+        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
+        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
+                new Class[]{Session.class},
+                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
+        ItemsDao itemsDao = new ItemsDao(session);
+        persistEntitiesList(items, session);
+        AttributesFilter filter = AttributesFilter.builder()
+                .brand(APPLE)
+                .os(IOS)
+                .internalMemory(GB_512)
+                .ram(gb_8)
+                .build();
+        ItemsEntity expected = ItemsEntity.builder()
+                .brand(APPLE)
+                .model("iPhone 14")
+                .internalMemory(GB_512)
+                .ram(gb_8)
+                .color("space grey")
+                .os(IOS)
+                .price(119_990.00)
+                .currency(CurrencyEnum.₽)
+                .quantity(83)
+                .build();
+        session.beginTransaction();
+        session.clear();
+        List<ItemsEntity> itemsWithFiltering = itemsDao.findItemsWithParameters(filter, session);
+        session.getTransaction()
+                .commit();
+        assertThat(itemsWithFiltering.get(0)).isEqualTo(expected);
+    }
+
 
     public static Stream<Arguments> argumentsSellHistory() {
         return Stream.of(Arguments.of(SellHistoryEntity.builder()
@@ -278,13 +258,13 @@ public class ItemsDaoTest {
 
     }
 
-    public static Stream<Arguments> argumentsForItemsTest() {
+    public static Stream<Arguments> argumentsWithOneItem() {
         return Stream.of(Arguments.of(ItemsEntity.builder()
                 .brand(GOOGLE)
                 .model("pixel a5")
                 .internalMemory(Attributes.InternalMemoryEnum.GB_16)
                 .ram(gb_4)
-                .color("black")
+                .color("yellow")
                 .os(ANDROID)
                 .price(999.99)
                 .currency(CurrencyEnum.$)

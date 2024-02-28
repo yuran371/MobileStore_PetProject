@@ -16,7 +16,7 @@ public class RetryCommand<T> {
     public T run(Supplier<T> function) {
         try {
             return function.get();
-        } catch (Exception e) {
+        } catch (OptimisticLockException e) {
             return retry(function);
         }
     }

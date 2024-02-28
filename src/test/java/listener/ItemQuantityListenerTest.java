@@ -27,8 +27,8 @@ public class ItemQuantityListenerTest {
         List<ItemsEntity> items = EntityHandler.getItemsEntities();
         List<PersonalAccountEntity> accounts = EntityHandler.getPersonalAccountEntities();
         List<SellHistoryEntity> sellHistories = EntityHandler.getSellHistoryEntities();
-        @Cleanup SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        @Cleanup Session session = sessionFactory.openSession();
+        @Cleanup SessionFactory entityManager = HibernateTestUtil.getSessionFactory();
+        @Cleanup Session session = entityManager.openSession();
         persistEntitiesList(accounts, session);
         persistEntitiesList(items, session);
         Integer quantityBeforePurchase = items.get(0)
@@ -40,6 +40,7 @@ public class ItemQuantityListenerTest {
                     .addPurchase(sellHistories.get(i));
         }
         persistEntitiesList(sellHistories, session);
+        System.out.println();
         session.beginTransaction();
         Integer quantityItem = session.get(ItemsEntity.class, 1l)
                 .getQuantity();

@@ -16,7 +16,7 @@ import utlis.SqlExceptionLogger;
 import java.util.List;
 import java.util.Optional;
 
-import static entity.QItemsEntity.itemsEntity;
+import static entity.QItemsEntity.QItemsEntity;
 import static entity.QPersonalAccountEntity.personalAccountEntity;
 import static entity.QSellHistoryEntity.sellHistoryEntity;
 
@@ -96,9 +96,9 @@ public class PersonalAccountDao  {
 
     public List<ItemsEntity> getAllBoughtPhones(Long id, Session session) {
         return new JPAQuery<ItemsEntity>(session)
-                .select(itemsEntity)
+                .select(QItemsEntity)
                 .from(sellHistoryEntity)
-                .join(sellHistoryEntity.itemId, itemsEntity)
+                .join(sellHistoryEntity.itemId, QItemsEntity)
                 .join(sellHistoryEntity.user, personalAccountEntity)
                 .where(personalAccountEntity.id.eq(id))
                 .fetch();
@@ -106,12 +106,12 @@ public class PersonalAccountDao  {
 
     public List<Tuple> getTopTenMostSpenders(Session session) {
         return new JPAQuery<Object[]>(session)
-                .select(personalAccountEntity, itemsEntity.price.sum())
+                .select(personalAccountEntity, QItemsEntity.price.sum())
                 .from(personalAccountEntity)
                 .join(personalAccountEntity.phonePurchases, sellHistoryEntity)
-                .join(sellHistoryEntity.itemId, itemsEntity)
+                .join(sellHistoryEntity.itemId, QItemsEntity)
                 .groupBy(personalAccountEntity.id)
-                .orderBy(itemsEntity.price.sum().desc())
+                .orderBy(QItemsEntity.price.sum().desc())
                 .fetch();
     }
 

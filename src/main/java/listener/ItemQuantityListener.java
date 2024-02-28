@@ -9,7 +9,7 @@ import org.hibernate.event.spi.PreInsertEventListener;
 import utlis.RetryCommand;
 
 public class ItemQuantityListener implements PreInsertEventListener {
-    private static RetryCommand<ItemsEntity> retryCommand = new RetryCommand<>(0);
+    private static RetryCommand<ItemsEntity> retryCommand = new RetryCommand<>(5);
 
     @Override
     public boolean onPreInsert(PreInsertEvent event) {
@@ -24,9 +24,7 @@ public class ItemQuantityListener implements PreInsertEventListener {
                 throw new RuntimeException("На складе нет такого количества товара, доступно: " + itemFromSellHistory.getQuantity() + " шт " + itemFromSellHistory.getBrand() + " " + itemFromSellHistory.getModel());
             } else {
                 itemFromDB.setQuantity(itemFromDB.getQuantity() - sellHistoryEntity.getQuantity());
-                System.out.println();
             }
-            System.out.println();
         }
         return false;
     }

@@ -102,12 +102,7 @@ public class EntityHandler {
                                                    SellHistoryEntity.builder()
                                                            .sellDate(OffsetDateTime.now().minus(2L, ChronoUnit.MONTHS))
                                                            .user(PersonalAccountEntity.builder().build())
-                                                           .itemId(ItemsEntity.builder().build()).quantity(10).build(),
-                                                   SellHistoryEntity.builder()
-                                                           .sellDate(OffsetDateTime.now().minus(10L, ChronoUnit.MONTHS)
-                                                                             .minus(2L, ChronoUnit.HOURS))
-                                                           .user(PersonalAccountEntity.builder().build())
-                                                           .itemId(ItemsEntity.builder().build()).quantity(5).build());
+                                                           .itemId(ItemsEntity.builder().build()).quantity(10).build());
         return entities;
     }
 
@@ -134,9 +129,9 @@ public class EntityHandler {
 
     public static <T> void persistEntitiesList(List<T> list, Session session) {
         list.stream().map(element -> {
-//            session.beginTransaction();
+            session.beginTransaction();
             session.persist(element);
-//            session.getTransaction().commit();
+            session.getTransaction().commit();
             return element;
         }).collect(Collectors.toList());
     }
