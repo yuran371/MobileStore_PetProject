@@ -1,54 +1,39 @@
 package dao;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import entity.SellHistoryEntity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import utlis.HibernateSessionFactory;
 
-import java.util.Optional;
+import java.time.OffsetDateTime;
+import java.util.List;
+
+import static entity.QSellHistoryEntity.sellHistoryEntity;
+
 @Slf4j
-public class SellHistoryDao implements Dao<Long, SellHistoryEntity> {
+public class SellHistoryDao extends DaoBase<Long, SellHistoryEntity> {
+    public SellHistoryDao(EntityManager entityManager) {
+        super(entityManager, SellHistoryEntity.class);
+    }
 
-//	private static ItemsRepository itemsDao = ItemsRepository.getInstance();
-	private static PersonalAccountDao personalAccountDao = PersonalAccountDao.getInstance();
+    public List<SellHistoryEntity> getAllForUser(Long userId) {
+        return new JPAQuery<SellHistoryEntity>(getEntityManager())
+                .select(sellHistoryEntity)
+                .from(sellHistoryEntity)
+                .where(sellHistoryEntity.user.id.eq(userId))
+                .fetch();
+    }
 
-	private SellHistoryDao() {
-	}
-
-	private static class SingletonSellHistoryDaoCreator {
-		private static final SellHistoryDao INSTANCE = new SellHistoryDao();
-	}
-
-	public static SellHistoryDao getInstance() {
-		return SingletonSellHistoryDaoCreator.INSTANCE;
-	}
-
-
-	@Override
-	public Optional<SellHistoryEntity> insert(SellHistoryEntity sellHistoryEntity) {
-		try (SessionFactory sessionFactory = HibernateSessionFactory.getSessionFactory();
-			 Session session = sessionFactory.openSession()) {
-			Transaction transaction = session.beginTransaction();
-			session.persist(sellHistoryEntity);
-			transaction.commit();
-			log.info("User {} successfully added", sellHistoryEntity);
-			return Optional.ofNullable(sellHistoryEntity);
-		}
-	}
-
-	@Override
-	public Optional<SellHistoryEntity> getById(Long id) {
-		return Optional.empty();
-	}
-
-	@Override
-	public void delete(SellHistoryEntity sellHistoryEntity) {
-	}
-
-	@Override
-	public void update(SellHistoryEntity entity) {
-
-	}
+    public List<SellHistoryEntity> getAllBeforeDate(OffsetDateTime date) {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<SellHistoryEntity> criteria = cb
+                .createQuery(SellHistoryEntity.class);
+        Root<SellHistoryEntity> sellHistoryEntity = criteria.from(SellHistoryEntity.class);
+         criteria.select(sellHistoryEntity)
+                .where(cb.lessThanOrEqualTo(sellHistoryEntity.get("sellDate"), date));
+        return getEntityManager().createQuery(criteria).getResultList();
+    }
 }

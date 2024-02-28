@@ -22,7 +22,6 @@ import java.util.List;
 @Table(name = "personal_account", schema = "market", indexes = {
         @Index(name = "emailIndex", columnList = "email", unique = true)
 })
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class PersonalAccountEntity implements BaseEntity<Long> {
 
     @Id

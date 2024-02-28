@@ -9,11 +9,10 @@ import java.io.Serializable;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class DaoBase<K extends Serializable, E extends BaseEntity<K>> implements Dao<K, E> {
+public abstract class DaoBase<K extends Serializable, E extends BaseEntity<K>> implements Dao<K, E> {
 
     @Getter
     private final EntityManager entityManager;
-
     private final Class<E> clazz;
 
     @Override

@@ -5,11 +5,9 @@ import entity.ImportantStatisticEntity;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
-import extentions.PersonalAccountParameterResolver;
 import lombok.Cleanup;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import util.EntityHandler;
 import util.HibernateTestUtil;
 
@@ -21,7 +19,7 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD;
 
 @TestInstance(PER_METHOD)
 @Tag(value = "ImportantStatisticListener")
-@ExtendWith(value = {PersonalAccountParameterResolver.class})
+//@ExtendWith(value = {PersonalAccountParameterResolver.class})
 public class ImportantStatisticListenerTest {
 
     private final PersonalAccountDao personalAccountDao;

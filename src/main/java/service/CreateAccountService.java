@@ -1,6 +1,5 @@
 package service;
 
-import dao.PersonalAccountDao;
 import dto.CreateAccountDto;
 import io.vavr.control.Either;
 import lombok.SneakyThrows;
@@ -15,7 +14,7 @@ public class CreateAccountService {
 	private static final CreateAccountService INSTANCE = new CreateAccountService();
 	private final CreateAccountValidator validator = CreateAccountValidator.getInstance();
 	private final CreateAccountMapper mapper = CreateAccountMapper.getInstance();
-	private final PersonalAccountDao daoPersonalAccount = PersonalAccountDao.getInstance();
+//	private final PersonalAccountDao daoPersonalAccount = PersonalAccountDao.getInstance();
 	private final ImageService imageService = ImageService.getInstance();
 
 	private CreateAccountService() {

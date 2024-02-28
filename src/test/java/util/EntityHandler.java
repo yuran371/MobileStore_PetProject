@@ -106,21 +106,6 @@ public class EntityHandler {
         return entities;
     }
 
-    public static List<ProfileInfoEntity> getProfileInfoEntities() {
-        List<ProfileInfoEntity> entities = List.of(ProfileInfoEntity.builder()
-                                                           .specialInfo("Delivery only from 2 to 6 p.m")
-                                                           .language("Russian").build(),
-                                                   ProfileInfoEntity.builder()
-                                                           .specialInfo("Before delivery need to call on personal " +
-                                                                                "phone")
-                                                           .language("Kazakh")
-                                                           .build(),
-                                                   ProfileInfoEntity.builder().specialInfo("Dont use delivery")
-                                                           .language("Ukrainian").build());
-
-        return entities;
-    }
-
     public static <T> void persistEntity(T entity, Session session) {
         session.beginTransaction();
         session.persist(entity);

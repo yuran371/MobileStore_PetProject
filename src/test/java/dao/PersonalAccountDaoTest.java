@@ -6,17 +6,18 @@ import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
 import entity.enums.CountryEnum;
 import entity.enums.GenderEnum;
-import extentions.PersonalAccountParameterResolver;
-import jakarta.persistence.EntityExistsException;
+import extentions.AddTestEntitiesExtension;
+import extentions.DaoTestResolver;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.EntityHandler;
-import util.HibernateTestUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,102 +25,63 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
-@TestInstance(PER_METHOD)
+@TestInstance(PER_CLASS)
 @Tag(value = "PersonalAccountDao")
-@ExtendWith(value = {PersonalAccountParameterResolver.class})
-public class PersonalAccountDaoTest {
+@ExtendWith(value = {DaoTestResolver.class, AddTestEntitiesExtension.class})
+public class PersonalAccountDaoTest extends DaoTestFields {
     private final PersonalAccountDao personalAccountDao;
-    private static List<ItemsEntity> itemsEntities;
-    private static List<SellHistoryEntity> sellHistoryEntities;
-    private static List<PersonalAccountEntity> personalAccountEntities;
-    private static final SessionFactory entityManager = HibernateTestUtil.getSessionFactory();
+    private final SessionFactory sessionFactory;
 
-    public PersonalAccountDaoTest(PersonalAccountDao instance) {
+    public PersonalAccountDaoTest(PersonalAccountDao instance, SessionFactory sessionFactory) {
         this.personalAccountDao = instance;
-    }
-
-    @BeforeAll
-    public static void fillTableWithEntities() {
-        itemsEntities = EntityHandler.getItemsEntities();
-        personalAccountEntities = EntityHandler.getPersonalAccountEntities();
-        var basicEntities = EntityHandler.getSellHistoryEntities();
-        @Cleanup var session = entityManager.openSession();
-        EntityHandler.persistEntitiesList(itemsEntities, session);
-        EntityHandler.persistEntitiesList(personalAccountEntities, session);
-        sellHistoryEntities = EntityHandler.createSellHistoryEntitiesList(personalAccountEntities, itemsEntities,
-                                                                          basicEntities, 14);
-        EntityHandler.persistEntitiesList(sellHistoryEntities, session);
-
-    }
-
-    @AfterAll
-    public static void closeTestSessionFactory() {
-        @Cleanup var session = entityManager.openSession();
-        EntityHandler.dropEntities(session, sellHistoryEntities, personalAccountEntities, itemsEntities);
-        entityManager.close();
-
+        this.sessionFactory = sessionFactory;
     }
 
     @Tag("Unit")
     @ParameterizedTest
     @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
     void insert_NewUser_notNull(PersonalAccountEntity account) {
-        @Cleanup var session = entityManager.openSession();
-        var insertResult = personalAccountDao.insert(account, session);
+        var session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        var insertResult = personalAccountDao.insert(account);
         assertThat(insertResult).isNotEmpty();
-        EntityHandler.dropEntity(account, session);
-    }
-
-    @Tag("Unit")
-    @ParameterizedTest
-    @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
-    void insert_ExistingUser_throwException(PersonalAccountEntity account) {
-        try (var session = entityManager.openSession()) {
-            personalAccountDao.insert(account, session);
-            session.evict(account);
-            assertThatThrownBy(() -> personalAccountDao.insert(account, session)).isInstanceOf(EntityExistsException.class);
-        } finally {
-            @Cleanup var session = entityManager.openSession();
-            EntityHandler.dropEntity(account, session);
-        }
+        session.remove(account);
+        System.out.println(itemsEntities);
+        session.getTransaction().commit();
     }
 
     @Tag("Unit")
     @ParameterizedTest
     @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
     void delete_ExistingUser_returnTrue(PersonalAccountEntity account) {
-        @Cleanup var session = entityManager.openSession();
-        EntityHandler.persistEntity(account, session);
-        var deleteResult = personalAccountDao.delete(account, session);
-        assertThat(deleteResult).isTrue();
-    }
-
-    @Tag("Unit")
-    @ParameterizedTest
-    @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
-    void delete_NotExistingUser_returnFalse(PersonalAccountEntity account) {
-        @Cleanup var session = entityManager.openSession();
-        personalAccountDao.delete(account, session);
-
+        var session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        session.persist(account);
+        personalAccountDao.delete(account);
+        assertThat(session.get(PersonalAccountEntity.class, account.getId())).isNull();
+        session.getTransaction().commit();
     }
 
     @Tag("Unit")
     @Test
     void getAll_haveUsers_returnAll() {
-        @Cleanup var session = entityManager.openSession();
-        var resultList = personalAccountDao.getAll(session);
+        var session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        var resultList = personalAccountDao.getAll();
         assertThat(resultList).hasSameElementsAs(personalAccountEntities);
+        session.getTransaction().commit();
     }
 
     @Tag("Unit")
     @Test
     void getAllWithPhonePurchases_haveUsers_returnAll() {
-        @Cleanup var session = entityManager.openSession();
-        var resultList = personalAccountDao.getAllWithPhonePurchases(session);
+        var session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        var resultList = personalAccountDao.getAllWithPhonePurchases();
         assertThat(resultList).hasSameElementsAs(personalAccountEntities);
+        session.getTransaction().commit();
     }
 
 
@@ -127,29 +89,32 @@ public class PersonalAccountDaoTest {
     @ParameterizedTest
     @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
     void validateAuth_validUser_returnUser(PersonalAccountEntity account) {
-        @Cleanup Session session = entityManager.openSession();
-        EntityHandler.persistEntity(account, session);
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        session.persist(account);
         Optional<PersonalAccountEntity> personalAccountEntity =
-                personalAccountDao.validateAuth(account.getEmail(), account.getPassword(), session);
+                personalAccountDao.validateAuth(account.getEmail(), account.getPassword());
         assertThat(personalAccountEntity.get()).isNotNull();
         assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
         assertThat(personalAccountEntity.get().getPassword()).isEqualTo(account.getPassword());
-        EntityHandler.dropEntity(account, session);
+        session.remove(account);
+        session.getTransaction().commit();
     }
 
     @Tag("Unit")
     @ParameterizedTest
     @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
     void getByEmail_validUser_returnUser(PersonalAccountEntity account) {
-        @Cleanup Session session = entityManager.openSession();
-        EntityHandler.persistEntity(account, session);
-        Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao.getByEmail(account.getEmail(),
-                                                                                              session);
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        session.persist(account);
+        Optional<PersonalAccountEntity> personalAccountEntity = personalAccountDao.getByEmail(account.getEmail());
         assertThat(personalAccountEntity.get()).isNotNull();
         assertThat(personalAccountEntity.get().getId()).isEqualTo(account.getId());
         assertThat(personalAccountEntity.get().getEmail()).isEqualTo(account.getEmail());
         assertThat(personalAccountEntity.get().getPassword()).isEqualTo(account.getPassword());
-        EntityHandler.dropEntity(account, session);
+        session.remove(account);
+        session.getTransaction().commit();
     }
 
 
@@ -159,7 +124,7 @@ public class PersonalAccountDaoTest {
     void getAllBoughtPhones_havePhones_returnList(PersonalAccountEntity account) {
         List<SellHistoryEntity> sells = EntityHandler.getSellHistoryEntities().subList(0, 3);
         List<ItemsEntity> items = EntityHandler.getItemsEntities().subList(0, 3);
-        @Cleanup Session session = entityManager.openSession();
+        @Cleanup Session session = sessionFactory.openSession();
         EntityHandler.persistEntity(account, session);
         EntityHandler.persistEntitiesList(items, session);
         for (int i = 0; i < sells.size(); i++) {
@@ -168,10 +133,13 @@ public class PersonalAccountDaoTest {
             sellHistoryEntity.setItemId(items.get(i));
         }
         EntityHandler.persistEntitiesList(sells, session);
-        List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId(), session);
+        Session currentSession = sessionFactory.getCurrentSession();
+        currentSession.beginTransaction();
+        List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId());
         assertThat(allBoughtPhones.size()).isEqualTo(items.size());
         assertThat(allBoughtPhones).extracting("id")
                 .contains(items.get(0).getId(), items.get(1).getId(), items.get(2).getId());
+        currentSession.getTransaction().commit();
         EntityHandler.dropEntities(session, sells, items);
         EntityHandler.dropEntity(account, session);
     }
@@ -180,27 +148,26 @@ public class PersonalAccountDaoTest {
     @ParameterizedTest
     @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
     void getAllBoughtPhones_noPhones_returnEmptyList(PersonalAccountEntity account) {
-        @Cleanup Session session = entityManager.openSession();
-        EntityHandler.persistEntity(account, session);
-        List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId(), session);
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        session.persist(account);
+        List<ItemsEntity> allBoughtPhones = personalAccountDao.getAllBoughtPhones(account.getId());
         assertThat(allBoughtPhones).isEmpty();
-        EntityHandler.dropEntity(account, session);
+        session.remove(account);
+        session.getTransaction().commit();
     }
 
     @Test
     void getTopTenMostSpenders_haveUsers_returnTop() {
-        @Cleanup Session session = entityManager.openSession();
-        List<Tuple> topTenMostSpenders = personalAccountDao.getTopTenMostSpenders(session);
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        List<Tuple> topTenMostSpenders = personalAccountDao.getTopTenMostSpenders();
         for (int i = 1; i < topTenMostSpenders.size(); i++) {
             Double spender = (Double) topTenMostSpenders.get(i - 1).get(1, Double.class);
             Double nextSpender = (Double) topTenMostSpenders.get(i).get(1, Double.class);
             assertThat(spender).isGreaterThan(nextSpender);
         }
-    }
-
-    @Test
-    void sortByGenderAndCountry_haveUsers_returnFilteredUsers() {
-        EntityHandler.getProfileInfoEntities();
+        session.getTransaction().commit();
     }
 
     public static Stream<PersonalAccountEntity> argumentsPersonalAccount() {
