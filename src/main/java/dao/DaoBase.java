@@ -22,8 +22,8 @@ public abstract class DaoBase<K extends Serializable, E extends BaseEntity<K>> i
     }
 
     @Override
-    public void delete(K id) {
-        entityManager.remove(id);
+    public void delete(E entity) {
+        entityManager.remove(entity);
         entityManager.flush();
     }
 

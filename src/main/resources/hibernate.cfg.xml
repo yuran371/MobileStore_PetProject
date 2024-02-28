@@ -15,7 +15,6 @@
         <mapping class="entity.PersonalAccountEntity"/>
         <mapping class="entity.SellHistoryEntity"/>
         <mapping class="entity.ItemsEntity"/>
-        <mapping class="entity.ProfileInfoEntity"/>
         <mapping class="entity.ImportantStatisticEntity"/>
 
 
