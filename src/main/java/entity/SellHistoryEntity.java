@@ -48,6 +48,9 @@ public class SellHistoryEntity implements BaseEntity<Long>, Cloneable {
     @Basic
     @Column(name = "sell_date")
     private OffsetDateTime sellDate;
+    @Basic
+    @Column(name = "price", nullable = false)
+    private Double price;
 
     @Override
     public SellHistoryEntity clone()  {

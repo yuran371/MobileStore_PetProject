@@ -3,7 +3,7 @@ package dao;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
-import dto.PersonalAccountFilter;
+import dto.filter.PersonalAccountFilter;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;

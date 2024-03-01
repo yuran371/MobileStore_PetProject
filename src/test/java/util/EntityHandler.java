@@ -160,6 +160,7 @@ public class EntityHandler {
             var cloneSellHistory = sells.get(sellIndex).clone();
             cloneSellHistory.setUser(personalAccountEntity);
             cloneSellHistory.setItemId(itemsEntity);
+            cloneSellHistory.setPrice(itemsEntity.getPrice());
             result.add(cloneSellHistory);
         }
         return result;

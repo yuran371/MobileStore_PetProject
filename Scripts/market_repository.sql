@@ -26,7 +26,7 @@ CREATE EXTENSION pgcrypto;
 
 CREATE TABLE IF NOT EXISTS personal_account
 (
-    account_id   BIGSERIAL    NOT NULL UNIQUE,
+    id   BIGSERIAL    NOT NULL UNIQUE,
     email        VARCHAR(128) PRIMARY KEY,
     password     TEXT         NOT NULL,
     name         VARCHAR(32)  NOT NULL,
@@ -51,23 +51,25 @@ CREATE TABLE IF NOT EXISTS sell_history
     sell_id   BIGSERIAl PRIMARY KEY,
     item_id   BIGINT REFERENCES Items (item_id) ON UPDATE CASCADE ON DELETE RESTRICT,
     user_id   BIGINT,
-    FOREIGN KEY (user_id) REFERENCES personal_account (account_id) ON DELETE RESTRICT,
+    FOREIGN KEY (user_id) REFERENCES personal_account (id) ON DELETE RESTRICT,
     quantity  INT CHECK (quantity >= 0) NOT NULL,
+    price           NUMERIC(12, 2) CHECK (price > 0),
     sell_date TIMESTAMPTZ               NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS profile_info
 (
     id           BIGSERIAL PRIMARY KEY,
-    user_id      BIGINT UNIQUE REFERENCES personal_account (account_id),
+    user_id      BIGINT UNIQUE REFERENCES personal_account (id),
     language     VARCHAR(2),
     special_info VARCHAR(256)
 );
 drop table profile_info;
+drop table sell_history;
 
 CREATE TABLE IF NOT EXISTS user_payment_options
 (
-    account_id         BIGINT REFERENCES personal_account (account_id) ON DELETE CASCADE,
+    account_id         BIGINT REFERENCES personal_account (id) ON DELETE CASCADE,
     added_payment_type VARCHAR(128) NOT NULL,
     PRIMARY KEY (account_id, added_payment_type)
 );

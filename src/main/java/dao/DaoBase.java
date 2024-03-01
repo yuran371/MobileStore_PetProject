@@ -2,6 +2,7 @@ package dao;
 
 import entity.BaseEntity;
 import jakarta.persistence.EntityManager;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public abstract class DaoBase<K extends Serializable, E extends BaseEntity<K>> implements Dao<K, E> {
 
-    @Getter
+    @Getter(AccessLevel.PROTECTED)
     private final EntityManager entityManager;
     private final Class<E> clazz;
 
