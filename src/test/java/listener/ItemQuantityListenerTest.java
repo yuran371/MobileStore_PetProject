@@ -31,7 +31,7 @@ public class ItemQuantityListenerTest {
         @Cleanup Session session = entityManager.openSession();
         persistEntitiesList(accounts, session);
         persistEntitiesList(items, session);
-        Integer quantityBeforePurchase = items.get(0)
+        Integer quantityBeforePurchase = items.get(0).getItemSalesInformation()
                 .getQuantity();
         for (int i = 0; i < 3; i++) {
             items.get(i)
@@ -43,6 +43,7 @@ public class ItemQuantityListenerTest {
         System.out.println();
         session.beginTransaction();
         Integer quantityItem = session.get(ItemsEntity.class, 1l)
+                .getItemSalesInformation()
                 .getQuantity();
         Integer quantitySellHistory = session.get(SellHistoryEntity.class, 1l)
                 .getQuantity();

@@ -74,12 +74,12 @@ public class PersonalAccountDao extends DaoBase<Long, PersonalAccountEntity> {
 
     public List<Tuple> getTopTenMostSpenders() {
         return new JPAQuery<Object[]>(getEntityManager())
-                .select(personalAccountEntity, itemsEntity.price.sum())
+                .select(personalAccountEntity, itemsEntity.itemSalesInformation.price.sum())
                 .from(personalAccountEntity)
                 .join(personalAccountEntity.phonePurchases, sellHistoryEntity)
                 .join(sellHistoryEntity.itemId, itemsEntity)
                 .groupBy(personalAccountEntity.id)
-                .orderBy(itemsEntity.price.sum().desc())
+                .orderBy(itemsEntity.itemSalesInformation.price.sum().desc())
                 .fetch();
     }
 

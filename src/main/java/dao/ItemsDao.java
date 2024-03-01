@@ -10,7 +10,7 @@ import org.hibernate.Session;
 
 import java.util.List;
 
-import static entity.QItemsEntity.QItemsEntity;
+import static entity.QItemsEntity.itemsEntity;
 
 @Slf4j
 public class ItemsDao extends DaoBase<Long, ItemsEntity> {
@@ -20,8 +20,8 @@ public class ItemsDao extends DaoBase<Long, ItemsEntity> {
     }
 
     public List<ItemsEntity> findItemsOnSpecificPage(long page, long limit) {
-        return new JPAQuery<ItemsEntity>(getEntityManager()).select(QItemsEntity)
-                .from(QItemsEntity)
+        return new JPAQuery<ItemsEntity>(getEntityManager()).select(itemsEntity)
+                .from(itemsEntity)
                 .limit(limit)
                 .offset(Math.abs(limit * page - limit))
                 .fetch();
@@ -29,13 +29,13 @@ public class ItemsDao extends DaoBase<Long, ItemsEntity> {
 
     public List<ItemsEntity> findItemsWithParameters(AttributesFilter filter, Session session) {
         Predicate predicate = QPredicate.builder()
-                .add(filter.getBrand(), QItemsEntity.brand::eq)
-                .add(filter.getOs(), QItemsEntity.os::eq)
-                .add(filter.getInternalMemory(), QItemsEntity.internalMemory::eq)
-                .add(filter.getRam(), QItemsEntity.ram::eq)
+                .add(filter.getBrand(), itemsEntity.brand::eq)
+                .add(filter.getOs(), itemsEntity.os::eq)
+                .add(filter.getInternalMemory(), itemsEntity.internalMemory::eq)
+                .add(filter.getRam(), itemsEntity.ram::eq)
                 .buildAnd();
-        return new JPAQuery<ItemsEntity>(session).select(QItemsEntity)
-                .from(QItemsEntity)
+        return new JPAQuery<ItemsEntity>(session).select(itemsEntity)
+                .from(itemsEntity)
                 .where(predicate)
                 .fetch();
     }

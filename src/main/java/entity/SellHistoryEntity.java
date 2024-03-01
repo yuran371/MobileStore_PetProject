@@ -31,20 +31,25 @@ import java.time.OffsetDateTime;
 @Audited
 @AuditTable(value = "sell_history_AUD", schema = "history", catalog = "market_repository")
 public class SellHistoryEntity implements BaseEntity<Long>, Cloneable {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "sell_id")
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")     // 1st - in this table; 2nd - in parent table
     private ItemsEntity itemId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @NotAudited
     private PersonalAccountEntity user;
+
     @Basic
     @Column(name = "quantity")
     private Integer quantity;
+
     @Basic
     @Column(name = "sell_date")
     private OffsetDateTime sellDate;

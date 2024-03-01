@@ -1,14 +1,14 @@
 package entity;
 
 import entity.enums.Attributes;
-import entity.enums.CurrencyEnum;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,47 +38,48 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"model"})
-@ToString(exclude = "phoneOrders")
+@ToString(exclude = {"phoneOrders", "itemSalesInformation"})
 @Entity(name = "items")
 @Table(schema = "market")
 @DynamicUpdate
 @Audited
 @AuditTable(value = "items_AUD", schema = "history", catalog = "market_repository")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ItemsEntity implements BaseEntity<Long> {
+
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
+
     @Column(name = "brand")
     @Enumerated(EnumType.STRING)
     private Attributes.BrandEnum brand;
+
     @Column(name = "model")
     private String model;
+
     @Column(name = "internal_memory")
     @Enumerated(EnumType.STRING)
     private Attributes.InternalMemoryEnum internalMemory;
+
     @Column(name = "ram")
     @Enumerated(EnumType.STRING)
     private Attributes.RamEnum ram;
+
     @Column(name = "color")
     private String color;
+
     @Column(name = "os")
     @Enumerated(EnumType.STRING)
     private Attributes.OperatingSystemEnum os;
-    @Column(name = "price")
-    private Double price;
-    @Column(name = "currency")
-    @Enumerated(EnumType.STRING)
-    private CurrencyEnum currency;
-    @Column(name = "quantity")
-    private Integer quantity;
+
+    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
+    private ItemSalesInformationEntity itemSalesInformation;
+
     @Version
     private Long version;
-    @Builder.Default
-    @ElementCollection
-    @CollectionTable(name = "item_currency", joinColumns = @JoinColumn(name = "item_id"))
-    @NotAudited
-    private List<CurrencyInfo> currencyInfos = new ArrayList<>();
+
     @Builder.Default
     @OneToMany(mappedBy = "itemId", fetch = FetchType.LAZY)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)     // При вызове session.persist(ItemEntity) также сохранятся все связанные sellHistoryEntity

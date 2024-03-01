@@ -15,6 +15,8 @@ import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.internal.SessionFactoryImpl;
 
+import javax.cache.Caching;
+import javax.cache.spi.CachingProvider;
 import java.nio.file.Path;
 
 @UtilityClass
@@ -25,6 +27,8 @@ public class HibernateSessionFactory {
     private static SessionFactory buildSessionFactory() {
         Configuration configuration = buildConfiguration();
         configuration.configure(PATH_TO_CFG.toFile());
+        CachingProvider caching = Caching.getCachingProvider();
+
         var sessionFactory = configuration.buildSessionFactory();
         listenerRegistration(sessionFactory);
         return sessionFactory;

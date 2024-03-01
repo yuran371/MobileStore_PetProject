@@ -1,6 +1,7 @@
 package dao;
 
 import dto.AttributesFilter;
+import entity.ItemSalesInformationEntity;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
@@ -67,10 +68,8 @@ public class ItemsDaoTest {
         session.beginTransaction();
         ItemsEntity updated = itemsDao.insert(itemEntity)
                 .get();
-        System.out.println(updated);
         updated.setOs(IOS);
         itemsDao.update(updated);
-        System.out.println(updated);
         ItemsEntity actual = session.get(ItemsEntity.class, updated.getId());
         session.getTransaction()
                 .commit();
@@ -106,6 +105,7 @@ public class ItemsDaoTest {
         session.beginTransaction();
         ItemsEntity inserted = itemsDao.insert(itemEntity)
                 .get();
+        session.evict(inserted);
         ItemsEntity itemById = itemsDao.getById(1l)
                 .get();
         session.getTransaction()
@@ -174,9 +174,11 @@ public class ItemsDaoTest {
                 .ram(gb_8)
                 .color("space grey")
                 .os(IOS)
-                .price(119_990.00)
-                .currency(CurrencyEnum.₽)
-                .quantity(83)
+                .itemSalesInformation(ItemSalesInformationEntity.builder()
+                        .price(119_990.00)
+                        .currency(CurrencyEnum.₽)
+                        .quantity(83)
+                        .build())
                 .build();
         session.beginTransaction();
         session.clear();
@@ -266,9 +268,11 @@ public class ItemsDaoTest {
                 .ram(gb_4)
                 .color("yellow")
                 .os(ANDROID)
-                .price(999.99)
-                .currency(CurrencyEnum.$)
-                .quantity(57)
+                .itemSalesInformation(ItemSalesInformationEntity.builder()
+                        .price(999.99)
+                        .currency(CurrencyEnum.$)
+                        .quantity(57)
+                        .build())
                 .build()));
     }
 
@@ -280,9 +284,11 @@ public class ItemsDaoTest {
                         .ram(gb_8)
                         .color("space grey")
                         .os(IOS)
-                        .price(119_990.00)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(83)
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(119_990.00)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(83)
+                                .build())
                         .build(),
                 ItemsEntity.builder()
                         .brand(APPLE)
@@ -291,9 +297,11 @@ public class ItemsDaoTest {
                         .ram(gb_16)
                         .color("gold")
                         .os(IOS)
-                        .price(79_999.99)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(55)
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(79_999.99)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(55)
+                                .build())
                         .build(),
                 ItemsEntity.builder()
                         .brand(APPLE)
@@ -302,9 +310,11 @@ public class ItemsDaoTest {
                         .ram(gb_16)
                         .color("black")
                         .os(IOS)
-                        .price(215_999.99)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(14)
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(215_999.99)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(14)
+                                .build())
                         .build(),
                 ItemsEntity.builder()
                         .brand(APPLE)
@@ -313,9 +323,11 @@ public class ItemsDaoTest {
                         .ram(gb_8)
                         .color("green")
                         .os(IOS)
-                        .price(96_999.99)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(99)
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(96_999.99)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(99)
+                                .build())
                         .build(),
                 ItemsEntity.builder()
                         .brand(XIAOMI)
@@ -324,9 +336,11 @@ public class ItemsDaoTest {
                         .ram(gb_4)
                         .color("black")
                         .os(ANDROID)
-                        .price(30_999.99)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(114)
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(30_999.99)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(114)
+                                .build())
                         .build(),
                 ItemsEntity.builder()
                         .brand(XIAOMI)
@@ -335,9 +349,11 @@ public class ItemsDaoTest {
                         .ram(gb_3)
                         .color("black")
                         .os(ANDROID)
-                        .price(8_999.99)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(223)
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(8_999.99)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(223)
+                                .build())
                         .build(),
                 ItemsEntity.builder()
                         .brand(SAMSUNG)
@@ -346,9 +362,11 @@ public class ItemsDaoTest {
                         .ram(gb_12)
                         .color("yellow")
                         .os(ANDROID)
-                        .price(28_999.99)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(99)
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(28_999.99)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(99)
+                                .build())
                         .build(),
                 ItemsEntity.builder()
                         .brand(SAMSUNG)
@@ -357,9 +375,11 @@ public class ItemsDaoTest {
                         .ram(gb_16)
                         .color("white")
                         .os(ANDROID)
-                        .price(119_999.99)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(8)
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(119_999.99)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(8)
+                                .build())
                         .build(),
                 ItemsEntity.builder()
                         .brand(SAMSUNG)
@@ -368,10 +388,11 @@ public class ItemsDaoTest {
                         .ram(gb_2)
                         .color("brown")
                         .os(ANDROID)
-                        .price(5_999.99)
-                        .currency(CurrencyEnum.₽)
-                        .quantity(99)
-                        .build()
-        )));
+                        .itemSalesInformation(ItemSalesInformationEntity.builder()
+                                .price(5_999.99)
+                                .currency(CurrencyEnum.₽)
+                                .quantity(99)
+                                .build())
+                        .build())));
     }
 }

@@ -25,6 +25,7 @@ public class HibernateTestUtil {
         configuration.setProperty("jakarta.persistence.create-database-schemas", Boolean.TRUE.toString());
         configuration.setProperty("hibernate.hbm2ddl.import_files", "addPgcrypto.sql");
         configuration.setProperty("hibernate.generate_statistics", Boolean.TRUE.toString());
+
         configuration.configure(PATH_TO_CFG.toFile());
         var sessionFactory = configuration.buildSessionFactory();
         HibernateSessionFactory.listenerRegistration(sessionFactory);
