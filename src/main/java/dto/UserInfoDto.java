@@ -1,27 +1,27 @@
 package dto;
 
-import jakarta.servlet.http.Part;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class CreateAccountDto {
+public class UserInfoDto {
 
-	String email;
-	String password;
-	String name;
-	String surname;
-	Part image;
-	String birthday;
-	String country;
-	String city;
-	String address;
-	String phoneNumber;
-	String gender;
+    String email;
+    String name;
+    String surname;
+    String birthday;
+    String country;
+    String city;
+    String address;
+    String phoneNumber;
+    String gender;
+    List<UserSellHistoryDto> purchases;
 }
