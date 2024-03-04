@@ -11,7 +11,20 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@NamedEntityGraph(
+        name = "withItems",
+        attributeNodes = {
+                @NamedAttributeNode(value = "phonePurchases", subgraph = "phonePurchases-subgraph"),
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "phonePurchases-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("itemId")
+                        }
+                )
+        }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,7 +65,7 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SellHistoryEntity> phonePurchases = new ArrayList<>();
     @Builder.Default
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "user_payment_options", joinColumns = @JoinColumn(name = "account_id"))
     private List<UserPaymentOptions> paymentOptions = new ArrayList<>();
     @Enumerated(EnumType.STRING)

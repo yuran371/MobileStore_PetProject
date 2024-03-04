@@ -1,37 +1,30 @@
 package mapper;
 
 import dto.CreateAccountDto;
-import entity.enums.CountryEnum;
-import entity.enums.GenderEnum;
 import entity.PersonalAccountEntity;
 import jakarta.servlet.http.Part;
-import utlis.DateFormatter;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.factory.Mappers;
 
-public class CreateAccountMapper {
+@Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ON_IMPLICIT_CONVERSION)
+public abstract class CreateAccountMapper {
 
-	private static CreateAccountMapper INSTANCE = new CreateAccountMapper();
-	private static final String USER_FOLDER = "user\\";
-	private static final String DEFAULT_AVATAR = "user\\default-avatar-icon-of-social-media-user-vector.jpg";
+    private static final String USER_FOLDER = "user\\";
+    private static final String DEFAULT_AVATAR = "user\\default-avatar-icon-of-social-media-user-vector.jpg";
+    public static CreateAccountMapper INSTANCE = Mappers.getMapper(CreateAccountMapper.class);
 
-	private CreateAccountMapper() {
-	}
+    @Mappings({
+            @Mapping(target = "countryEnum", source = "country"),
+            @Mapping(target = "genderEnum", source = "gender"),
+            @Mapping(target = "birthday", dateFormat = "yyyy-MM-dd"),
+            @Mapping(target = "image", source = "image")
+    })
+    abstract PersonalAccountEntity createAccountDtoToPersonalAccountEntity(CreateAccountDto dto);
 
-	public static CreateAccountMapper getInstance() {
-		return INSTANCE;
-	}
-
-	public PersonalAccountEntity mapOf(CreateAccountDto account) {
-
-		Part image = account.getImage();
-		PersonalAccountEntity personalAccountEntity = PersonalAccountEntity.builder().email(account.getEmail())
-				.password(account.getPassword()).name(account.getName()).surname(account.getSurname())
-				.image(USER_FOLDER + image == null ? "" : image.getSubmittedFileName())
-				.birthday(DateFormatter.getDate(account.getBirthday())).countryEnum(CountryEnum.getValue(account.getCountry()))
-				.city(account.getCity()).address(account.getAddress()).phoneNumber(account.getPhoneNumber())
-				.genderEnum(GenderEnum.valueOf(account.getGender())).build();
-		if (account.getImage().getSubmittedFileName().isBlank()) {
-			personalAccountEntity.setImage(DEFAULT_AVATAR);
-		}
-		return personalAccountEntity;
-	}
+    String mapImage(Part image) {
+        return image == null ? DEFAULT_AVATAR : USER_FOLDER + image.getSubmittedFileName();
+    }
 }

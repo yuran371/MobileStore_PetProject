@@ -1,4 +1,4 @@
-package dto;
+package dto.filter;
 
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;

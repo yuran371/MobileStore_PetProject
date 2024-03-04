@@ -2,7 +2,7 @@ package dao;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
-import dto.AttributesFilter;
+import dto.filter.AttributesFilter;
 import entity.ItemsEntity;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
