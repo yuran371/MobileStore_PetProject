@@ -6,6 +6,8 @@ import entity.enums.GenderEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
+import validator.CheckBirthday;
+import validator.CreateUserGroup;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     private String name;
     private String surname;
     private String image;
+    @CheckBirthday(groups = CreateUserGroup.class)
     private LocalDate birthday;
     @Enumerated(EnumType.STRING)
     private CountryEnum countryEnum;
