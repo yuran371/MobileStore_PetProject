@@ -22,7 +22,7 @@ public abstract class CreateAccountMapper {
             @Mapping(target = "birthday", dateFormat = "yyyy-MM-dd"),
             @Mapping(target = "image", source = "image")
     })
-    abstract PersonalAccountEntity createAccountDtoToPersonalAccountEntity(CreateAccountDto dto);
+    public abstract PersonalAccountEntity createAccountDtoToPersonalAccountEntity(CreateAccountDto dto);
 
     String mapImage(Part image) {
         return image == null ? DEFAULT_AVATAR : USER_FOLDER + image.getSubmittedFileName();

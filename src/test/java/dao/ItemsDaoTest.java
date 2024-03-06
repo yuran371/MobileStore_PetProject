@@ -1,6 +1,6 @@
 package dao;
 
-import dto.AttributesFilter;
+import dto.filter.AttributesFilter;
 import entity.ItemSalesInformationEntity;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
