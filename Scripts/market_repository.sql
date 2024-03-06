@@ -7,13 +7,14 @@ SET search_path TO market;
 CREATE TABLE items
 (
     item_id                   BIGSERIAl PRIMARY KEY,
-    brand                     VARCHAR(32) NOT NULL,
-    model                     VARCHAR(32) NOT NULL,
-    internal_memory           INT         NOT NULL,
-    RAM                       INT         NOT NULL,
-    color                     VARCHAR(32) NOT NULL,
-    OS                        VARCHAR(32) NOT NULL,
-    item_sales_information_id BIGINT      NOT NULL UNIQUE REFERENCES item_sales_information (id),
+    brand                     VARCHAR(32)  NOT NULL,
+    model                     VARCHAR(32)  NOT NULL,
+    internal_memory           INT          NOT NULL,
+    RAM                       INT          NOT NULL,
+    color                     VARCHAR(32)  NOT NULL,
+    OS                        VARCHAR(32)  NOT NULL,
+    image                     VARCHAR(124) NOT NULL,
+    item_sales_information_id BIGINT       NOT NULL UNIQUE REFERENCES item_sales_information (id),
     UNIQUE (model, internal_memory, RAM, color)
 );
 
@@ -32,7 +33,7 @@ CREATE EXTENSION pgcrypto;
 
 CREATE TABLE IF NOT EXISTS personal_account
 (
-    id   BIGSERIAL    NOT NULL UNIQUE,
+    id           BIGSERIAL    NOT NULL UNIQUE,
     email        VARCHAR(128) PRIMARY KEY,
     password     TEXT         NOT NULL,
     name         VARCHAR(32)  NOT NULL,
@@ -59,7 +60,7 @@ CREATE TABLE IF NOT EXISTS sell_history
     user_id   BIGINT,
     FOREIGN KEY (user_id) REFERENCES personal_account (id) ON DELETE RESTRICT,
     quantity  INT CHECK (quantity >= 0) NOT NULL,
-    price           NUMERIC(12, 2) CHECK (price > 0),
+    price     NUMERIC(12, 2) CHECK (price > 0),
     sell_date TIMESTAMPTZ               NOT NULL
 );
 

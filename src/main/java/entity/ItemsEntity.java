@@ -1,12 +1,12 @@
 package entity;
 
 import entity.enums.Attributes;
-import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.*;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
@@ -44,11 +44,11 @@ import java.util.List;
 @DynamicUpdate
 @Audited
 @AuditTable(value = "items_AUD", schema = "history", catalog = "market_repository")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ItemsEntity implements BaseEntity<Long> {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
 
@@ -74,6 +74,10 @@ public class ItemsEntity implements BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private Attributes.OperatingSystemEnum os;
 
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
     @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
     private ItemSalesInformationEntity itemSalesInformation;
 
@@ -82,13 +86,15 @@ public class ItemsEntity implements BaseEntity<Long> {
 
     @Builder.Default
     @OneToMany(mappedBy = "itemId", fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)     // При вызове session.persist(ItemEntity) также сохранятся все связанные sellHistoryEntity
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    // При вызове session.persist(ItemEntity) также сохранятся все связанные sellHistoryEntity
     private List<SellHistoryEntity> phoneOrders = new ArrayList<>();
 
     public void addPhoneOrder(SellHistoryEntity phoneOrder) {
         phoneOrders.add(phoneOrder);
         phoneOrder.setItemId(this);
     }
+
     public void removePhoneOrder(SellHistoryEntity itemOrder) {
         phoneOrders.remove(itemOrder);
         itemOrder.setItemId(null);

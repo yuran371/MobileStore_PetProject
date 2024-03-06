@@ -3,7 +3,7 @@ package dto;
 import lombok.Value;
 
 @Value
-public class ItemsFilterDto {
+public class OldItemsFilterDto {
 	// record (Long itemId, String model, String brand, Double price, String
 	// currency)
 	Long itemId;
