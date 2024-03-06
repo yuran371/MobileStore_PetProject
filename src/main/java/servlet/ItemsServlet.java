@@ -1,13 +1,10 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import dto.CreateAccountDto;
-import dto.ItemsFilterDto;
-import dto.ReadUserDto;
+import dto.OldItemsFilterDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -65,7 +62,7 @@ public class ItemsServlet extends HttpServlet {
 			if (submitParameter.equals("AllPhones")) {
 				req.setAttribute(ITEMS, itemsService.findAllItems());
 			} else {
-				List<ItemsFilterDto> brand = itemsService.findBrand(submitParameter);
+				List<OldItemsFilterDto> brand = itemsService.findBrand(submitParameter);
 				req.setAttribute(ITEMS, brand);
 			}
 			req.getRequestDispatcher(JspHelper.getUrl("items")).forward(req, resp);

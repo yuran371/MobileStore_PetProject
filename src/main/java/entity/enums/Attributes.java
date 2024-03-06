@@ -52,7 +52,13 @@ public class Attributes {
     }
 
     public enum RamEnum {
-        gb_2(2), gb_3(3), gb_4(4), gb_6(6), gb_8(8), gb_12(12), gb_16(16);
+        gb_2(2),
+        gb_3(3),
+        gb_4(4),
+        gb_6(6),
+        gb_8(8),
+        gb_12(12),
+        gb_16(16);
 
         private int capacityRam;
 

@@ -182,7 +182,9 @@ public class ItemsDaoTest {
                 .build();
         session.beginTransaction();
         session.clear();
-        List<ItemsEntity> itemsWithFiltering = itemsDao.findItemsWithParameters(filter, session);
+        long page = 1;
+        long limit = 3;
+        List<ItemsEntity> itemsWithFiltering = itemsDao.findItemsWithParameters(filter, page, limit);
         session.getTransaction()
                 .commit();
         assertThat(itemsWithFiltering.get(0)).isEqualTo(expected);
@@ -268,6 +270,7 @@ public class ItemsDaoTest {
                 .ram(gb_4)
                 .color("yellow")
                 .os(ANDROID)
+                .image(new byte[0])
                 .itemSalesInformation(ItemSalesInformationEntity.builder()
                         .price(999.99)
                         .currency(CurrencyEnum.$)

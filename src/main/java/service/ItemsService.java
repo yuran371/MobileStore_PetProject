@@ -1,6 +1,6 @@
 package service;
 
-import dto.ItemsFilterDto;
+import dto.OldItemsFilterDto;
 
 import java.util.List;
 
@@ -16,13 +16,13 @@ public class ItemsService {
 		return INSTANCE;
 	}
 
-	public List<ItemsFilterDto> findAllItems() {
+	public List<OldItemsFilterDto> findAllItems() {
 //		return InstanceDao.findAll().stream().map(entity -> new ItemsFilterDto(entity.getId(), entity.getModel(),
 //				entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name())).collect(Collectors.toList());
 		return null;
 	}
 
-	public List<ItemsFilterDto> findBrand(String brand) {
+	public List<OldItemsFilterDto> findBrand(String brand) {
 //		return InstanceDao.findByBrand(brand).stream().map(entity -> new ItemsFilterDto(entity.getId(),
 //				entity.getModel(), entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name()))
 //				.collect(Collectors.toList());
