@@ -1,6 +1,6 @@
 package mapper;
 
-import dto.UserInfoDto;
+import dto.personalAccount.ReadUserInfoDto;
 import entity.PersonalAccountEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -8,14 +8,16 @@ import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ON_IMPLICIT_CONVERSION, uses = UserSellHistoryMapper.class)
-public abstract class UserInfoMapper {
+public abstract class ReadUserInfoMapper {
 
-    public static UserInfoMapper INSTANCE = Mappers.getMapper(UserInfoMapper.class);
+    public static ReadUserInfoMapper INSTANCE = Mappers.getMapper(ReadUserInfoMapper.class);
 
     @Mapping(target = "gender", source = "genderEnum")
     @Mapping(target = "country", source = "countryEnum")
     @Mapping(target = "purchases", source = "phonePurchases")
-    abstract UserInfoDto personalAccountEntityToUserInfoDto(PersonalAccountEntity entity);
-
+    @Mapping(target = "id", source = "id")
+    //todo Add token for ID
+    public abstract ReadUserInfoDto personalAccountEntityToUserInfoDto(PersonalAccountEntity entity);
+        
 }
 

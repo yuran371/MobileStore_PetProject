@@ -1,10 +1,9 @@
-package util;
+package utlis;
 
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.testcontainers.containers.PostgreSQLContainer;
-import utlis.HibernateSessionFactory;
 
 import java.nio.file.Path;
 
@@ -13,8 +12,12 @@ public class HibernateTestUtil {
 
     public static final PostgreSQLContainer<?> testContainer = new PostgreSQLContainer<>("postgres:16");
     private static final Path PATH_TO_CFG = Path.of("src/test/resources/hibernate.cfg.xml");
+
+    public static final SessionFactory sessionFactory;
+
     static {
         testContainer.start();
+        sessionFactory = getSessionFactory();
     }
 
     public static SessionFactory getSessionFactory() {

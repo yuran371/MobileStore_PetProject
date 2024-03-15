@@ -2,7 +2,7 @@ package mapper;
 
 import dao.DaoTestFields;
 import dao.PersonalAccountDao;
-import dto.UserInfoDto;
+import dto.personalAccount.ReadUserInfoDto;
 import entity.PersonalAccountEntity;
 import extentions.AddTestEntitiesExtension;
 import extentions.DaoTestResolver;
@@ -18,12 +18,12 @@ import java.util.Map;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith({AddTestEntitiesExtension.class, DaoTestResolver.class})
-public class UserInfoMapperTest extends DaoTestFields {
+public class ReadUserInfoMapperTest extends DaoTestFields {
 
     public SessionFactory sessionFactory;
     public PersonalAccountDao personalAccountDao;
 
-    public UserInfoMapperTest(SessionFactory sessionFactory, PersonalAccountDao personalAccountDao) {
+    public ReadUserInfoMapperTest(SessionFactory sessionFactory, PersonalAccountDao personalAccountDao) {
         this.sessionFactory = sessionFactory;
         this.personalAccountDao = personalAccountDao;
     }
@@ -35,7 +35,7 @@ public class UserInfoMapperTest extends DaoTestFields {
         Map<String, Object> properties = Map.of(GraphSemantic.LOAD.getJakartaHintName(),
                                                 currentSession.getEntityGraph("withItems"));
         PersonalAccountEntity personalAccountEntity = currentSession.find(PersonalAccountEntity.class, 1L, properties);
-        UserInfoDto userInfoDto = UserInfoMapper.INSTANCE.personalAccountEntityToUserInfoDto(personalAccountEntity);
+        ReadUserInfoDto userInfoDto = ReadUserInfoMapper.INSTANCE.personalAccountEntityToUserInfoDto(personalAccountEntity);
         System.out.println();
         currentSession.getTransaction().commit();
     }

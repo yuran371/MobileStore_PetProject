@@ -9,7 +9,7 @@ import lombok.Cleanup;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import util.EntityHandler;
-import util.HibernateTestUtil;
+import utlis.HibernateTestUtil;
 
 import java.util.List;
 

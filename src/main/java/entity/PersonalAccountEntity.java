@@ -7,7 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
 import validator.CheckBirthday;
-import validator.CreateUserGroup;
+import validator.CreateUpdateUserGroup;
+import validator.UniqueEmail;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @UniqueEmail(groups = CreateUpdateUserGroup.class)
     private String email;
     @ColumnTransformer(read = "pgp_sym_decrypt(" +
             "password::bytea, " +
@@ -55,7 +57,7 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     private String name;
     private String surname;
     private String image;
-    @CheckBirthday(groups = CreateUserGroup.class)
+    @CheckBirthday(groups = CreateUpdateUserGroup.class)
     private LocalDate birthday;
     @Enumerated(EnumType.STRING)
     private CountryEnum countryEnum;
@@ -64,6 +66,8 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private GenderEnum genderEnum;
+    @Column(name = "confirmed_email", nullable = false)
+    private boolean confirmedAccount;
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SellHistoryEntity> phonePurchases = new ArrayList<>();

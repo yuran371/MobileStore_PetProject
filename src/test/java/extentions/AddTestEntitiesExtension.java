@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import util.EntityHandler;
-import util.HibernateTestUtil;
+import utlis.HibernateTestUtil;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class AddTestEntitiesExtension implements BeforeAllCallback, AfterAllCall
     public void beforeAll(ExtensionContext context) throws Exception {
         Store store = context.getStore(Namespace.create(SESSION_FACTORY_CLASS.getSimpleName()));
         sessionFactory = (SessionFactory) store.getOrComputeIfAbsent(SESSION_FACTORY_CLASS,
-                                                                     sessionFactoryClass -> HibernateTestUtil.getSessionFactory());
+                                                                     sessionFactoryClass -> HibernateTestUtil.sessionFactory);
         itemsEntitiesList = EntityHandler.getItemsEntities();
         personalAccountEntitiesList = EntityHandler.getPersonalAccountEntities();
         @Cleanup var session = sessionFactory.openSession();

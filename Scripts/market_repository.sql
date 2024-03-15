@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS personal_account
     phone_number TEXT
         CONSTRAINT phone_number_constraint NOT NULL,
     genderEnum   VARCHAR(12)  NOT NULL,
+    confirmed_email BOOLEAN NOT NULL,
     CONSTRAINT birthday_constraint CHECK (DATE_PART('year', current_date) - DATE_PART('year', birthday) > 18),
     CONSTRAINT phone_number_constraint CHECK (((phone_number ~ '\+7[0-9]{10}$') AND
                                                (countryEnum = 'russia' OR countryEnum = 'россия'))
