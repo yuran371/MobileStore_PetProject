@@ -10,13 +10,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.ItemsService;
+import service.OldItemsService;
 import utlis.JspHelper;
 
 @WebServlet("/items")
 public class ItemsServlet extends HttpServlet {
 
-	private final ItemsService itemsService = ItemsService.getInstance();
+	private final OldItemsService oldItemsService = OldItemsService.getInstance();
 	private final static String AUTHORIZATION_STATUS = "AuthorizationStatus";
 	private final static String USER = "User";
 	private final static String ITEMS = "items";
@@ -26,7 +26,7 @@ public class ItemsServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
-		req.setAttribute(ITEMS, itemsService.findAllItems());
+		req.setAttribute(ITEMS, oldItemsService.findAllItems());
 		req.getRequestDispatcher(JspHelper.getUrl("items")).forward(req, resp);
 
 //		==================================
@@ -60,9 +60,9 @@ public class ItemsServlet extends HttpServlet {
 			resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 			String submitParameter = req.getParameter(BRAND);
 			if (submitParameter.equals("AllPhones")) {
-				req.setAttribute(ITEMS, itemsService.findAllItems());
+				req.setAttribute(ITEMS, oldItemsService.findAllItems());
 			} else {
-				List<OldItemsFilterDto> brand = itemsService.findBrand(submitParameter);
+				List<OldItemsFilterDto> brand = oldItemsService.findBrand(submitParameter);
 				req.setAttribute(ITEMS, brand);
 			}
 			req.getRequestDispatcher(JspHelper.getUrl("items")).forward(req, resp);

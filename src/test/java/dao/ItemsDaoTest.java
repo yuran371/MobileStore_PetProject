@@ -9,18 +9,18 @@ import entity.enums.Attributes;
 import entity.enums.CountryEnum;
 import entity.enums.CurrencyEnum;
 import entity.enums.GenderEnum;
+import extentions.DaoTestResolver;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.EntityHandler;
-import utlis.HibernateTestUtil;
 
-import java.lang.reflect.Proxy;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -32,21 +32,23 @@ import static entity.enums.Attributes.OperatingSystemEnum.ANDROID;
 import static entity.enums.Attributes.OperatingSystemEnum.IOS;
 import static entity.enums.Attributes.RamEnum.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static util.EntityHandler.persistEntitiesList;
 
-@TestInstance(PER_METHOD)
+@TestInstance(PER_CLASS)
 @Tag(value = "ItemsDaoTest")
+@ExtendWith(value = {DaoTestResolver.class})
 public class ItemsDaoTest {
+    private final ItemsDao itemsDao;
+    private final SessionFactory sessionFactory;
+    public ItemsDaoTest(ItemsDao itemsDao, SessionFactory sessionFactory) {
+        this.itemsDao = itemsDao;
+        this.sessionFactory = sessionFactory;
+    }
     @ParameterizedTest
     @MethodSource("argumentsWithOneItem")
     void insert_true(ItemsEntity itemEntity) {
-        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-
-        ItemsDao itemsDao = new ItemsDao(session);
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
         ItemsEntity insertedItem = itemsDao.insert(itemEntity)
                 .get();
@@ -59,36 +61,30 @@ public class ItemsDaoTest {
     @ParameterizedTest
     @MethodSource("argumentsWithOneItem")
     void update_true(ItemsEntity itemEntity) {
-        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-
-        ItemsDao itemsDao = new ItemsDao(session);
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
-        ItemsEntity updated = itemsDao.insert(itemEntity)
-                .get();
-        updated.setOs(IOS);
-        itemsDao.update(updated);
-        ItemsEntity actual = session.get(ItemsEntity.class, updated.getId());
+//        ItemsEntity updated = itemsDao.insert(itemEntity)
+//                .get();
+//        updated.setOs(IOS);
+        itemEntity.setId(100l);
+        itemsDao.update(itemEntity);
+        ItemsEntity actual = session.get(ItemsEntity.class, itemEntity.getId());
         session.getTransaction()
                 .commit();
-        assertThat(actual).isEqualTo(updated);
+        assertThat(actual).isEqualTo(itemEntity);
     }
 
     @ParameterizedTest
     @MethodSource("argumentsWithOneItem")
     void remove_true(ItemsEntity itemEntity) {
-        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-        ItemsDao itemsDao = new ItemsDao(session);
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
         ItemsEntity inserted = itemsDao.insert(itemEntity)
                 .get();
-        itemsDao.delete(inserted);
-        ItemsEntity itemsEntityAfterDelete = session.get(ItemsEntity.class, inserted.getId());
+        inserted.setId(100l);
+        inserted.getItemSalesInformation().setId(12l);
+        itemsDao.delete(itemEntity);
+        ItemsEntity itemsEntityAfterDelete = session.get(ItemsEntity.class, itemEntity.getId());
         session.getTransaction()
                 .commit();
         assertThat(itemsEntityAfterDelete).isNull();
@@ -97,11 +93,7 @@ public class ItemsDaoTest {
     @ParameterizedTest
     @MethodSource("argumentsWithOneItem")
     void getById_true(ItemsEntity itemEntity) {
-        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-        ItemsDao itemsDao = new ItemsDao(session);
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
         ItemsEntity inserted = itemsDao.insert(itemEntity)
                 .get();
@@ -116,17 +108,12 @@ public class ItemsDaoTest {
     @Test
     void countItems_countIs3_True() {
         List<ItemsEntity> items = EntityHandler.getItemsEntities();
-        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-        ItemsDao itemsDao = new ItemsDao(session);
-        persistEntitiesList(items, session);
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
+        persistEntitiesList(items, session);
         long page = 2;
         long limit = 3;
         List<ItemsEntity> offsetLimitList = itemsDao.findItemsOnSpecificPage(page, limit);
-
         session.getTransaction()
                 .commit();
         assertThat(offsetLimitList.size()).isEqualTo(3);
@@ -135,13 +122,9 @@ public class ItemsDaoTest {
     @Test
     void isFirstEntityOnThirdPage_isEqualExpectedEntity_True() {
         List<ItemsEntity> items = EntityHandler.getItemsEntities();
-        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-        ItemsDao itemsDao = new ItemsDao(session);
-        persistEntitiesList(items, session);
+        Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
+        persistEntitiesList(items, session);
         long page = 3;
         long limit = 3;
         List<ItemsEntity> offsetLimitList = itemsDao.findItemsOnSpecificPage(page, limit);
@@ -155,11 +138,8 @@ public class ItemsDaoTest {
     @Test
     void isEntityGetsByUsingQuerydslFiltering_isEqualExpectedEntity_True() {
         List<ItemsEntity> items = EntityHandler.getItemsEntities();
-        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-        ItemsDao itemsDao = new ItemsDao(session);
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
         persistEntitiesList(items, session);
         AttributesFilter filter = AttributesFilter.builder()
                 .brand(APPLE)
@@ -180,7 +160,6 @@ public class ItemsDaoTest {
                         .quantity(83)
                         .build())
                 .build();
-        session.beginTransaction();
         session.clear();
         long page = 1;
         long limit = 3;

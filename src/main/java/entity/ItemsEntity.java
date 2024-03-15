@@ -93,6 +93,7 @@ public class ItemsEntity implements BaseEntity<Long> {
     public void addPhoneOrder(SellHistoryEntity phoneOrder) {
         phoneOrders.add(phoneOrder);
         phoneOrder.setItemId(this);
+        phoneOrder.setPrice(this.getItemSalesInformation().getPrice());
     }
 
     public void removePhoneOrder(SellHistoryEntity itemOrder) {

@@ -23,16 +23,19 @@ public class ItemsInfoMapperTest {
                 .os(itemsEntity.getOs()
                         .getOs())
                 .image(itemsEntity.getImage())
-                .internalMemory(itemsEntity.getInternalMemory()
-                        .getCapacityInternal())
-                .ram(itemsEntity.getRam()
-                        .getCapacityRam())
-                .price(itemsEntity.getItemSalesInformation()
-                        .getPrice())
+                .internalMemory(String.valueOf(itemsEntity.getInternalMemory()
+                        .getInternalMemory()))
+                .ram(String.valueOf(itemsEntity.getRam()
+                        .getRam()))
+                .price(String.valueOf(itemsEntity.getItemSalesInformation()
+                        .getPrice()))
                 .currency(itemsEntity.getItemSalesInformation()
                         .getCurrency()
                         .toString())
                 .build();
+        String s = String.valueOf(itemsEntity.getInternalMemory()
+                .getInternalMemory());
+        System.out.println(s);
         assertThat(actual).isEqualTo(expected);
     }
 

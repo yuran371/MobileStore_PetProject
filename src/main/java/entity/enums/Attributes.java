@@ -31,43 +31,43 @@ public class Attributes {
     }
 
     public enum InternalMemoryEnum {
-        GB_16(16),
-        GB_32(32),
-        GB_64(64),
-        GB_128(128),
-        GB_256(256),
-        GB_512(512),
-        GB_1024(1024);
+        GB_16("16"),
+        GB_32("32"),
+        GB_64("64"),
+        GB_128("128"),
+        GB_256("256"),
+        GB_512("512"),
+        GB_1024("1024");
 
-        private int capacityInternal;
+        private String internalMemory;
 
-        InternalMemoryEnum(int capacityInternal) {
-            this.capacityInternal = capacityInternal;
+        InternalMemoryEnum(String internalMemory) {
+            this.internalMemory = internalMemory;
         }
 
-        public int getCapacityInternal() {
-            return capacityInternal;
+        public String getInternalMemory() {
+            return internalMemory;
         }
 
     }
 
     public enum RamEnum {
-        gb_2(2),
-        gb_3(3),
-        gb_4(4),
-        gb_6(6),
-        gb_8(8),
-        gb_12(12),
-        gb_16(16);
+        gb_2("2"),
+        gb_3("3"),
+        gb_4("4"),
+        gb_6("6"),
+        gb_8("8"),
+        gb_12("12"),
+        gb_16("16");
 
-        private int capacityRam;
+        private String ram;
 
-        RamEnum(int capacityRam) {
-            this.capacityRam = capacityRam;
+        RamEnum(String ram) {
+            this.ram = ram;
         }
 
-        public int getCapacityRam() {
-            return capacityRam;
+        public String getRam() {
+            return ram;
         }
 
     }

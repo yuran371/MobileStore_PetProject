@@ -28,11 +28,11 @@ public abstract class ItemsInfoMapper {
     protected String inputEnumToString(Attributes.OperatingSystemEnum os) {
         return os.getOs();
     }
-    protected int inputEnumToString(Attributes.InternalMemoryEnum internalMemory) {
-        return internalMemory.getCapacityInternal();
+    protected String inputEnumToString(Attributes.InternalMemoryEnum internalMemory) {
+        return internalMemory.getInternalMemory();
     }
-    protected int inputEnumToString(Attributes.RamEnum ram) {
-        return ram.getCapacityRam();
+    protected String inputEnumToString(Attributes.RamEnum ram) {
+        return ram.getRam();
     }
 
 }

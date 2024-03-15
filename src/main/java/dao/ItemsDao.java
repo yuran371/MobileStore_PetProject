@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import dto.filter.AttributesFilter;
 import entity.ItemsEntity;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,8 +15,9 @@ import static entity.QItemsEntity.itemsEntity;
 @Slf4j
 public class ItemsDao extends DaoBase<Long, ItemsEntity> {
 
+    @Inject
     public ItemsDao(EntityManager entityManager) {
-        super( entityManager, ItemsEntity.class);
+        super(entityManager, ItemsEntity.class);
     }
 
     public List<ItemsEntity> findItemsOnSpecificPage(long page, long limit) {

@@ -1,21 +1,19 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
-import dto.ItemsFindByIdDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.ItemFindByIdService;
+import service.OldItemFindByIdService;
 
 @WebServlet("/items-parameters")
 public class ItemsParametersServlet extends HttpServlet {
 
-	private final ItemFindByIdService instanceService = ItemFindByIdService.getInstance();
+	private final OldItemFindByIdService instanceService = OldItemFindByIdService.getInstance();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

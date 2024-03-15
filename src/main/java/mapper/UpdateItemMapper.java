@@ -1,8 +1,7 @@
 package mapper;
 
-import dto.AddItemDto;
+import dto.UpdateItemDto;
 import entity.ItemsEntity;
-import entity.enums.Attributes;
 import entity.enums.Attributes.BrandEnum;
 import entity.enums.Attributes.InternalMemoryEnum;
 import entity.enums.Attributes.OperatingSystemEnum;
@@ -12,9 +11,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public abstract class AddItemMapper implements MapperInt {
-    public static AddItemMapper INSTANCE = Mappers.getMapper(AddItemMapper.class);
+public abstract class UpdateItemMapper implements MapperInt {
+    public static UpdateItemMapper INSTANCE = Mappers.getMapper(UpdateItemMapper.class);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "model", target = "model")
     @Mapping(source = "brand", target = "brand")
     @Mapping(source = "color", target = "color")
@@ -25,8 +25,9 @@ public abstract class AddItemMapper implements MapperInt {
     @Mapping(source = "price", target = "itemSalesInformation.price")
     @Mapping(source = "currency", target = "itemSalesInformation.currency")
     @Mapping(source = "quantity", target = "itemSalesInformation.quantity")
-    public abstract ItemsEntity toEntity(AddItemDto addItemDto);
+    public abstract ItemsEntity toEntity(UpdateItemDto updateItemDto);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "model", target = "model")
     @Mapping(source = "brand", target = "brand")
     @Mapping(source = "color", target = "color")
@@ -37,7 +38,7 @@ public abstract class AddItemMapper implements MapperInt {
     @Mapping(source = "itemSalesInformation.price", target = "price")
     @Mapping(source = "itemSalesInformation.currency", target = "currency")
     @Mapping(source = "itemSalesInformation.quantity", target = "quantity")
-    public abstract AddItemDto toDto(ItemsEntity itemsEntity);
+    public abstract UpdateItemDto toDto(ItemsEntity itemsEntity);
 
     protected BrandEnum stringToInputEnum(String brand) {
         for (BrandEnum o : BrandEnum.values()) {
@@ -75,19 +76,19 @@ public abstract class AddItemMapper implements MapperInt {
         return null;
     }
 
-    protected String inputEnumToString(Attributes.BrandEnum brand) {
+    protected String inputEnumToString(BrandEnum brand) {
         return brand.getBrand();
     }
 
-    protected String inputEnumToString(Attributes.OperatingSystemEnum os) {
+    protected String inputEnumToString(OperatingSystemEnum os) {
         return os.getOs();
     }
 
-    protected String inputEnumToString(Attributes.InternalMemoryEnum internalMemory) {
+    protected String inputEnumToString(InternalMemoryEnum internalMemory) {
         return internalMemory.getInternalMemory();
     }
 
-    protected String inputEnumToString(Attributes.RamEnum ram) {
+    protected String inputEnumToString(RamEnum ram) {
         return ram.getRam();
     }
 
