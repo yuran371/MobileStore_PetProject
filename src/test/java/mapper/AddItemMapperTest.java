@@ -21,17 +21,19 @@ public class AddItemMapperTest {
                 .os(itemsEntity.getOs()
                         .getOs())
                 .image(itemsEntity.getImage())
-                .internalMemory(Integer.toString(itemsEntity.getInternalMemory().getCapacityInternal()))
-                .ram(Integer.toString(itemsEntity.getRam()
-                        .getCapacityRam()))
-                .price(itemsEntity.getItemSalesInformation()
-                        .getPrice())
+                .internalMemory(itemsEntity.getInternalMemory().getInternalMemory())
+                .ram(itemsEntity.getRam()
+                        .getRam())
+                .price(String.valueOf(itemsEntity.getItemSalesInformation()
+                        .getPrice()))
                 .currency(itemsEntity.getItemSalesInformation()
                         .getCurrency().toString())
                 .quantity(itemsEntity.getItemSalesInformation().getQuantity().toString())
                 .build();
-        ItemsEntity actual = AddItemMapper.INSTANCE.toEntity(addItemDto);
-        assertThat(actual).isEqualTo(itemsEntity);
+        ItemsEntity actualToEntity = AddItemMapper.INSTANCE.toEntity(addItemDto);
+        var actualToDto = AddItemMapper.INSTANCE.toDto(itemsEntity);
+        assertThat(actualToEntity).isEqualTo(itemsEntity);
+        assertThat(actualToDto).isEqualTo(addItemDto);
     }
 
 }

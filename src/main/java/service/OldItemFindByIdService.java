@@ -1,12 +1,12 @@
 package service;
 
-public class ItemFindByIdService {
-	private static ItemFindByIdService INSTANCE = new ItemFindByIdService();
+public class OldItemFindByIdService {
+	private static OldItemFindByIdService INSTANCE = new OldItemFindByIdService();
 
-	private ItemFindByIdService() {
+	private OldItemFindByIdService() {
 	}
 
-	public static ItemFindByIdService getInstance() {
+	public static OldItemFindByIdService getInstance() {
 		return INSTANCE;
 	}
 

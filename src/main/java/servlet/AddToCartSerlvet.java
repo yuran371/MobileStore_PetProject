@@ -2,7 +2,7 @@ package servlet;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
-import service.ItemsService;
+import service.OldItemsService;
 
 @WebServlet("/items-add-to-cart")
 public class AddToCartSerlvet extends HttpServlet {
@@ -10,7 +10,7 @@ public class AddToCartSerlvet extends HttpServlet {
 	private final static String USER = "User";
 	private final static String CART = "Cart";
 	private final static String CART_STATUS = "CartStatus";
-	private final static ItemsService itemsService = ItemsService.getInstance();
+	private final static OldItemsService OLD_ITEMS_SERVICE = OldItemsService.getInstance();
 
 	public static enum CartStatus {
 		INVALID_QUANTITY, HAVE_ITEMS

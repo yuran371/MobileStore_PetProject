@@ -227,10 +227,7 @@ public class EntityHandler {
     public static <T> void persistEntitiesList(List<T> list, Session session) {
         list.stream()
                 .map(element -> {
-                    session.beginTransaction();
                     session.persist(element);
-                    session.getTransaction()
-                            .commit();
                     return element;
                 })
                 .collect(Collectors.toList());
