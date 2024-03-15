@@ -1,6 +1,6 @@
 package mapper;
 
-import dto.UserSellHistoryDto;
+import dto.personalAccount.UserSellHistoryDto;
 import entity.SellHistoryEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -34,8 +35,8 @@ public abstract class DaoBase<K extends Serializable, E extends BaseEntity<K>> i
     }
 
     @Override
-    public Optional<E> getById(K id) {
-        return Optional.ofNullable(entityManager.find(clazz, id));
+    public Optional<E> getById(K id, Map<String, Object> properties) {
+        return Optional.ofNullable(entityManager.find(clazz, id, properties));
     }
 
 }

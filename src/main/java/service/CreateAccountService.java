@@ -1,6 +1,6 @@
 package service;
 
-import dto.CreateAccountDto;
+import dto.personalAccount.CreateAccountDto;
 import io.vavr.control.Either;
 import lombok.SneakyThrows;
 import validator.CreateAccountValidator;

@@ -18,7 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.EntityHandler;
-import util.HibernateTestUtil;
+import utlis.HibernateTestUtil;
 
 import java.lang.reflect.Proxy;
 import java.time.LocalDate;

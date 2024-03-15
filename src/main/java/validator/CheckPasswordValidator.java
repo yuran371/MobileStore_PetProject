@@ -13,7 +13,6 @@ public class CheckPasswordValidator implements ConstraintValidator<CheckPassword
         if (value == null || value.isBlank()) {
             return true;
         }
-        boolean matches = textPattern.matcher(value).matches();
-        return matches;
+        return textPattern.matcher(value).matches();
     }
 }

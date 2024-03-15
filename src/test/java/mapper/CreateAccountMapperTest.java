@@ -1,7 +1,7 @@
 package mapper;
 
 
-import dto.CreateAccountDto;
+import dto.personalAccount.CreateAccountDto;
 import entity.PersonalAccountEntity;
 import org.junit.jupiter.api.Test;
 
