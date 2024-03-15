@@ -7,6 +7,7 @@ import dto.filter.PersonalAccountFilter;
 import entity.ItemsEntity;
 import entity.PersonalAccountEntity;
 import entity.SellHistoryEntity;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.graph.GraphSemantic;
@@ -21,6 +22,7 @@ import static entity.QSellHistoryEntity.sellHistoryEntity;
 @Slf4j
 public class PersonalAccountDao extends DaoBase<Long, PersonalAccountEntity> {
 
+    @Inject
     public PersonalAccountDao(EntityManager entityManager) {
         super(entityManager, PersonalAccountEntity.class);
     }
@@ -94,5 +96,4 @@ public class PersonalAccountDao extends DaoBase<Long, PersonalAccountEntity> {
                 .where(predicate)
                 .fetch();
     }
-
 }

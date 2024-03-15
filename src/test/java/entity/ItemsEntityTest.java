@@ -8,7 +8,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.EntityHandler;
-import util.HibernateTestUtil;
+import utlis.HibernateTestUtil;
 
 import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;

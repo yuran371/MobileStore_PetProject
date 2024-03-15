@@ -1,13 +1,10 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import dto.CreateAccountDto;
 import dto.ItemsFilterDto;
-import dto.ReadUserDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

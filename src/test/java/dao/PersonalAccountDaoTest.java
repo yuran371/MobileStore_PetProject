@@ -19,12 +19,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.EntityHandler;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @TestInstance(PER_CLASS)
@@ -55,7 +57,7 @@ public class PersonalAccountDaoTest extends DaoTestFields {
     @Tag("Unit")
     @ParameterizedTest
     @MethodSource("dao.PersonalAccountDaoTest#argumentsPersonalAccount")
-    void delete_ExistingUser_returnTrue(PersonalAccountEntity account) {
+    void delete_existingUser_returnTrue(PersonalAccountEntity account) {
         var session = sessionFactory.getCurrentSession();
         session.beginTransaction();
         session.persist(account);
@@ -64,6 +66,43 @@ public class PersonalAccountDaoTest extends DaoTestFields {
         session.getTransaction().commit();
     }
 
+    @Tag("Unit")
+    @Test
+    void delete_notExistingUser_throwException() {
+        var session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        PersonalAccountEntity account = PersonalAccountEntity.builder().id(1000L).build();
+        assertThatThrownBy(() -> personalAccountDao.delete(account)).isInstanceOf(UndeclaredThrowableException.class);
+        session.getTransaction().commit();
+    }
+
+    @Tag("Unit")
+    @Test
+    void update_notExistingUser_returnFalse() {
+        Session currentSession = sessionFactory.getCurrentSession();
+        currentSession.beginTransaction();
+        PersonalAccountEntity personalAccountEntity = PersonalAccountEntity.builder().id(10000L).build();
+        personalAccountDao.update(personalAccountEntity);
+        currentSession.getTransaction().commit();
+        Session currentSession1 = sessionFactory.getCurrentSession();
+        currentSession1.beginTransaction();
+        Optional<PersonalAccountEntity> byId = personalAccountDao.getById(10000L);
+        currentSession1.getTransaction().commit();
+        System.out.println();
+    }
+
+    @Tag("Unit")
+    @Test
+    void getById_haveUsers_returnEntity() {
+        var session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        PersonalAccountEntity entityFromList = personalAccountEntities.get(0);
+        var resultList = personalAccountDao.getById(entityFromList.getId());
+        assertThat(resultList).isNotEmpty();
+        resultList.get().getPhonePurchases();
+        assertThat(resultList.get()).isEqualTo(entityFromList);
+        session.getTransaction().commit();
+    }
     @Tag("Unit")
     @Test
     void getAll_haveUsers_returnAll() {
@@ -131,6 +170,7 @@ public class PersonalAccountDaoTest extends DaoTestFields {
             SellHistoryEntity sellHistoryEntity = sells.get(i);
             sellHistoryEntity.setUser(account);
             sellHistoryEntity.setItemId(items.get(i));
+            sellHistoryEntity.setPrice(items.get(i).getItemSalesInformation().getPrice());
         }
         EntityHandler.persistEntitiesList(sells, session);
         Session currentSession = sessionFactory.getCurrentSession();
