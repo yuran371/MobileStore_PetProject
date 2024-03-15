@@ -1,4 +1,4 @@
-package dto;
+package dto.personalAccount;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

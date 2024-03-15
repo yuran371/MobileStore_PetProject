@@ -3,7 +3,7 @@ package mapper;
 import dao.DaoTestFields;
 import dao.PersonalAccountDao;
 import dao.SellHistoryDao;
-import dto.UserSellHistoryDto;
+import dto.personalAccount.UserSellHistoryDto;
 import entity.SellHistoryEntity;
 import extentions.AddTestEntitiesExtension;
 import extentions.DaoTestResolver;

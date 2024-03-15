@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
-import util.HibernateTestUtil;
+import utlis.HibernateTestUtil;
 
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;

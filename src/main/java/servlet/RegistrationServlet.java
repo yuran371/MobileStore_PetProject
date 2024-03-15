@@ -1,6 +1,6 @@
 package servlet;
 
-import dto.CreateAccountDto;
+import dto.personalAccount.CreateAccountDto;
 import entity.enums.CountryEnum;
 import entity.enums.GenderEnum;
 import jakarta.servlet.ServletException;

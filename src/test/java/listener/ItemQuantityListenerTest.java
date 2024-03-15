@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import util.EntityHandler;
-import util.HibernateTestUtil;
+import utlis.HibernateTestUtil;
 
 import java.util.List;
 

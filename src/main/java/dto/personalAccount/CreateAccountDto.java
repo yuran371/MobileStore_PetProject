@@ -1,4 +1,4 @@
-package dto;
+package dto.personalAccount;
 
 import jakarta.servlet.http.Part;
 import jakarta.validation.constraints.Email;

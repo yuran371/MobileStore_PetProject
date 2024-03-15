@@ -1,4 +1,4 @@
-package dto;
+package dto.personalAccount;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class UserInfoDto {
+public class ReadUserInfoDto {
 
+    String id;
     String email;
     String name;
     String surname;
