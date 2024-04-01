@@ -63,10 +63,9 @@ public class ItemsDaoTest {
     void update_true(ItemsEntity itemEntity) {
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
-//        ItemsEntity updated = itemsDao.insert(itemEntity)
-//                .get();
-//        updated.setOs(IOS);
-        itemEntity.setId(100l);
+        ItemsEntity updated = itemsDao.insert(itemEntity)
+                .get();
+        updated.setOs(IOS);
         itemsDao.update(itemEntity);
         ItemsEntity actual = session.get(ItemsEntity.class, itemEntity.getId());
         session.getTransaction()

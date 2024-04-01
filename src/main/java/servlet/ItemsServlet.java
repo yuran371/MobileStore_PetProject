@@ -1,33 +1,44 @@
 package servlet;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import dto.OldItemsFilterDto;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.OldItemsService;
+import lombok.Cleanup;
+import service.ItemsService;
 import utlis.JspHelper;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/items")
 public class ItemsServlet extends HttpServlet {
 
-	private final OldItemsService oldItemsService = OldItemsService.getInstance();
+	private final ItemsService ItemsService;
 	private final static String AUTHORIZATION_STATUS = "AuthorizationStatus";
 	private final static String USER = "User";
 	private final static String ITEMS = "items";
 	private final static String BRAND = "brand";
 
-	@Override
+	@Inject
+    public ItemsServlet(service.ItemsService itemsService) {
+        ItemsService = itemsService;
+    }
+
+    @Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		resp.setContentType("text/html");
-		req.setAttribute(ITEMS, oldItemsService.findAllItems());
+//		req.setAttribute(ITEMS, ItemsService.findItemsWithParameters(AttributesFilter.builder().build(), 2, 3));
 		req.getRequestDispatcher(JspHelper.getUrl("items")).forward(req, resp);
+		System.out.println("privet");
+		@Cleanup PrintWriter printWriter = resp.getWriter();
+		printWriter.write("""
+//						<h1>Welcome, %s. You are authorized. </h1>
+//						""");
 
 //		==================================
 
@@ -60,10 +71,10 @@ public class ItemsServlet extends HttpServlet {
 			resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 			String submitParameter = req.getParameter(BRAND);
 			if (submitParameter.equals("AllPhones")) {
-				req.setAttribute(ITEMS, oldItemsService.findAllItems());
+//				req.setAttribute(ITEMS, ItemsService.findAllItems());
 			} else {
-				List<OldItemsFilterDto> brand = oldItemsService.findBrand(submitParameter);
-				req.setAttribute(ITEMS, brand);
+//				List<OldItemsFilterDto> brand = oldItemsService.findBrand(submitParameter);
+//				req.setAttribute(ITEMS, brand);
 			}
 			req.getRequestDispatcher(JspHelper.getUrl("items")).forward(req, resp);
 		}

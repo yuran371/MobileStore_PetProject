@@ -27,18 +27,6 @@ public abstract class AddItemMapper implements MapperInt {
     @Mapping(source = "quantity", target = "itemSalesInformation.quantity")
     public abstract ItemsEntity toEntity(AddItemDto addItemDto);
 
-    @Mapping(source = "model", target = "model")
-    @Mapping(source = "brand", target = "brand")
-    @Mapping(source = "color", target = "color")
-    @Mapping(source = "os", target = "os")
-    @Mapping(source = "image", target = "image")
-    @Mapping(source = "internalMemory", target = "internalMemory")
-    @Mapping(source = "ram", target = "ram")
-    @Mapping(source = "itemSalesInformation.price", target = "price")
-    @Mapping(source = "itemSalesInformation.currency", target = "currency")
-    @Mapping(source = "itemSalesInformation.quantity", target = "quantity")
-    public abstract AddItemDto toDto(ItemsEntity itemsEntity);
-
     protected BrandEnum stringToInputEnum(String brand) {
         for (BrandEnum o : BrandEnum.values()) {
             if (o.getBrand().equals(brand)) {
@@ -74,6 +62,18 @@ public abstract class AddItemMapper implements MapperInt {
         }
         return null;
     }
+
+    @Mapping(source = "model", target = "model")
+    @Mapping(source = "brand", target = "brand")
+    @Mapping(source = "color", target = "color")
+    @Mapping(source = "os", target = "os")
+    @Mapping(source = "image", target = "image")
+    @Mapping(source = "internalMemory", target = "internalMemory")
+    @Mapping(source = "ram", target = "ram")
+    @Mapping(source = "itemSalesInformation.price", target = "price")
+    @Mapping(source = "itemSalesInformation.currency", target = "currency")
+    @Mapping(source = "itemSalesInformation.quantity", target = "quantity")
+    public abstract AddItemDto toDto(ItemsEntity itemsEntity);
 
     protected String inputEnumToString(Attributes.BrandEnum brand) {
         return brand.getBrand();
