@@ -9,7 +9,7 @@
 </head>
 <body>
 <img alt="User Image" src="/images/user/me.jpg">
-	<form action="/registration" method="post" enctype="multipart/form-data">
+	<form action="${pageContext.request.contextPath}/registration" method="post" enctype="multipart/form-data">
 		<label for="emailId">
 			Email: <input type="email" name="email" id="emailId" required>
 		</label>
@@ -36,8 +36,8 @@
 			Date of birth: <input type="date" name="dateOfBirth" id="dateId" required>
 		</label>
 		<br>
-		<label>Your countryEnum:</label>
-		<select name="countryEnum" id=countryEnum required>
+		<label>Your country:</label>
+		<select name="country" id=country required>
 			<c:forEach var="countryEnum" items="${requestScope.countries}">
 				<option value="${countryEnum}">${countryEnum}</option>
 			</c:forEach>
@@ -56,8 +56,8 @@
 			Phone number: <input type="text" name="phoneNumber" id="phoneNumberId">
 		</label>
 		<br>
-		<c:forEach var="genderEnum" items="${requestScope.genders}">
-			<input type="radio" name="genderEnum" value="${genderEnum}"> ${genderEnum}
+		<c:forEach var="gender" items="${requestScope.genders}">
+			<input type="radio" name="gender" value="${gender}"> ${gender}
 		</c:forEach>
 		<br>
 		<button type="submit">Create account</button>
