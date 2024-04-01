@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import utlis.Validators;
-import validator.CreateUpdateUserGroup;
+import validator.CreateUserGroup;
 
 import java.util.Set;
 
@@ -135,7 +135,7 @@ public class CreateAccountDtoTest {
                 .birthday("2016-02-10").build();
         PersonalAccountEntity entity = CreateAccountMapper.INSTANCE.createAccountDtoToPersonalAccountEntity(accountDto);
         Validator validator = Validators.defaultFactory.getValidator();
-        Set<ConstraintViolation<PersonalAccountEntity>> validate = validator.validate(entity, CreateUpdateUserGroup.class);
+        Set<ConstraintViolation<PersonalAccountEntity>> validate = validator.validate(entity, CreateUserGroup.class);
         assertThat(validate.size()).isEqualTo(1);
         assertThat(validate.stream()
                            .findFirst().get().getMessage())

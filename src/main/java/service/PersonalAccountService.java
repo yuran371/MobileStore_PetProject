@@ -18,7 +18,8 @@ import mapper.UpdateUserMapper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.graph.GraphSemantic;
-import validator.CreateUpdateUserGroup;
+import validator.CreateUserGroup;
+import validator.UpdateUserGroup;
 
 import java.util.Map;
 import java.util.Optional;
@@ -50,7 +51,7 @@ public class PersonalAccountService {
         Session currentSession = sessionFactory.getCurrentSession();
         currentSession.beginTransaction();
         Set<ConstraintViolation<PersonalAccountEntity>> entityViolations = validator.validate(personalAccountEntity,
-                                                                                              CreateUpdateUserGroup.class);
+                                                                                              CreateUserGroup.class);
         currentSession.getTransaction().commit();
         if (!entityViolations.isEmpty()) {
             return Either.right(entityViolations);
@@ -72,7 +73,7 @@ public class PersonalAccountService {
         Session currentSession = sessionFactory.getCurrentSession();
         currentSession.beginTransaction();
         Set<ConstraintViolation<PersonalAccountEntity>> entityViolations = validator.validate(personalAccountEntity,
-                                                                                              CreateUpdateUserGroup.class);
+                                                                                              UpdateUserGroup.class);
         currentSession.getTransaction().commit();
         if (!entityViolations.isEmpty()) {
             return Either.right(entityViolations);

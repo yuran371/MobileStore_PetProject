@@ -1,49 +1,72 @@
 package servlet;
 
-import java.io.IOException;
-
-import dto.LoginUserDto;
-import dto.ReadUserDto;
+import dto.personalAccount.AuthUserDto;
+import dto.personalAccount.ReadUserInfoDto;
+import io.vavr.control.Either;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import lombok.SneakyThrows;
-import service.LoginService;
+import jakarta.servlet.http.*;
+import jakarta.validation.ConstraintViolation;
+import service.PersonalAccountService;
 import utlis.JspHelper;
+import utlis.TokenHandler;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-	private final LoginService loginService = LoginService.getInstance();
-	public final static String USER = "User";
+    private static final String AUTHORIZATION_ERRORS = "error";
+    @Inject
+    private PersonalAccountService personalAccountService;
+    public final static String USER = "User";
+    private final static String TOKEN_COOKIE = "auth";
+    private final static int COOKIE_EXPIRY_TIME = 60 * 60;
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.getRequestDispatcher(JspHelper.getUrl("login")).forward(req, resp);
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getRequestDispatcher(JspHelper.getUrl("login")).forward(req, resp);
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		HttpSession session = req.getSession();
-		LoginUserDto dto = LoginUserDto.builder().email(req.getParameter("email"))
-				.password(req.getParameter("password")).build();
-		loginService.checkUser(dto).ifPresentOrElse(user -> successLogin(user, session, req, resp),
-				() -> loginError(req, resp));
-	}
-
-	@SneakyThrows
-	private void loginError(HttpServletRequest req, HttpServletResponse resp) {
-		resp.sendRedirect("/login?error");
-	}
-
-	@SneakyThrows
-	private static void successLogin(ReadUserDto dto, HttpSession session, HttpServletRequest req,
-			HttpServletResponse resp) {
-		session.setAttribute(USER, dto);
-		resp.sendRedirect("/items");
-	}
-
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        if (session.getAttribute(USER) != null) {
+            req.getRequestDispatcher(JspHelper.getUrl("items")).forward(req, resp);
+            return;
+        }
+        AuthUserDto authUserDto = AuthUserDto.builder()
+                .email(req.getParameter("email"))
+                .password(req.getParameter("password"))
+                .build();
+        Either<Optional<ReadUserInfoDto>, Set<? extends ConstraintViolation<?>>> authResult =
+                personalAccountService.authUser(authUserDto);
+        if (authResult.isRight()) {
+            req.setAttribute(AUTHORIZATION_ERRORS, authResult.get());
+            doGet(req, resp);
+            return;
+        }
+        Optional<ReadUserInfoDto> readUserInfoDto = authResult.getLeft();
+        if (readUserInfoDto.isEmpty()) {
+            req.setAttribute(AUTHORIZATION_ERRORS, "not a user");
+            return;
+        }
+        session.setAttribute(USER, readUserInfoDto.get());
+        var cookies = req.getCookies();
+        Optional<Cookie> jwtCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie != null && cookie.getName().equals(TOKEN_COOKIE))
+                .findFirst();
+        jwtCookie.ifPresentOrElse(cookie -> cookie.setValue(TokenHandler.generateToken(authUserDto.getEmail())),
+                                  () -> {
+                                      Cookie cookie = new Cookie(TOKEN_COOKIE,
+                                                                 TokenHandler.generateToken(authUserDto.getEmail()));
+                                      cookie.setMaxAge(COOKIE_EXPIRY_TIME);
+                                      resp.addCookie(cookie);
+                                  });
+        req.getRequestDispatcher(JspHelper.getUrl("items")).forward(req, resp);
+    }
 }

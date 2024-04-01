@@ -24,5 +24,6 @@ public class ReadUserInfoDto {
     String address;
     String phoneNumber;
     String gender;
+    String confirmed;
     List<UserSellHistoryDto> purchases;
 }

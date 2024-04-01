@@ -16,6 +16,7 @@ public abstract class ReadUserInfoMapper {
     @Mapping(target = "country", source = "countryEnum")
     @Mapping(target = "purchases", source = "phonePurchases")
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "confirmed", source = "confirmedAccount")
     //todo Add token for ID
     public abstract ReadUserInfoDto personalAccountEntityToUserInfoDto(PersonalAccountEntity entity);
         

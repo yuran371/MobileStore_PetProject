@@ -7,8 +7,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
 import validator.CheckBirthday;
-import validator.CreateUpdateUserGroup;
+import validator.CreateUserGroup;
 import validator.UniqueEmail;
+import validator.UpdateUserGroup;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @UniqueEmail(groups = CreateUpdateUserGroup.class)
+    @UniqueEmail(groups = CreateUserGroup.class)
     private String email;
     @ColumnTransformer(read = "pgp_sym_decrypt(" +
             "password::bytea, " +
@@ -57,7 +58,7 @@ public class PersonalAccountEntity implements BaseEntity<Long> {
     private String name;
     private String surname;
     private String image;
-    @CheckBirthday(groups = CreateUpdateUserGroup.class)
+    @CheckBirthday(groups = {CreateUserGroup.class, UpdateUserGroup.class})
     private LocalDate birthday;
     @Enumerated(EnumType.STRING)
     private CountryEnum countryEnum;
