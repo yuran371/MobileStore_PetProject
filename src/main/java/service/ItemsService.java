@@ -6,7 +6,10 @@ import dto.ItemsInfoDto;
 import dto.UpdateItemDto;
 import dto.filter.AttributesFilter;
 import entity.ItemsEntity;
+import io.vavr.control.Either;
 import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import mapper.AddItemMapper;
 import mapper.ItemsInfoMapper;
 import mapper.UpdateItemMapper;
@@ -16,47 +19,72 @@ import org.hibernate.SessionFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ItemsService {
 
     @Inject
-    public ItemsService(ItemsDao itemDao, SessionFactory sessionFactory) {
+    public ItemsService(ItemsDao itemDao, SessionFactory sessionFactory, Validator validator) {
         this.itemDao = itemDao;
         this.sessionFactory = sessionFactory;
+        this.validator = validator;
     }
 
     private final ItemsDao itemDao;
     private final SessionFactory sessionFactory;
+    private final Validator validator;
 
-    public Optional<ItemsEntity> insert(AddItemDto addItemDto) {
-        AddItemMapper addItemMapper = AddItemMapper.INSTANCE;
+    public Either<Optional<ItemsEntity>, Set<? extends ConstraintViolation<?>>> insert(AddItemDto addItemDto) {
+        Set<ConstraintViolation<Class<AddItemDto>>> dtoValidate = validator.validate(AddItemDto.class);
+        if (!dtoValidate.isEmpty()) {
+            return Either.right(dtoValidate);
+        }
+        ItemsEntity entityFromDto = AddItemMapper.INSTANCE.toEntity(addItemDto);
+        Set<ConstraintViolation<Class<ItemsEntity>>> entityValidate = validator.validate(ItemsEntity.class);
+        if (!entityValidate.isEmpty()) {
+            return Either.right(entityValidate);
+        }
         Session session = sessionFactory.getCurrentSession();
         session.getTransaction().begin();
-        ItemsEntity entityFromDto = addItemMapper.toEntity(addItemDto);
         Optional<ItemsEntity> inserted = itemDao.insert(entityFromDto);
         session.getTransaction().commit();
-        return inserted;
+
+        return Either.left(inserted);
     }
 
-    public void update(UpdateItemDto updateItemDto) {
-        UpdateItemMapper updateItemMapper = UpdateItemMapper.INSTANCE;
+    public Either<Boolean, Set<? extends ConstraintViolation<?>>> update(UpdateItemDto updateItemDto) {
+        Set<ConstraintViolation<Class<AddItemDto>>> dtoValidate = validator.validate(AddItemDto.class);
+        if (!dtoValidate.isEmpty()) {
+            return Either.right(dtoValidate);
+        }
+        ItemsEntity updateItemMapper = UpdateItemMapper.INSTANCE.toEntity(updateItemDto);
+        Set<ConstraintViolation<Class<ItemsEntity>>> entityValidate = validator.validate(ItemsEntity.class);
+        if (!entityValidate.isEmpty()) {
+            return Either.right(entityValidate);
+        }
         Session session = sessionFactory.getCurrentSession();
         session.getTransaction().begin();
         Optional<ItemsEntity> byId = itemDao.getById(updateItemDto.getId());
-//        byId.ifPresentOrElse(v -> itemDao.update(updateItemMapper.toEntity(updateItemDto)), );
+        AtomicBoolean atomicRes = new AtomicBoolean(true);
+        byId.ifPresentOrElse(v -> itemDao.update(updateItemMapper), () -> atomicRes.set(false));
+        boolean res = atomicRes.get();
+        session.getTransaction().commit();
+        return Either.left(true);
+
 //        itemDao.getById(addItemDto.get)
 //        itemDao.update(addItemMapper.toEntity(addItemDto));
-        session.getTransaction().commit();
     }
 
-    public ItemsInfoDto getById(long id) {
+    public Optional<ItemsInfoDto> getById(long id) {
         ItemsInfoMapper itemsInfoMapper = ItemsInfoMapper.INSTANCE;
         Session session = sessionFactory.getCurrentSession();
         session.getTransaction().begin();
         ItemsEntity itemsEntity = itemDao.getById(id)
                 .get();
+        Optional<ItemsInfoDto> getDto = Optional.of(itemsInfoMapper.toDto(itemsEntity));
         session.getTransaction().commit();
-        return itemsInfoMapper.toDto(itemsEntity);
+        return getDto;
     }
 
     public List<ItemsInfoDto> findItemsWithParameters(AttributesFilter filter, long page, long limit) {

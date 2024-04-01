@@ -18,6 +18,53 @@ public abstract class ItemsInfoMapper {
     @Mapping(source = "image", target = "image")
     @Mapping(source = "internalMemory", target = "internalMemory")
     @Mapping(source = "ram", target = "ram")
+    @Mapping(source = "price", target = "itemSalesInformation.price")
+    @Mapping(source = "currency", target = "itemSalesInformation.currency")
+    public abstract ItemsEntity toEntity(ItemsInfoDto itemsInfoDto);
+
+    protected Attributes.BrandEnum stringToInputEnum(String brand) {
+        for (Attributes.BrandEnum o : Attributes.BrandEnum.values()) {
+            if (o.getBrand().equals(brand)) {
+                return o;
+            }
+        }
+        return null;
+    }
+
+    protected Attributes.OperatingSystemEnum stringToInputEnum1(String os) {
+        for (Attributes.OperatingSystemEnum o : Attributes.OperatingSystemEnum.values()) {
+            if (o.getOs().equals(os)) {
+                return o;
+            }
+        }
+        return null;
+    }
+
+    protected Attributes.InternalMemoryEnum stringToInputEnum2(String internalMemory) {
+        for (Attributes.InternalMemoryEnum o : Attributes.InternalMemoryEnum.values()) {
+            if (o.getInternalMemory()==internalMemory) {
+                return o;
+            }
+        }
+        return null;
+    }
+
+    protected Attributes.RamEnum stringToInputEnum3(String ram) {
+        for (Attributes.RamEnum o : Attributes.RamEnum.values()) {
+            if (o.getRam()==ram) {
+                return o;
+            }
+        }
+        return null;
+    }
+
+    @Mapping(source = "model", target = "model")
+    @Mapping(source = "brand", target = "brand")
+    @Mapping(source = "color", target = "color")
+    @Mapping(source = "os", target = "os")
+    @Mapping(source = "image", target = "image")
+    @Mapping(source = "internalMemory", target = "internalMemory")
+    @Mapping(source = "ram", target = "ram")
     @Mapping(source = "itemSalesInformation.price", target = "price")
     @Mapping(source = "itemSalesInformation.currency", target = "currency")
     public abstract ItemsInfoDto toDto(ItemsEntity itemsEntity);
@@ -34,5 +81,6 @@ public abstract class ItemsInfoMapper {
     protected String inputEnumToString(Attributes.RamEnum ram) {
         return ram.getRam();
     }
+
 
 }

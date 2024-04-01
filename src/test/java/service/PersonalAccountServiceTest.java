@@ -42,7 +42,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @TestInstance(PER_METHOD)
-@Tag(value = "ItemsDaoTest")
+@Tag(value = "PersonalAccountServiceTest")
 @RunWith(JUnitParamsRunner.class)
 public class PersonalAccountServiceTest {
 
