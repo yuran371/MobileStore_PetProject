@@ -17,16 +17,14 @@ import org.hibernate.internal.SessionFactoryImpl;
 
 import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;
-import java.nio.file.Path;
 
 @UtilityClass
 public class HibernateSessionFactory {
 
-    private static final Path PATH_TO_CFG = Path.of("src/main/resources/hibernate.cfg.xml");
     private static final SessionFactory SESSION_FACTORY = buildSessionFactory();
     private static SessionFactory buildSessionFactory() {
         Configuration configuration = buildConfiguration();
-        configuration.configure(PATH_TO_CFG.toFile());
+        configuration.configure();
         CachingProvider caching = Caching.getCachingProvider();
 
         var sessionFactory = configuration.buildSessionFactory();

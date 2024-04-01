@@ -28,7 +28,7 @@
 			<button type="button">Create account</button>
 		</a>
 	</div>
-	<span> <c:if test="${param.error != null}">
+	<span> <c:if test="${requestScope.error != null}">
 			<div>Email or password is incorrect</div>
 		</c:if>
 	</span>
