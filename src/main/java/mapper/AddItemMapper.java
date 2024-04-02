@@ -47,7 +47,7 @@ public abstract class AddItemMapper implements MapperInt {
 
     protected InternalMemoryEnum stringToInputEnum2(String internalMemory) {
         for (InternalMemoryEnum o : InternalMemoryEnum.values()) {
-            if (o.getInternalMemory()==internalMemory) {
+            if (o.getInternalMemory().equals(internalMemory)) {
                 return o;
             }
         }
@@ -56,7 +56,7 @@ public abstract class AddItemMapper implements MapperInt {
 
     protected RamEnum stringToInputEnum3(String ram) {
         for (RamEnum o : RamEnum.values()) {
-            if (o.getRam()==ram) {
+            if (o.getRam().equals(ram)) {
                 return o;
             }
         }
