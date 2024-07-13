@@ -40,17 +40,18 @@ CREATE TABLE IF NOT EXISTS personal_account
     surname      VARCHAR(32)  NOT NULL,
     image        VARCHAR(124) NOT NULL,
     birthday     DATE         NOT NULL,
-    countryEnum  VARCHAR(64)  NOT NULL,
+    country_enum  VARCHAR(64)  NOT NULL,
     city         VARCHAR(256) NOT NULL,
     address      VARCHAR(256) NOT NULL,
     phone_number TEXT
         CONSTRAINT phone_number_constraint NOT NULL,
-    genderEnum   VARCHAR(12)  NOT NULL,
+    gender_enum   VARCHAR(12)  NOT NULL,
     confirmed_email BOOLEAN NOT NULL,
+    discount_enum VARCHAR(128),
     CONSTRAINT birthday_constraint CHECK (DATE_PART('year', current_date) - DATE_PART('year', birthday) > 18),
     CONSTRAINT phone_number_constraint CHECK (((phone_number ~ '\+7[0-9]{10}$') AND
-                                               (countryEnum = 'russia' OR countryEnum = 'россия'))
-        OR (countryEnum != 'russia' AND countryEnum != 'россия'))
+                                               (country_enum = 'russia' OR country_enum = 'россия'))
+        OR (country_enum != 'russia' AND country_enum != 'россия'))
 );
 
 
@@ -94,4 +95,12 @@ DROP TABLE items CASCADE;
 DROP TABLE personal_account CASCADE;
 DROP TABLE sell_history CASCADE;
 
+CREATE TABLE IF NOT EXISTS important_statistic
+(
+    id                    BIGINT PRIMARY KEY,
+    all_users_counter     BIGINT NOT NULL,
+    premium_users_counter BIGINT NOT NULL,
+    sales_counter         BIGINT NOT NULL,
+    items_counter         BIGINT NOT NULL
+);
 

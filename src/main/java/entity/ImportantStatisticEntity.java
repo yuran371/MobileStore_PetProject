@@ -2,13 +2,15 @@ package entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
+@Entity(name = "important_statistic")
+@Table(schema = "market")
 public class ImportantStatisticEntity implements BaseEntity<Long> {
 
     @Id
