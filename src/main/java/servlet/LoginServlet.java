@@ -13,19 +13,23 @@ import utlis.JspHelper;
 import utlis.TokenHandler;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
-@WebServlet("/login")
+@WebServlet(LoginServlet.URL)
 public class LoginServlet extends HttpServlet {
 
+    public static final String URL = "/login";
+    public static final String USER = "User";
+    public static final String TOKEN_COOKIE = "auth";
     private static final String AUTHORIZATION_ERRORS = "error";
+    private static final int COOKIE_EXPIRY_TIME = 60 * 60;
+    @Serial
+    private static final long serialVersionUID = -618441551049690046L;
     @Inject
     private PersonalAccountService personalAccountService;
-    public final static String USER = "User";
-    private final static String TOKEN_COOKIE = "auth";
-    private final static int COOKIE_EXPIRY_TIME = 60 * 60;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

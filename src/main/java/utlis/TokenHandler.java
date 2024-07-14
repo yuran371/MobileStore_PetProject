@@ -16,35 +16,36 @@ import java.security.spec.KeySpec;
 public class TokenHandler {
 
     private static final String PBKDF_2_WITH_HMAC_SHA_256 = "PBKDF2WithHmacSHA256";
-    private static final String SALT_STRING = "SaltString";
-    private static final SecretKey key;
+    private static final SecretKey KEY;
 
     static {
         try {
-            key = getKeyFromPassword(PropertiesUtil.getProperty("token.password"));
+            KEY = getKeyFromPassword(PropertiesUtil.getProperty("token.password"), PropertiesUtil.getProperty("token" +
+                                                                                                              ".salt"));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    private static SecretKey getKeyFromPassword(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        KeySpec keyspec = new PBEKeySpec(password.toCharArray(), "salt".getBytes(), 65530, 256);
+    private static SecretKey getKeyFromPassword(String password, String salt) throws InvalidKeySpecException,
+            NoSuchAlgorithmException {
+        SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF_2_WITH_HMAC_SHA_256);
+        KeySpec keyspec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), 65530, 256);
         return new SecretKeySpec(factory.generateSecret(keyspec).getEncoded(), "HmacSHA256");
     }
 
     public String generateToken(String email) {
         return Jwts.builder()
                 .subject(email)
-                .signWith(key)
+                .signWith(KEY)
                 .compact();
     }
 
-    public boolean checkKey(String token) {
+    public boolean checkTokenAuthenticity(String token) {
         try {
             Jwts.parser()
-                    .verifyWith(key)
+                    .verifyWith(KEY)
                     .build()
                     .parseSignedClaims(token);
             return true;
