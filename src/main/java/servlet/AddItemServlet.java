@@ -15,6 +15,7 @@ import service.ItemsService;
 import utlis.JspHelper;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
@@ -25,10 +26,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @WebServlet("/add-item")
 public class AddItemServlet extends HttpServlet {
 
+    @Serial
+    private static final long serialVersionUID = -8492324644385946171L;
     @Inject
     private ItemsService itemsService;
-    private final static String ITEMS_ERRORS = "errors";
-    private final static String TOKEN_COOKIE = "auth";
+    private static final String ITEMS_ERRORS = "errors";
+    private static final String TOKEN_COOKIE = "auth";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

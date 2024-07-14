@@ -1,8 +1,5 @@
 package servlet;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,10 +9,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import service.ImageService;
 
-@WebServlet("/images/*")
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serial;
+
+@WebServlet(ImagesServlet.URL)
 public class ImagesServlet extends HttpServlet {
 
-	ImageService imageService = ImageService.getInstance();
+	public static final String URL = "/images/*";
+	@Serial
+	private static final long serialVersionUID = 5049507779194083231L;
+	private static final ImageService imageService = ImageService.getInstance();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

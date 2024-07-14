@@ -18,6 +18,7 @@ import utlis.JspHelper;
 import utlis.TokenHandler;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
@@ -25,12 +26,15 @@ import java.util.Set;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024)
-@WebServlet("/registration")
+@WebServlet(RegistrationServlet.URL)
 public class RegistrationServlet extends HttpServlet {
 
-    private final static String USER = "User";
-    private final static String CREATE_ACCOUNT_ERRORS = "errors";
-    private final static String TOKEN_COOKIE = "auth";
+    public static final String URL = "/registration";
+    @Serial
+    private static final long serialVersionUID = 3920936508797910281L;
+    private static final String USER = "User";
+    private static final String CREATE_ACCOUNT_ERRORS = "errors";
+    private static final String TOKEN_COOKIE = "auth";
 
     @Inject
     private PersonalAccountService personalAccountService;
@@ -67,10 +71,9 @@ public class RegistrationServlet extends HttpServlet {
         Either<Long, Set<? extends ConstraintViolation<?>>> save = personalAccountService.createUser(accountDto);
         if (save.isRight()) {
             req.setAttribute(CREATE_ACCOUNT_ERRORS, save.get());
-            doGet(req, resp);
+            this.doGet(req, resp);
             return;
         }
-        var session = req.getSession();
         var cookies = req.getCookies();
         Optional<Cookie> jwtCookie = Arrays.stream(cookies)
                 .filter(cookie -> cookie != null && cookie.getName().equals(TOKEN_COOKIE))
