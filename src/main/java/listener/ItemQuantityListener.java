@@ -20,10 +20,14 @@ public class ItemQuantityListener implements PreInsertEventListener {
             ItemsEntity itemFromSellHistory = sellHistoryEntity.getItemId();
             ItemsEntity itemFromDB = retryCommand.run(() -> session.find(ItemsEntity.class,
                     itemFromSellHistory.getId(), LockModeType.OPTIMISTIC));
-            if (sellHistoryEntity.getQuantity() > itemFromDB.getItemSalesInformation().getQuantity()) {
-                throw new RuntimeException("На складе нет такого количества товара, доступно: " + itemFromSellHistory.getItemSalesInformation().getQuantity() + " шт " + itemFromSellHistory.getBrand() + " " + itemFromSellHistory.getModel());
+            if (sellHistoryEntity.getQuantity() > itemFromDB.getItemSalesInformation()
+                    .getQuantity()) {
+                throw new RuntimeException("На складе нет такого количества товара, доступно: " + itemFromSellHistory.getItemSalesInformation()
+                        .getQuantity() + " шт " + itemFromSellHistory.getBrand() + " " + itemFromSellHistory.getModel());
             } else {
-                itemFromDB.getItemSalesInformation().setQuantity(itemFromDB.getItemSalesInformation().getQuantity() - sellHistoryEntity.getQuantity());
+                itemFromDB.getItemSalesInformation()
+                        .setQuantity(itemFromDB.getItemSalesInformation()
+                                .getQuantity() - sellHistoryEntity.getQuantity());
             }
         }
         return false;

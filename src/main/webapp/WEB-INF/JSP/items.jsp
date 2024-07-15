@@ -14,6 +14,7 @@
 			<button type="submit" name="brand" value="Apple">Apple</button>
 			<button type="submit" name="brand" value="Xiaomi">Xiaomi</button>
 			<button type="submit" name="brand" value="Samsung">Samsung</button>
+			<button type="submit" name="brand" value="Google">Google</button>
 			<button type="submit" name="brand" value="AllPhones">All phones</button>
 		</form>
 	</div>

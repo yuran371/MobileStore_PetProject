@@ -76,7 +76,7 @@ public class ItemsEntity implements BaseEntity<Long> {
 
     @Lob
     @Column(name = "image")
-    private byte[] image;
+    private String image;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
     private ItemSalesInformationEntity itemSalesInformation;
