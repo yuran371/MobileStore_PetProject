@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public abstract class ItemsInfoMapper {
-    public static ItemsInfoMapper INSTANCE = Mappers.getMapper(ItemsInfoMapper.class);
+    public static final ItemsInfoMapper INSTANCE = Mappers.getMapper(ItemsInfoMapper.class);
 
     @Mapping(source = "model", target = "model")
     @Mapping(source = "brand", target = "brand")
@@ -42,7 +42,7 @@ public abstract class ItemsInfoMapper {
 
     protected Attributes.InternalMemoryEnum stringToInputEnum2(String internalMemory) {
         for (Attributes.InternalMemoryEnum o : Attributes.InternalMemoryEnum.values()) {
-            if (o.getInternalMemory()==internalMemory) {
+            if (o.getInternalMemory().equals(internalMemory)) {
                 return o;
             }
         }
@@ -51,7 +51,7 @@ public abstract class ItemsInfoMapper {
 
     protected Attributes.RamEnum stringToInputEnum3(String ram) {
         for (Attributes.RamEnum o : Attributes.RamEnum.values()) {
-            if (o.getRam()==ram) {
+            if (o.getRam().equals(ram)) {
                 return o;
             }
         }

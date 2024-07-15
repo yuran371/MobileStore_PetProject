@@ -5,24 +5,20 @@ import entity.PersonalAccountEntity;
 import jakarta.servlet.http.Part;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ON_IMPLICIT_CONVERSION)
 public abstract class CreateAccountMapper {
 
+    public static final CreateAccountMapper INSTANCE = Mappers.getMapper(CreateAccountMapper.class);
     private static final String USER_FOLDER = "user\\";
     private static final String DEFAULT_AVATAR = "user\\default-avatar-icon-of-social-media-user-vector.jpg";
-    public static CreateAccountMapper INSTANCE = Mappers.getMapper(CreateAccountMapper.class);
 
-    @Mappings({
-            @Mapping(target = "countryEnum", source = "country"),
-            @Mapping(target = "genderEnum", source = "gender"),
-            @Mapping(target = "birthday", dateFormat = "yyyy-MM-dd"),
-            @Mapping(target = "image", source = "image"),
-            @Mapping(target = "confirmedAccount", constant = "false")
-    })
+    @Mapping(target = "countryEnum", source = "country")
+    @Mapping(target = "genderEnum", source = "gender")
+    @Mapping(target = "birthday", dateFormat = "yyyy-MM-dd")
+    @Mapping(target = "confirmedAccount", constant = "false")
     public abstract PersonalAccountEntity createAccountDtoToPersonalAccountEntity(CreateAccountDto dto);
 
     String mapImage(Part image) {
