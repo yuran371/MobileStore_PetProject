@@ -11,7 +11,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public abstract class UpdateItemMapper implements MapperInt {
+public abstract class UpdateItemMapper {
     public static UpdateItemMapper INSTANCE = Mappers.getMapper(UpdateItemMapper.class);
 
     @Mapping(source = "id", target = "id")

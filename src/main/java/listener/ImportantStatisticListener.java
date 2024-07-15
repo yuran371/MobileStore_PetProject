@@ -54,9 +54,11 @@ public class ImportantStatisticListener implements PostInsertEventListener, Post
         if (event.getEntity().getClass() == personalAccountEntityClass && event.getDirtyProperties().length == 1) {
             int discountEnumIndex = Arrays.asList(event.getPersister().getPropertyNames()).indexOf("discountEnum");
             if (Arrays.stream(event.getDirtyProperties())
-                    .anyMatch(value -> value == discountEnumIndex) && event.getOldState()[discountEnumIndex] == null) {
-                var importantStatisticEntity = event.getSession().get(ImportantStatisticEntity.class, statistic.getId(),
-                                                                      new LockOptions(LockMode.PESSIMISTIC_WRITE, 1));
+                        .anyMatch(value -> value == discountEnumIndex) && event.getOldState()[discountEnumIndex] == null)
+            {
+                var importantStatisticEntity = event.getSession()
+                        .get(ImportantStatisticEntity.class, statistic.getId(),
+                             new LockOptions(LockMode.PESSIMISTIC_WRITE, 1));
                 importantStatisticEntity.setPremiumUsersCounter(importantStatisticEntity.getPremiumUsersCounter() + 1);
             }
         }

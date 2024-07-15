@@ -12,8 +12,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public abstract class AddItemMapper implements MapperInt {
-    public static AddItemMapper INSTANCE = Mappers.getMapper(AddItemMapper.class);
+public abstract class AddItemMapper {
+
+    public static final AddItemMapper INSTANCE = Mappers.getMapper(AddItemMapper.class);
 
     @Mapping(source = "model", target = "model")
     @Mapping(source = "brand", target = "brand")

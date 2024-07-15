@@ -15,9 +15,6 @@ import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.internal.SessionFactoryImpl;
 
-import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
-
 @UtilityClass
 public class HibernateSessionFactory {
 
@@ -25,8 +22,6 @@ public class HibernateSessionFactory {
     private static SessionFactory buildSessionFactory() {
         Configuration configuration = buildConfiguration();
         configuration.configure();
-        CachingProvider caching = Caching.getCachingProvider();
-
         var sessionFactory = configuration.buildSessionFactory();
         listenerRegistration(sessionFactory);
         return sessionFactory;
