@@ -17,12 +17,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Slf4j
 public class EmailSender {
 
-    private final static String COMPANY_EMAIL = PropertiesUtil.getProperty("smtp.email");
-    private final static String PASSWORD = PropertiesUtil.getProperty("smtp.password");
-    private final static String SUBJECT = "Please confirm your email address";
-    private final static String BODY = "To confirm your email, go to link below:\n%s";
-    private final static String smtpPort = PropertiesUtil.getProperty("smtp.port");
-    private final static String smtpHost = PropertiesUtil.getProperty("smtp.host");
+    private static final String COMPANY_EMAIL = PropertiesUtil.getProperty("smtp.email");
+    private static final String PASSWORD = PropertiesUtil.getProperty("smtp.password");
+    private static final String SUBJECT = "Please confirm your email address";
+    private static final String BODY = "To confirm your email, go to link below:\n%s";
+    private static final String smtpPort = PropertiesUtil.getProperty("smtp.port");
+    private static final String smtpHost = PropertiesUtil.getProperty("smtp.host");
 
 
     public static void sendPureEmail(Session session, String toEmail, String link) throws EmailSendException {
