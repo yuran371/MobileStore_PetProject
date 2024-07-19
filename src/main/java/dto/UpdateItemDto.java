@@ -18,8 +18,7 @@ public class UpdateItemDto {
     String brand;
     String color;
     String os;
-    @Size(min = 1024, max = 1024*1024, message = "Image size must should not exceed 1 MB")
-    byte[] image;
+    String image;
     String internalMemory;
     String ram;
     @Size(min = 1, message = "Price must be over 0")

@@ -10,6 +10,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Objects;
+
 @Mapper
 public abstract class UpdateItemMapper {
     public static UpdateItemMapper INSTANCE = Mappers.getMapper(UpdateItemMapper.class);
@@ -69,7 +71,7 @@ public abstract class UpdateItemMapper {
 
     protected RamEnum stringToInputEnum3(String ram) {
         for (RamEnum o : RamEnum.values()) {
-            if (o.getRam()==ram) {
+            if (Objects.equals(o.getRam(), ram)) {
                 return o;
             }
         }

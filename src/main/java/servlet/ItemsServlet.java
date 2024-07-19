@@ -1,6 +1,6 @@
 package servlet;
 
-import dto.filter.AttributesFilter;
+import dto.ItemsInfoDto;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,6 +12,7 @@ import utlis.JspHelper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @WebServlet("/items")
 public class ItemsServlet extends HttpServlet {
@@ -22,12 +23,30 @@ public class ItemsServlet extends HttpServlet {
     public static final String USER = "User";
     public static final String ITEMS = "items";
     public static final String BRAND = "brand";
+    public static final String PAGE = "page";
+    public static final String LIMIT = "limit";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
         resp.setContentType("text/html");
-		req.setAttribute(ITEMS, itemsService.findItemsWithParameters(AttributesFilter.builder().build(), 2, 3));
+
+        int page = 1;
+        int limit = 5;
+
+        String pageParam = req.getParameter(PAGE);
+        String limitParam = req.getParameter(LIMIT);
+
+        if (pageParam != null && limitParam != null) {
+            page= Integer.parseInt(pageParam);
+            limit= Integer.parseInt(limitParam);
+        }
+
+
+        List<ItemsInfoDto> allWithOffsetAndLimit = itemsService.findAllWithOffsetAndLimit(page, limit);
+        req.setAttribute(ITEMS, allWithOffsetAndLimit);
+        req.setAttribute(PAGE, page);
+        req.setAttribute(LIMIT, limit);
         req.getRequestDispatcher(JspHelper.getUrl("items"))
                 .forward(req, resp);
     }

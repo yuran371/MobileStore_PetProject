@@ -37,12 +37,6 @@ public class ItemsServiceIntegrationTest {
     @WeldSetup
     WeldInitiator weldInitiator = WeldInitiator.of(WeldInitiator.createWeld()
             .enableDiscovery());
-//    @WeldSetup
-//    public WeldInitiator weld = WeldInitiator.of(WeldInitiator.createWeld().addPackages(true, ItemsService.class.getPackage()));
-//    @WeldSetup
-//    WeldInitiator weldInitiator = WeldInitiator.from(ItemsService.class, ItemsDao.class, SessionFactory.class,
-//            Validator.class).build();
-
 
     @Tag("Integration")
     @ParameterizedTest
@@ -68,7 +62,7 @@ public class ItemsServiceIntegrationTest {
         Either<Boolean, Set<? extends ConstraintViolation<?>>> updated = itemsService.update(updateItemDto);
         assertThat(updated.isLeft()).isTrue();
         assertThat(updated.getLeft()).isTrue();
-//        itemsService.update(dto);
+
     }
 
     @Tag("Integration")
@@ -79,8 +73,6 @@ public class ItemsServiceIntegrationTest {
         Optional<ItemsInfoDto> ItemById = itemsService.getById(1l);
         assertThat(ItemById).isEqualTo(addItemDto);
         System.out.println();
-
-//        itemsService.update(dto);
     }
 
     @Tag("Integration")
@@ -91,36 +83,8 @@ public class ItemsServiceIntegrationTest {
         ItemsInfoMapper itemsInfoMapper = ItemsInfoMapper.INSTANCE;
         ItemsEntity entity = itemsInfoMapper.toEntity(itemsInfoDto);
         AttributesFilter.builder().brand(entity.getBrand()).build();
-//        itemsService.findItemsWithParameters();
-    }
-//    @Tag("Unit")
-//    @ParameterizedTest
-//    @MethodSource("argumentsOnItemsInfoDto")
-//    void getById_validItemDto_returnItemDto(ItemsInfoDto itemsInfoDto) {
-//        mockitoClosable = MockitoAnnotations.openMocks(this);
-//        when(session.getTransaction())
-//                .thenReturn(transaction);
-//        when(sessionFactory.getCurrentSession())
-//                .thenReturn(session);
-//        when(itemsDao.getById(anyLong())).thenReturn(Optional.of(ItemsInfoMapper.INSTANCE.toEntity(itemsInfoDto)));
-//
-//        ItemsInfoDto actual = itemsService.getById(1l).get();
-//        assertThat(actual).isEqualTo(itemsInfoDto);
-//    }
 
-//    @Tag("Unit")
-//    @Test
-//    void findItemsWithParameters_validItemsWithFiltering_returnItemsList() {
-//        mockitoClosable = MockitoAnnotations.openMocks(this);
-//        when(session.getTransaction())
-//                .thenReturn(transaction);
-//        when(sessionFactory.getCurrentSession())
-//                .thenReturn(session);
-//        List<ItemsEntity> listMock = mock(List.class);
-//        AttributesFilter filterMock = mock(AttributesFilter.class);
-//        when(itemsDao.findItemsWithParameters(any(AttributesFilter.class), anyInt(), anyInt())).thenReturn(listMock);
-//        List<ItemsInfoDto> itemsWithParameters = itemsService.findItemsWithParameters(filterMock, 1, 3);
-//    }
+    }
 
     public static Stream<Arguments> argumentsOneAddItemsDto() {
         return Stream.of(Arguments.of(AddItemDto.builder()
@@ -130,7 +94,7 @@ public class ItemsServiceIntegrationTest {
                 .ram("4")
                 .color("yellow")
                 .os("Android")
-                .image(new byte[0])
+                .image("/ava-path")
                 .price("999.99")
                 .currency("$")
                 .quantity("57")
@@ -145,7 +109,7 @@ public class ItemsServiceIntegrationTest {
                 .ram("4")
                 .color("yellow")
                 .os("Android")
-                .image(new byte[0])
+                .image("/ava-path")
                 .price("999.99")
                 .currency("$")
                 .quantity("57")
@@ -160,7 +124,7 @@ public class ItemsServiceIntegrationTest {
                 .ram("4")
                 .color("yellow")
                 .os("Android")
-                .image(new byte[0])
+                .image("/ava-path")
                 .price("999.99")
                 .currency("$")
                 .build()));

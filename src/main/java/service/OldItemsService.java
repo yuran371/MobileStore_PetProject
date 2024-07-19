@@ -10,16 +10,8 @@ public class OldItemsService {
 	private OldItemsService() {
 	};
 
-//	static ItemsRepository InstanceDao = ItemsRepository.getInstance();
-
 	public static OldItemsService getInstance() {
 		return INSTANCE;
-	}
-
-	public List<OldItemsFilterDto> findAllItems() {
-//		return InstanceDao.findAll().stream().map(entity -> new ItemsFilterDto(entity.getId(), entity.getModel(),
-//				entity.getBrand().name(), entity.getPrice(), entity.getCurrency().name())).collect(Collectors.toList());
-		return null;
 	}
 
 	public List<OldItemsFilterDto> findBrand(String brand) {

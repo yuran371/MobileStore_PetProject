@@ -23,8 +23,7 @@ public class AddItemDto {
     @NotBlank
     String os;
     @NotBlank
-    @Size(min = 1024, max = 1024*1024, message = "Image size must should not exceed 1 MB")
-    byte[] image;
+    String image;
     @NotBlank
     String internalMemory;
     @NotBlank

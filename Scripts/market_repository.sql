@@ -9,8 +9,8 @@ CREATE TABLE items
     item_id                   BIGSERIAl PRIMARY KEY,
     brand                     VARCHAR(32)  NOT NULL,
     model                     VARCHAR(32)  NOT NULL,
-    internal_memory           INT          NOT NULL,
-    RAM                       INT          NOT NULL,
+    internal_memory           VARCHAR(32)   NOT NULL,
+    RAM                       VARCHAR(32)  NOT NULL,
     color                     VARCHAR(32)  NOT NULL,
     OS                        VARCHAR(32)  NOT NULL,
     image                     VARCHAR(124) NOT NULL,
@@ -27,6 +27,7 @@ CREATE TABLE item_sales_information
     quantity INT CHECK (quantity >= 0) NOT NULL
 );
 
+ALTER SEQUENCE item_sales_information_id_seq RESTART WITH 1;
 
 ALTER ROLE dmitry SET search_path = market;
 
@@ -90,6 +91,7 @@ DROP TABLE user_payment_options;
 CREATE INDEX IF NOT EXISTS item_id_idx ON sell_history (item_id);
 
 ALTER SEQUENCE items_item_id_seq RESTART WITH 1;
+
 TRUNCATE TABLE items CASCADE;
 DROP TABLE items CASCADE;
 

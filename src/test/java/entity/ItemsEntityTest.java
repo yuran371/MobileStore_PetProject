@@ -10,12 +10,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import util.EntityHandler;
 import utlis.HibernateTestUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Proxy;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD;
 
 @TestInstance(PER_METHOD)
@@ -42,30 +38,4 @@ public class ItemsEntityTest {
         session2.getTransaction().commit();
     }
 
-    @ParameterizedTest
-    @MethodSource("dao.ItemsDaoTest#argumentsWithOneItem")
-    void check_Image_true(ItemsEntity itemEntity) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try (InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream("w200_Test.png")) {
-            int length;
-            byte[] buffer = new byte[1024];
-            while ((length = in.read(buffer)) != -1) {
-                out.write(buffer, 0, length);
-            }
-        }
-        byte[] image = out.toByteArray();
-        System.out.println("image.length "+image.length);
-        SessionFactory sessionFactory = HibernateTestUtil.getSessionFactory();
-        Session session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                (proxy, method, args) -> method.invoke(sessionFactory.getCurrentSession(), args));
-        ItemsDao itemsDao = new ItemsDao(session);
-        itemEntity.setImage(image);
-        EntityHandler.persistEntity(itemEntity, session);
-        session.beginTransaction();
-        byte[] imageFromDB = session.get(ItemsEntity.class, 1L)
-                .getImage();
-        session.getTransaction().commit();
-        assertThat(imageFromDB).isEqualTo(itemEntity.getImage());
-    }
 }
