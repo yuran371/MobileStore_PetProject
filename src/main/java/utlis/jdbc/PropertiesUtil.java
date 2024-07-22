@@ -1,4 +1,4 @@
-package utlis;
+package utlis.jdbc;
 
 import exceptions.NotFoundApplicationPropertiesFileException;
 import lombok.experimental.UtilityClass;
