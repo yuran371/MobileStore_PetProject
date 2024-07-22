@@ -1,13 +1,13 @@
 package validator;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.List;
-
 import dto.personalAccount.CreateAccountDto;
 import entity.enums.CountryEnum;
 import entity.enums.GenderEnum;
 import utlis.DateFormatter;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
 
 public class CreateAccountValidator {
 
@@ -17,7 +17,7 @@ public class CreateAccountValidator {
 	}
 
 	private static class SingletonHolder {
-		private static CreateAccountValidator INSTANCE = new CreateAccountValidator();
+		private static final CreateAccountValidator INSTANCE = new CreateAccountValidator();
 	}
 
 	public static CreateAccountValidator getInstance() {
@@ -27,7 +27,7 @@ public class CreateAccountValidator {
 	public ValidationErrors isValid(CreateAccountDto account) {
 		List<Error> createAccountErrors = validationErrors.getCreateAccountErrors();
 		if (!createAccountErrors.isEmpty()) {
-			createAccountErrors.removeAll(createAccountErrors);
+			createAccountErrors.clear();
 		}
 		if (!DateFormatter.isValid(account.getBirthday())) {
 			createAccountErrors.add(new Error("Date is invalid",

@@ -3,6 +3,7 @@ package utlis;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.experimental.UtilityClass;
+import utlis.jdbc.PropertiesUtil;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
