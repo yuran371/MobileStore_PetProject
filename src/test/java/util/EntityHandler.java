@@ -1,6 +1,7 @@
 package util;
 
 import entity.*;
+import entity.enums.Attributes;
 import entity.enums.CountryEnum;
 import entity.enums.CurrencyEnum;
 import entity.enums.GenderEnum;
@@ -71,7 +72,7 @@ public class EntityHandler {
                         .brand(APPLE)
                         .model("iPhone 14")
                         .internalMemory(GB_512)
-                        .ram(gb_8)
+                        .ram(GB_8)
                         .color("space grey")
                         .os(IOS)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()
@@ -84,7 +85,7 @@ public class EntityHandler {
                         .brand(APPLE)
                         .model("iPhone 11")
                         .internalMemory(GB_128)
-                        .ram(gb_16)
+                        .ram(Attributes.RamEnum.GB_16)
                         .color("gold")
                         .os(IOS)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()
@@ -97,7 +98,7 @@ public class EntityHandler {
                         .brand(APPLE)
                         .model("iPhone 15 Pro Max")
                         .internalMemory(GB_1024)
-                        .ram(gb_16)
+                        .ram(Attributes.RamEnum.GB_16)
                         .color("black")
                         .os(IOS)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()
@@ -110,7 +111,7 @@ public class EntityHandler {
                         .brand(APPLE)
                         .model("iPhone 14 Pro Max")
                         .internalMemory(GB_256)
-                        .ram(gb_8)
+                        .ram(GB_8)
                         .color("green")
                         .os(IOS)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()
@@ -123,7 +124,7 @@ public class EntityHandler {
                         .brand(XIAOMI)
                         .model("Redmi A2+")
                         .internalMemory(GB_32)
-                        .ram(gb_4)
+                        .ram(GB_4)
                         .color("black")
                         .os(ANDROID)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()
@@ -136,7 +137,7 @@ public class EntityHandler {
                         .brand(XIAOMI)
                         .model("13T")
                         .internalMemory(GB_64)
-                        .ram(gb_3)
+                        .ram(GB_3)
                         .color("black")
                         .os(ANDROID)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()
@@ -149,7 +150,7 @@ public class EntityHandler {
                         .brand(SAMSUNG)
                         .model("Galaxy S21 FE")
                         .internalMemory(GB_128)
-                        .ram(gb_12)
+                        .ram(GB_12)
                         .color("yellow")
                         .os(ANDROID)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()
@@ -162,7 +163,7 @@ public class EntityHandler {
                         .brand(SAMSUNG)
                         .model("Galaxy S23 Ultra")
                         .internalMemory(GB_1024)
-                        .ram(gb_16)
+                        .ram(Attributes.RamEnum.GB_16)
                         .color("white")
                         .os(ANDROID)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()
@@ -175,7 +176,7 @@ public class EntityHandler {
                         .brand(SAMSUNG)
                         .model("Galaxy A04")
                         .internalMemory(GB_32)
-                        .ram(gb_2)
+                        .ram(GB_2)
                         .color("brown")
                         .os(ANDROID)
                         .itemSalesInformation(ItemSalesInformationEntity.builder()

@@ -82,5 +82,4 @@ public abstract class ItemsInfoMapper {
         return ram.getRam();
     }
 
-
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class ItemsService {
 
@@ -46,9 +47,11 @@ public class ItemsService {
             return Either.right(entityValidate);
         }
         Session session = sessionFactory.getCurrentSession();
-        session.getTransaction().begin();
+        session.getTransaction()
+                .begin();
         Optional<ItemsEntity> inserted = itemDao.insert(entityFromDto);
-        session.getTransaction().commit();
+        session.getTransaction()
+                .commit();
 
         return Either.left(inserted);
     }
@@ -64,12 +67,14 @@ public class ItemsService {
             return Either.right(entityValidate);
         }
         Session session = sessionFactory.getCurrentSession();
-        session.getTransaction().begin();
+        session.getTransaction()
+                .begin();
         Optional<ItemsEntity> byId = itemDao.getById(updateItemDto.getId());
         AtomicBoolean atomicRes = new AtomicBoolean(true);
         byId.ifPresentOrElse(v -> itemDao.update(updateItemMapper), () -> atomicRes.set(false));
         boolean res = atomicRes.get();
-        session.getTransaction().commit();
+        session.getTransaction()
+                .commit();
         return Either.left(true);
 
 //        itemDao.getById(addItemDto.get)
@@ -79,11 +84,13 @@ public class ItemsService {
     public Optional<ItemsInfoDto> getById(long id) {
         ItemsInfoMapper itemsInfoMapper = ItemsInfoMapper.INSTANCE;
         Session session = sessionFactory.getCurrentSession();
-        session.getTransaction().begin();
+        session.getTransaction()
+                .begin();
         ItemsEntity itemsEntity = itemDao.getById(id)
                 .get();
         Optional<ItemsInfoDto> getDto = Optional.of(itemsInfoMapper.toDto(itemsEntity));
-        session.getTransaction().commit();
+        session.getTransaction()
+                .commit();
         return getDto;
     }
 
@@ -91,13 +98,45 @@ public class ItemsService {
         List<ItemsInfoDto> list = new ArrayList<>();
         ItemsInfoMapper itemsInfoMapper = ItemsInfoMapper.INSTANCE;
         Session session = sessionFactory.getCurrentSession();
-        session.getTransaction().begin();
+        session.getTransaction()
+                .begin();
         List<ItemsEntity> itemsWithParameters = itemDao.findItemsWithParameters(filter, page, limit);
-        session.getTransaction().commit();
+        session.getTransaction()
+                .commit();
         for (ItemsEntity itemsWithParameter : itemsWithParameters) {
             list.add(itemsInfoMapper.toDto(itemsWithParameter));
         }
         return list;
+    }
+
+    public List<ItemsInfoDto> findBrand(String brand, long page, long limit) {
+        ItemsInfoMapper itemsInfoMapper = ItemsInfoMapper.INSTANCE;
+        Session session = sessionFactory.getCurrentSession();
+        session.getTransaction()
+                .begin();
+        List<Optional<ItemsEntity>> items = itemDao.findBrand(brand, page, limit);
+        List<ItemsInfoDto> collected = items.stream()
+                .filter(Optional::isPresent)
+                .map(optionalItemsEntity -> itemsInfoMapper.toDto(optionalItemsEntity.get()))
+                .collect(Collectors.toList());
+        session.getTransaction()
+                .commit();
+        return collected;
+    }
+
+    public List<ItemsInfoDto> findAllWithOffsetAndLimit(long page, long limit) {
+        ItemsInfoMapper itemsInfoMapper = ItemsInfoMapper.INSTANCE;
+        Session session = sessionFactory.getCurrentSession();
+        session.getTransaction()
+                .begin();
+        List<Optional<ItemsEntity>> items = itemDao.findAllWithOffsetAndLimit(page, limit);
+        List<ItemsInfoDto> collected = items.stream()
+                .filter(Optional::isPresent)
+                .map(optionalItemsEntity -> itemsInfoMapper.toDto(optionalItemsEntity.get()))
+                .collect(Collectors.toList());
+        session.getTransaction()
+                .commit();
+        return collected;
     }
 
 }

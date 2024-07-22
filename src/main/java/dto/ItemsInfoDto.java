@@ -16,7 +16,7 @@ public class ItemsInfoDto {
     String brand;
     String color;
     String os;
-    byte[] image;
+    String image;
     String internalMemory;
     String ram;
     String price;

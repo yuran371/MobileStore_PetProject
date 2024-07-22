@@ -10,7 +10,7 @@ services:
     volumes:
       - posgresql_shop_db:/var/lib/postgresql/data
     ports:
-      - 5555:5432
+      - 5432:5432
 
   pgadmin:
     image: dpage/pgadmin4:latest

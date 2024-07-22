@@ -1,7 +1,7 @@
 package service;
 
 public class OldItemFindByIdService {
-	private static OldItemFindByIdService INSTANCE = new OldItemFindByIdService();
+	private static final OldItemFindByIdService INSTANCE = new OldItemFindByIdService();
 
 	private OldItemFindByIdService() {
 	}

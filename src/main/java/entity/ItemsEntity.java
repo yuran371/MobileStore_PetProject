@@ -74,11 +74,10 @@ public class ItemsEntity implements BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private Attributes.OperatingSystemEnum os;
 
-    @Lob
     @Column(name = "image")
-    private byte[] image;
+    private String image;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
     private ItemSalesInformationEntity itemSalesInformation;
 
     @Version
