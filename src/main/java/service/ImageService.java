@@ -3,7 +3,7 @@ package service;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import utlis.PropertiesUtil;
+import utlis.jdbc.PropertiesUtil;
 
 import java.io.InputStream;
 import java.nio.file.Files;

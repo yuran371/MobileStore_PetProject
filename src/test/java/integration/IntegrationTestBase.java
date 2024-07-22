@@ -8,7 +8,7 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utlis.ConnectionPoolManager;
+import utlis.jdbc.ConnectionPoolManager;
 
 import java.io.File;
 import java.io.IOException;

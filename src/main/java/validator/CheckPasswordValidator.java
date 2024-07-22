@@ -11,7 +11,7 @@ public class CheckPasswordValidator implements ConstraintValidator<CheckPassword
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.isBlank()) {
-            return true;
+            return false;
         }
         return textPattern.matcher(value).matches();
     }

@@ -3,6 +3,7 @@ package utlis;
 import exceptions.EmailSendException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import utlis.jdbc.PropertiesUtil;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
