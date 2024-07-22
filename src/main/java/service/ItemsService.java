@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public class ItemsService {
 
@@ -72,13 +71,9 @@ public class ItemsService {
         Optional<ItemsEntity> byId = itemDao.getById(updateItemDto.getId());
         AtomicBoolean atomicRes = new AtomicBoolean(true);
         byId.ifPresentOrElse(v -> itemDao.update(updateItemMapper), () -> atomicRes.set(false));
-        boolean res = atomicRes.get();
         session.getTransaction()
                 .commit();
         return Either.left(true);
-
-//        itemDao.getById(addItemDto.get)
-//        itemDao.update(addItemMapper.toEntity(addItemDto));
     }
 
     public Optional<ItemsInfoDto> getById(long id) {
@@ -118,7 +113,7 @@ public class ItemsService {
         List<ItemsInfoDto> collected = items.stream()
                 .filter(Optional::isPresent)
                 .map(optionalItemsEntity -> itemsInfoMapper.toDto(optionalItemsEntity.get()))
-                .collect(Collectors.toList());
+                .toList();
         session.getTransaction()
                 .commit();
         return collected;
@@ -133,7 +128,7 @@ public class ItemsService {
         List<ItemsInfoDto> collected = items.stream()
                 .filter(Optional::isPresent)
                 .map(optionalItemsEntity -> itemsInfoMapper.toDto(optionalItemsEntity.get()))
-                .collect(Collectors.toList());
+                .toList();
         session.getTransaction()
                 .commit();
         return collected;

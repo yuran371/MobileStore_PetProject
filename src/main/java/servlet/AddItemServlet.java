@@ -70,12 +70,6 @@ public class AddItemServlet extends HttpServlet {
         Optional<Cookie> jwtCookie = Arrays.stream(cookies)
                 .filter(cookie -> cookie != null && cookie.getName().equals(TOKEN_COOKIE))
                 .findFirst();
-//        jwtCookie.ifPresentOrElse(cookie -> cookie.setValue(TokenHandler.generateToken(accountDto.getEmail())),
-//                () -> {
-//                    Cookie cookie = new Cookie(TOKEN_COOKIE,
-//                            TokenHandler.generateToken(accountDto.getEmail()));
-//                    resp.addCookie(cookie);
-//                });
         resp.sendRedirect("/add-item");
     }
 

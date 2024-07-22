@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static entity.QItemsEntity.itemsEntity;
 
@@ -54,7 +53,7 @@ public class ItemsDao extends DaoBase<Long, ItemsEntity> {
                 .limit(limit)
                 .offset(Math.abs(limit * page - limit))
                 .fetch();
-        return items.stream().map(Optional::ofNullable).collect(Collectors.toList());
+        return items.stream().map(Optional::ofNullable).toList();
     }
 
     public List<Optional<ItemsEntity>> findAllWithOffsetAndLimit(long page, long limit) {
@@ -64,7 +63,7 @@ public class ItemsDao extends DaoBase<Long, ItemsEntity> {
                 .limit(limit)
                 .offset(Math.abs(limit * page - limit))
                 .fetch();
-        return items.stream().map(Optional::ofNullable).collect(Collectors.toList());
+        return items.stream().map(Optional::ofNullable).toList();
     }
 
 }

@@ -16,13 +16,6 @@ public abstract class AddItemMapper {
 
     public static final AddItemMapper INSTANCE = Mappers.getMapper(AddItemMapper.class);
 
-    @Mapping(source = "model", target = "model")
-    @Mapping(source = "brand", target = "brand")
-    @Mapping(source = "color", target = "color")
-    @Mapping(source = "os", target = "os")
-    @Mapping(source = "image", target = "image")
-    @Mapping(source = "internalMemory", target = "internalMemory")
-    @Mapping(source = "ram", target = "ram")
     @Mapping(source = "price", target = "itemSalesInformation.price")
     @Mapping(source = "currency", target = "itemSalesInformation.currency")
     @Mapping(source = "quantity", target = "itemSalesInformation.quantity")
@@ -64,13 +57,6 @@ public abstract class AddItemMapper {
         return null;
     }
 
-    @Mapping(source = "model", target = "model")
-    @Mapping(source = "brand", target = "brand")
-    @Mapping(source = "color", target = "color")
-    @Mapping(source = "os", target = "os")
-    @Mapping(source = "image", target = "image")
-    @Mapping(source = "internalMemory", target = "internalMemory")
-    @Mapping(source = "ram", target = "ram")
     @Mapping(source = "itemSalesInformation.price", target = "price")
     @Mapping(source = "itemSalesInformation.currency", target = "currency")
     @Mapping(source = "itemSalesInformation.quantity", target = "quantity")

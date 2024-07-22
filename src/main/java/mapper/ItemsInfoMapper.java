@@ -11,13 +11,6 @@ import org.mapstruct.factory.Mappers;
 public abstract class ItemsInfoMapper {
     public static final ItemsInfoMapper INSTANCE = Mappers.getMapper(ItemsInfoMapper.class);
 
-    @Mapping(source = "model", target = "model")
-    @Mapping(source = "brand", target = "brand")
-    @Mapping(source = "color", target = "color")
-    @Mapping(source = "os", target = "os")
-    @Mapping(source = "image", target = "image")
-    @Mapping(source = "internalMemory", target = "internalMemory")
-    @Mapping(source = "ram", target = "ram")
     @Mapping(source = "price", target = "itemSalesInformation.price")
     @Mapping(source = "currency", target = "itemSalesInformation.currency")
     public abstract ItemsEntity toEntity(ItemsInfoDto itemsInfoDto);
@@ -58,13 +51,6 @@ public abstract class ItemsInfoMapper {
         return null;
     }
 
-    @Mapping(source = "model", target = "model")
-    @Mapping(source = "brand", target = "brand")
-    @Mapping(source = "color", target = "color")
-    @Mapping(source = "os", target = "os")
-    @Mapping(source = "image", target = "image")
-    @Mapping(source = "internalMemory", target = "internalMemory")
-    @Mapping(source = "ram", target = "ram")
     @Mapping(source = "itemSalesInformation.price", target = "price")
     @Mapping(source = "itemSalesInformation.currency", target = "currency")
     public abstract ItemsInfoDto toDto(ItemsEntity itemsEntity);

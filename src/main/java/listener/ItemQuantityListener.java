@@ -9,7 +9,7 @@ import org.hibernate.event.spi.PreInsertEventListener;
 import utlis.RetryCommand;
 
 public class ItemQuantityListener implements PreInsertEventListener {
-    private static RetryCommand<ItemsEntity> retryCommand = new RetryCommand<>(5);
+    private static final RetryCommand<ItemsEntity> retryCommand = new RetryCommand<>(5);
 
     @Override
     public boolean onPreInsert(PreInsertEvent event) {

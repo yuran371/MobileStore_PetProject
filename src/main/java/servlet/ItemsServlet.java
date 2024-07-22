@@ -47,23 +47,8 @@ public class ItemsServlet extends HttpServlet {
         req.setAttribute(ITEMS, allWithOffsetAndLimit);
         req.setAttribute(PAGE, page);
         req.setAttribute(LIMIT, limit);
-        req.getRequestDispatcher(JspHelper.getUrl("items"))
+        req.getRequestDispatcher(JspHelper.getUrl(ITEMS))
                 .forward(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        {
-            resp.setContentType("text/html");
-            resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            String submitParameter = req.getParameter(BRAND);
-
-//				List<OldItemsFilterDto> brand = oldItemsService.findBrand(submitParameter);
-//				req.setAttribute(ITEMS, brand);
-
-            req.getRequestDispatcher(JspHelper.getUrl("items"))
-                    .forward(req, resp);
-        }
     }
 
 }

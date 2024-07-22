@@ -1,13 +1,8 @@
 package dto;
 
-import java.time.OffsetDateTime;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.time.OffsetDateTime;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -15,7 +10,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode
 @ToString
-public class SellHistoryDto {
+public class SellHistoryDto {	// WiP
 
 	private Long sellId;
 	private final Long itemId;

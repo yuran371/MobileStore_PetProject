@@ -15,8 +15,6 @@ public abstract class CreateAccountMapper {
     private static final String USER_FOLDER = "user\\";
     private static final String DEFAULT_AVATAR = "user\\default-avatar-icon-of-social-media-user-vector.jpg";
 
-    @Mapping(target = "countryEnum", source = "country")
-    @Mapping(target = "genderEnum", source = "gender")
     @Mapping(target = "birthday", dateFormat = "yyyy-MM-dd")
     @Mapping(target = "confirmedAccount", constant = "false")
     public abstract PersonalAccountEntity createAccountDtoToPersonalAccountEntity(CreateAccountDto dto);

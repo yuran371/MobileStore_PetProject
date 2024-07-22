@@ -23,10 +23,6 @@ public class ItemSalesInformationEntity implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToOne
-//    @JoinColumn(name = "item_id")
-//    private ItemsEntity item;
-
     @Column(name = "price")
     private Double price;
 

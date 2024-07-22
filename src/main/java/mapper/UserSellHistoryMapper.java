@@ -14,16 +14,12 @@ public abstract class UserSellHistoryMapper {
 
     public static final UserSellHistoryMapper INSTANCE = Mappers.getMapper(UserSellHistoryMapper.class);
 
-
-    @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "sellDate", source = "sellDate")
     @Mapping(target = "brand", source = "itemId.brand")
     @Mapping(target = "model", source = "itemId.model")
     @Mapping(target = "os", source = "itemId.os")
     @Mapping(target = "ram", source = "itemId.ram")
     @Mapping(target = "color", source = "itemId.color")
     @Mapping(target = "internalMemory", source = "itemId.internalMemory")
-    @Mapping(target = "price", source = "price")
     abstract UserSellHistoryDto sellHistoryEntityToUserSellHistoryDto(SellHistoryEntity entity);
 
     String map(OffsetDateTime sellDate) {

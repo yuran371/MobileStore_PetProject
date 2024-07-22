@@ -11,6 +11,6 @@ public enum CountryEnum {
 	}
 
 	public static boolean isValid(String country) {
-		return getValue(country) == null ? false : true;
+		return getValue(country) != null;
 	}
 }
